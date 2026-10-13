@@ -32,7 +32,7 @@ html, body {
 }
 
 /* ---------- Campus stage ----------
-   One 16:9 box, the video's own 1280x720 frame. Videos, still frame, SVG
+   One 16:9 box (video is 1920x1080). Videos, still frame, SVG
    hotspots and the hover label are all children of this box and share its
    coordinate system, so a hotspot can never drift off its building at any
    window size.
@@ -80,7 +80,8 @@ html, body {
 }
 
 /* ---------- Hotspots ----------
-   Drawn in index.html in the video's own pixel space (viewBox 1280x720).
+   Drawn in index.html in a 1280x720 coordinate space (viewBox; the
+   1920x1080 video and stills scale into it).
    DOM order = back to front, so where two shapes overlap the one in front
    wins both the pointer and the highlight. Inert until the loop runs. */
 .campus__zones {

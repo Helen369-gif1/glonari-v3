@@ -11,8 +11,9 @@
   //   the globe, Gia walks in)     →  seamless 14 s loop (fixed camera;
   //   only the fountain jets and the globe move)  →  11 hotspots live.
   //
-  // The hotspots are SVG shapes drawn in index.html in the video's own
-  // 1280x720 pixel space. Because the loop's camera, houses and presenter
+  // The hotspots are SVG shapes drawn in index.html in a fixed
+  // 1280x720 coordinate space (viewBox; the 1920x1080 video scales into
+  // it). Because the loop's camera, houses and presenter
   // never move, those shapes never have to move either: no hit-testing
   // math, no per-frame work — the browser's own SVG hit-testing does it.
   // ===================================================================
@@ -29,6 +30,7 @@
   const zones = Array.from(campus.querySelectorAll('.zone'));
   const dimHole = document.getElementById('dim-hole');
 
+  // SVG viewBox size (coordinate space), not the video's pixel size.
   const FRAME_W = 1280;
   const FRAME_H = 720;
 

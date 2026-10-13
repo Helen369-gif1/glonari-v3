@@ -144,15 +144,16 @@
 
   <!-- Campus scene (2026-10-13, replaces the layered parallax scene —
        see DEVELOPMENT_PLAN.md Stage 19 / PRODUCT_REQUIREMENTS.md §29).
-       .campus is a fixed 16:9 box (the video's own 1280x720 frame) sized
+       .campus is a fixed 16:9 box (the video frame; video is 1920x1080) sized
        in styles.css (pure cover, always fills the window); the videos AND the SVG
        hotspots are children of that same box, so the hotspots, drawn in
-       the video's own 1280x720 pixel coordinates, stay locked onto the
+       a 1280x720 coordinate space (viewBox; the 1920x1080 video scales
+       into it), stay locked onto the
        buildings at any window size. The camera never moves in the loop,
        so the shapes never have to. -->
   <div class="stage-viewport">
   <div class="campus" id="campus">
-    <img class="campus__still" src="assets/campus/campus-still.webp" alt="" width="1280" height="720">
+    <img class="campus__still" src="assets/campus/campus-still.webp" alt="" width="1920" height="1080">
     <video class="campus__loop" muted loop playsinline preload="auto" poster="assets/campus/campus-still.webp" aria-hidden="true">
       <source src="assets/campus/campus-loop.mp4" type="video/mp4">
     </video>

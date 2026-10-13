@@ -905,6 +905,8 @@ How to use this plan: give Claude Code **one stage at a time**. Each stage is se
 
 > **SUPERSEDED (2026-10-13)** — desktop Campus now always fills the screen (pure cover, no capped crop, no blurred backdrop, no edge fade); windows narrower than 3:2 (max-aspect-ratio: 3/2) or under 768px go to mobile/; the mobile page's reverse redirect uses the exact negation. See chat/prompt from 2026-10-13. Implementation: forward gate in `index.html` is `matchMedia('(max-width: 767px), not all and (min-aspect-ratio: 3/2)')` (a strict "< 3:2", so an exact 3:2 window stays on desktop); reverse gate in `mobile/index.html` is `(min-width: 768px) and (min-aspect-ratio: 3/2) and (hover: hover) and (pointer: fine)` — the width/aspect part is the exact negation, the existing hover/pointer condition is kept, so touch devices still never go to desktop.
 
+> **SUPERSEDED (2026-10-14)** — campus-loop.mp4 / campus-intro.mp4 / stills are now 1920x1080: static buildings and sky rebuilt from the original source picture (higher resolution than the 720p video), fountain/globe and presenter taken from the original loop and upscaled, softer colour grade (less glare and saturation) applied identically to intro, loop and stills; intro's last 0.5 s blends into the new loop's first frame. See chat/prompt from 2026-10-14.
+
 ---
 
 ## Summary: stage dependency chain
