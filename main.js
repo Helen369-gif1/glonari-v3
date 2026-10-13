@@ -125,17 +125,8 @@
     introVideo.addEventListener('playing', armSafety, { once: true });
 
     introVideo.currentTime = 0;
-    // The "explore" click is a user gesture, so the intro may play with its
-    // sound. If the browser still refuses (e.g. the overlay's 60 s
-    // failsafe exit, which is not a gesture), it plays muted instead.
-    introVideo.muted = false;
-    introVideo
-      .play()
-      .catch(() => {
-        introVideo.muted = true;
-        return introVideo.play();
-      })
-      .catch(startLoop);
+    // The intro always plays muted (its audio track is removed).
+    introVideo.play().catch(startLoop);
   }
 
   const introPending = root.classList.contains('intro-active');

@@ -37,46 +37,19 @@ html, body {
    coordinate system, so a hotspot can never drift off its building at any
    window size.
 
-   Sizing (pure CSS, no JS layout pass): "cover", but with a capped crop,
-   so no building can be cropped out of reach on unusual screens —
-     - at most ~6% of the width is cut (keeps the GLONARI PULSE / HOMES
-       signs readable on 16:10 and 4:3/5:4 screens);
-     - at most ~11% of the height is cut (ultra-wide 21:9).
-   Where the cap leaves a band, the blurred backdrop below shows through and
-   the box's own edges fade into it.
-     width = max(contain, min(cover, 106.67vw, 199.1vh))  */
-.stage-backdrop {
-  position: absolute;
-  inset: -40px;
-  width: calc(100% + 80px);
-  height: calc(100% + 80px);
-  object-fit: cover;
-  filter: blur(28px) brightness(0.62) saturate(1.1);
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 1.2s ease;
-}
-
-/* Only once the Campus itself is up — never around the dark intro. */
-body.campus-ready .stage-backdrop {
-  opacity: 1;
-}
-
+   Sizing (pure CSS, no JS layout pass): plain "cover" — the box always
+   fills the whole window, no capped crop, no blurred backdrop, no edge
+   fade (2026-10-13). Windows narrower than 3:2 (or under 768px) never
+   reach this page — index.html's device gate sends them to mobile/ — so
+   the side crop here stays small enough to keep every building usable.
+     width = cover = max(100vw, 177.7778vh)  */
 .campus {
   position: absolute;
   left: 50%;
   top: 50%;
-  width: max(min(100vw, 177.7778vh), min(max(100vw, 177.7778vh), 106.67vw, 199.1vh));
+  width: max(100vw, 177.7778vh);
   aspect-ratio: 16 / 9;
   transform: translate(-50%, -50%);
-  -webkit-mask-image:
-    linear-gradient(to right, transparent, #000 3%, #000 97%, transparent),
-    linear-gradient(to bottom, transparent, #000 3%, #000 97%, transparent);
-  -webkit-mask-composite: source-in;
-  mask-image:
-    linear-gradient(to right, transparent, #000 3%, #000 97%, transparent),
-    linear-gradient(to bottom, transparent, #000 3%, #000 97%, transparent);
-  mask-composite: intersect;
 }
 
 .campus__still,
@@ -147,9 +120,9 @@ body.campus-ready .stage-backdrop {
 .zone__glow {
   fill: none;
   stroke: var(--gold-bright);
-  stroke-width: 16;
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
   stroke-linejoin: round;
-  filter: url(#zone-glow);
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.45s ease;
@@ -184,7 +157,7 @@ body.campus-ready .stage-backdrop {
   opacity: 0.5;
 }
 .zone.is-active .zone__glow {
-  opacity: 0.85;
+  opacity: 0.95;
 }
 .zone.is-active .zone__halo {
   opacity: 1;
@@ -193,7 +166,16 @@ body.campus-ready .stage-backdrop {
 /* Keyboard focus gets the same highlight plus a visible ring on the glow. */
 .zone:focus-visible .zone__glow {
   opacity: 1;
-  stroke-width: 9;
+  stroke-width: 3;
+}
+
+/* The fountain ring is not clipped by a shape mask, so its full stroke shows —
+   half the width keeps it matching the ~1px building outlines. */
+.zone[data-key="fountain"] .zone__glow {
+  stroke-width: 1;
+}
+.zone[data-key="fountain"]:focus-visible .zone__glow {
+  stroke-width: 1.5;
 }
 
 /* ---------- Hover / focus label ---------- */
@@ -241,7 +223,6 @@ body:not(.campus-ready) .explore-hint {
   .zone__glow,
   .zone__halo,
   .campus__dim,
-  .stage-backdrop,
   .campus__label {
     transition: none;
   }

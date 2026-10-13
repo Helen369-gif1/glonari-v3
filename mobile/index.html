@@ -58,7 +58,12 @@
       }
     }
 
-    var desktopQuery = window.matchMedia('(min-width: 768px) and (hover: hover) and (pointer: fine)');
+    // 2026-10-13: the width/aspect part is now the exact negation of the
+    // desktop gate ('(max-width: 767px), not all and (min-aspect-ratio:
+    // 3/2)') — at least 768px wide AND at least 3:2 — so a window the
+    // desktop page would send here is never sent back (no redirect loop).
+    // The (hover)/(pointer) part is unchanged.
+    var desktopQuery = window.matchMedia('(min-width: 768px) and (min-aspect-ratio: 3/2) and (hover: hover) and (pointer: fine)');
 
     function goDesktop() {
       window.location.replace('../index.html');
