@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>
+  // Device gate (PRODUCT_REQUIREMENTS.md §19 / DEVELOPMENT_PLAN.md
+  // Stage 14): this desktop scene and mobile/index.html's static tap-zone
+  // scene are two independent entry points with no shared layout — a
+  // narrow/portrait viewport must never load this page's parallax scene
+  // at all, not just render it awkwardly. Runs synchronously, as the
+  // very first thing after <meta viewport> (so the media query already
+  // sees the real device width, not a pre-viewport-meta default) and
+  // before any stylesheet/asset below is requested, so a phone-sized
+  // viewport never fetches this page's desktop assets before leaving.
+  // 767px matches this project's own established mobile breakpoint (see
+  // Stage 14's history). .replace(), not .href, so the redirect doesn't
+  // leave a back-button entry that would just bounce the user right
+  // back here into another redirect.
+  //
+  // Live re-check (2026-08-25, later still): the one-time check above
+  // only ever runs once, at load — it never catches a viewport that
+  // narrows to mobile width AFTER this page has already loaded (a manual
+  // browser-window resize, an orientation change, or a backgrounded tab
+  // resuming at a different size), so a desktop-loaded page left open
+  // through one of those never left. `MediaQueryList`'s own 'change'
+  // event exists exactly for this — it fires only when `matches` itself
+  // flips, not on every resize tick, so it's used here instead of a
+  // manual `resize` listener; the SAME MediaQueryList object is reused
+  // for both the one-time check and this listener, rather than
+  // constructing a second one for the same query.
+  // Returning to the Campus (2026-10-12): the branded intro is only for
+  // a fresh entry. A browser Back/Forward to this page, or arriving from
+  // one of the sub-sites (their "← Glonari" back link, or any link out of
+  // meet-gia/, digital-banker/, global-dream/, global-reserve/), lands
+  // straight in the Campus. Same-origin referrer only, so an outside
+  // link still gets the intro, and a manual reload (which keeps the old
+  // referrer) still shows it.
+  function glonariReturningToCampus() {
+    try {
+      var nav = performance.getEntriesByType('navigation')[0];
+      if (nav && nav.type === 'back_forward') return true;
+      if ((nav && nav.type === 'reload') || !document.referrer) return false;
+      var ref = new URL(document.referrer);
+      return ref.origin === location.origin &&
+        /\/(meet-gia|digital-banker|global-dream|global-reserve)\//.test(ref.pathname);
+    } catch (e) {
+      return false;
+    }
+  }
+
+  var mobileQuery = window.matchMedia('(max-width: 767px)');
+
+  function goMobile() {
+    window.location.replace('mobile/index.html');
+  }
+
+  if (mobileQuery.matches) {
+    // A returning visit forwarded to mobile carries its "skip the intro"
+    // decision along: after .replace() the mobile page only sees this
+    // page as its referrer and a plain 'navigate' type.
+    if (glonariReturningToCampus()) sessionStorage.setItem('glonariSkipIntro', '1');
+    goMobile();
+  } else {
+    var pendingMobileRedirect = null;
+    mobileQuery.addEventListener('change', function (event) {
+      if (pendingMobileRedirect) {
+        clearTimeout(pendingMobileRedirect);
+        pendingMobileRedirect = null;
+      }
+      if (!event.matches) return; // only react to crossing INTO mobile width
+      // Debounced (300ms): guards against a transient/flickering match —
+      // DevTools device-emulation toggling, or the brief instant of
+      // unstable `innerWidth` some mobile browsers report mid
+      // orientation-change — by requiring the narrow state to still hold
+      // once the delay elapses, rather than acting on the very first
+      // 'change' event.
+      pendingMobileRedirect = setTimeout(function () {
+        if (mobileQuery.matches) {
+          // One-shot marker consumed by mobile/index.html's own inline
+          // <head> script — this call site is the LIVE resize/orientation
+          // redirect, not the initial synchronous check above, so the
+          // destination page must not replay the branded intro (see
+          // intro.js). Set immediately before the existing goMobile()
+          // call; goMobile() itself and the redirect criteria are
+          // unchanged.
+          sessionStorage.setItem('glonariSkipIntro', '1');
+          goMobile();
+        }
+      }, 300);
+    });
+  }
+</script>
+<script>
+  // Branded intro one-shot marker (see intro.js/intro.css): consumed here,
+  // once, so only the automatic live-redirect above (the only call site
+  // that sets it) suppresses the intro on its destination page. A normal
+  // load, a manual reload, or a redirect from the initial synchronous
+  // check further up never has this marker set, so they always show it.
+  // Returning to the Campus (see glonariReturningToCampus above) skips it
+  // too.
+  if (sessionStorage.getItem('glonariSkipIntro')) {
+    sessionStorage.removeItem('glonariSkipIntro');
+  } else if (!glonariReturningToCampus()) {
+    document.documentElement.classList.add('intro-active');
+  }
+</script>
+<title>Glonari Global Scene</title>
+<link rel="preload" as="image" href="assets/campus/campus-still.webp">
+<link rel="stylesheet" href="design-tokens.css">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="section-modal.css">
+<link rel="stylesheet" href="intro.css">
+</head>
+<body>
+  <!-- Branded intro overlay: shared markup/behavior with mobile/index.html
+       — see intro.css/intro.js. Sits above the Campus (and its own
+       #modal-overlay) while active; fully removed from the DOM on exit.
+       Not aria-hidden: unlike the old auto-exiting version, this one holds
+       a real interactive control (the "explore" button) that assistive
+       tech must be able to reach. -->
+  <div id="intro-overlay">
+    <div class="intro-inner">
+      <div class="intro-logo" id="intro-logo">
+        <picture>
+          <source type="image/webp" srcset="assets/glonari-logo.webp">
+          <img src="assets/glonari-logo.png" alt="Glonari" width="1584" height="763">
+        </picture>
+      </div>
+      <div class="intro-copy" id="intro-copy">
+        <h1 class="intro-headline">More than a place to live — a smarter path to ownership</h1>
+        <p class="intro-subhead">Glonari brings real estate, member participation, artificial intelligence, global connections, and financial intelligence together to help lower your cost of living and make ownership more achievable. Gia quietly connects it all.</p>
+      </div>
+      <button type="button" class="intro-cta" id="intro-cta">explore</button>
+    </div>
+  </div>
+
+  <!-- Campus scene (2026-10-13, replaces the layered parallax scene —
+       see DEVELOPMENT_PLAN.md Stage 19 / PRODUCT_REQUIREMENTS.md §29).
+       .campus is a fixed 16:9 box (the video's own 1280x720 frame) sized
+       in styles.css (cover with a capped crop, blurred backdrop behind); the videos AND the SVG
+       hotspots are children of that same box, so the hotspots, drawn in
+       the video's own 1280x720 pixel coordinates, stay locked onto the
+       buildings at any window size. The camera never moves in the loop,
+       so the shapes never have to. -->
+  <div class="stage-viewport">
+  <img class="stage-backdrop" src="assets/campus/campus-still.webp" alt="" aria-hidden="true">
+  <div class="campus" id="campus">
+    <img class="campus__still" src="assets/campus/campus-still.webp" alt="" width="1280" height="720">
+    <video class="campus__loop" muted loop playsinline preload="auto" poster="assets/campus/campus-still.webp" aria-hidden="true">
+      <source src="assets/campus/campus-loop.mp4" type="video/mp4">
+    </video>
+    <video class="campus__intro" playsinline preload="auto" aria-hidden="true">
+      <source src="assets/campus/campus-intro.mp4" type="video/mp4">
+    </video>
+    <svg class="campus__zones" viewBox="0 0 1280 720" preserveAspectRatio="none" aria-label="Glonari Campus">
+      <defs>
+        <filter id="feather" x="-5%" y="-5%" width="110%" height="110%"><feGaussianBlur stdDeviation="2.5"/></filter>
+        <filter id="zone-glow" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="5"/></filter>
+        <radialGradient id="halo-grad"><stop offset="0" stop-color="#ffe9b8" stop-opacity=".38"/><stop offset="1" stop-color="#ffe9b8" stop-opacity="0"/></radialGradient>
+        <!-- Spotlight: everything except the active zone dims slightly; main.js
+             copies the active zone's shape and occlusion mask into #dim-hole. -->
+        <mask id="dim-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="1280" height="720"><rect width="1280" height="720" fill="#fff"/><path id="dim-hole" d="" fill="#000"/></mask>
+        <mask id="mask-building-pulse" maskUnits="userSpaceOnUse" x="0" y="0" width="1280" height="720"><path d="M0 178L40 178A54.0 70 0 0 1 148 178L190 178L190 352L0 352Z" fill="#fff" filter="url(#feather)"/><path d="M200 205L247 205A40.5 65 0 0 1 328 205L356 205L356 342L200 342Z" fill="#000"/><path d="M352 172L397 172A39.5 54 0 0 1 476 172L518 172L518 306L352 306Z" fill="#000"/><path d="M528 126L578 126A59.0 68 0 0 1 696 126L750 126L750 312L528 312Z" fill="#000"/><path d="M760 174L807 174A39.5 56 0 0 1 886 174L932 174L932 306L760 306Z" fill="#000"/><path d="M920 204L956 204A41.0 62 0 0 1 1038 204L1086 204L1086 342L920 342Z" fill="#000"/><path d="M1097 178L1137 178A54.5 70 0 0 1 1246 178L1280 178L1280 356L1097 356Z" fill="#000"/><path d="M0 398L104 398A85.0 76 0 0 1 274 398L346 398L346 572L0 572Z" fill="#000"/><path d="M930 400L1019 400A80.0 76 0 0 1 1179 400L1276 400L1276 582L930 582Z" fill="#000"/><path d="M557 398A80 80 0 0 1 717 398L722 440L790 446L860 462L888 488L882 512L840 528L700 535L570 532L532 516L528 478L548 452L560 440Z" fill="#000"/><image href="assets/campus/presenter-mask-cut.png" x="240" y="260" width="460" height="460"/></mask>
+        <mask id="mask-building-glonari-news" maskUnits="userSpaceOnUse" x="0" y="0" width="1280" height="720"><path d="M200 205L247 205A40.5 65 0 0 1 328 205L356 205L356 342L200 342Z" fill="#fff" filter="url(#feather)"/><path d="M352 172L397 172A39.5 54 0 0 1 476 172L518 172L518 306L352 306Z" fill="#000"/><path d="M528 126L578 126A59.0 68 0 0 1 696 126L750 126L750 312L528 312Z" fill="#000"/><path d="M760 174L807 174A39.5 56 0 0 1 886 174L932 174L932 306L760 306Z" fill="#000"/><path d="M920 204L956 204A41.0 62 0 0 1 1038 204L1086 204L1086 342L920 342Z" fill="#000"/><path d="M1097 178L1137 178A54.5 70 0 0 1 1246 178L1280 178L1280 356L1097 356Z" fill="#000"/><path d="M0 398L104 398A85.0 76 0 0 1 274 398L346 398L346 572L0 572Z" fill="#000"/><path d="M930 400L1019 400A80.0 76 0 0 1 1179 400L1276 400L1276 582L930 582Z" fill="#000"/><path d="M557 398A80 80 0 0 1 717 398L722 440L790 446L860 462L888 488L882 512L840 528L700 535L570 532L532 516L528 478L548 452L560 440Z" fill="#000"/><image href="assets/campus/presenter-mask-cut.png" x="240" y="260" width="460" height="460"/></mask>
+        <mask id="mask-building-global-connections" maskUnits="userSpaceOnUse" x="0" y="0" width="1280" height="720"><path d="M352 172L397 172A39.5 54 0 0 1 476 172L518 172L518 306L352 306Z" fill="#fff" filter="url(#feather)"/><path d="M528 126L578 126A59.0 68 0 0 1 696 126L750 126L750 312L528 312Z" fill="#000"/><path d="M760 174L807 174A39.5 56 0 0 1 886 174L932 174L932 306L760 306Z" fill="#000"/><path d="M920 204L956 204A41.0 62 0 0 1 1038 204L1086 204L1086 342L920 342Z" fill="#000"/><path d="M1097 178L1137 178A54.5 70 0 0 1 1246 178L1280 178L1280 356L1097 356Z" fill="#000"/><path d="M0 398L104 398A85.0 76 0 0 1 274 398L346 398L346 572L0 572Z" fill="#000"/><path d="M930 400L1019 400A80.0 76 0 0 1 1179 400L1276 400L1276 582L930 582Z" fill="#000"/><path d="M557 398A80 80 0 0 1 717 398L722 440L790 446L860 462L888 488L882 512L840 528L700 535L570 532L532 516L528 478L548 452L560 440Z" fill="#000"/><image href="assets/campus/presenter-mask-cut.png" x="240" y="260" width="460" height="460"/></mask>
+        <mask id="mask-building-banker" maskUnits="userSpaceOnUse" x="0" y="0" width="1280" height="720"><path d="M528 126L578 126A59.0 68 0 0 1 696 126L750 126L750 312L528 312Z" fill="#fff" filter="url(#feather)"/><path d="M760 174L807 174A39.5 56 0 0 1 886 174L932 174L932 306L760 306Z" fill="#000"/><path d="M920 204L956 204A41.0 62 0 0 1 1038 204L1086 204L1086 342L920 342Z" fill="#000"/><path d="M1097 178L1137 178A54.5 70 0 0 1 1246 178L1280 178L1280 356L1097 356Z" fill="#000"/><path d="M0 398L104 398A85.0 76 0 0 1 274 398L346 398L346 572L0 572Z" fill="#000"/><path d="M930 400L1019 400A80.0 76 0 0 1 1179 400L1276 400L1276 582L930 582Z" fill="#000"/><path d="M557 398A80 80 0 0 1 717 398L722 440L790 446L860 462L888 488L882 512L840 528L700 535L570 532L532 516L528 478L548 452L560 440Z" fill="#000"/><image href="assets/campus/presenter-mask-cut.png" x="240" y="260" width="460" height="460"/></mask>
+        <mask id="mask-building-global-dream" maskUnits="userSpaceOnUse" x="0" y="0" width="1280" height="720"><path d="M760 174L807 174A39.5 56 0 0 1 886 174L932 174L932 306L760 306Z" fill="#fff" filter="url(#feather)"/><path d="M920 204L956 204A41.0 62 0 0 1 1038 204L1086 204L1086 342L920 342Z" fill="#000"/><path d="M1097 178L1137 178A54.5 70 0 0 1 1246 178L1280 178L1280 356L1097 356Z" fill="#000"/><path d="M0 398L104 398A85.0 76 0 0 1 274 398L346 398L346 572L0 572Z" fill="#000"/><path d="M930 400L1019 400A80.0 76 0 0 1 1179 400L1276 400L1276 582L930 582Z" fill="#000"/><path d="M557 398A80 80 0 0 1 717 398L722 440L790 446L860 462L888 488L882 512L840 528L700 535L570 532L532 516L528 478L548 452L560 440Z" fill="#000"/><image href="assets/campus/presenter-mask-cut.png" x="240" y="260" width="460" height="460"/></mask>
+        <mask id="mask-building-glonari-commercial" maskUnits="userSpaceOnUse" x="0" y="0" width="1280" height="720"><path d="M920 204L956 204A41.0 62 0 0 1 1038 204L1086 204L1086 342L920 342Z" fill="#fff" filter="url(#feather)"/><path d="M1097 178L1137 178A54.5 70 0 0 1 1246 178L1280 178L1280 356L1097 356Z" fill="#000"/><path d="M0 398L104 398A85.0 76 0 0 1 274 398L346 398L346 572L0 572Z" fill="#000"/><path d="M930 400L1019 400A80.0 76 0 0 1 1179 400L1276 400L1276 582L930 582Z" fill="#000"/><path d="M557 398A80 80 0 0 1 717 398L722 440L790 446L860 462L888 488L882 512L840 528L700 535L570 532L532 516L528 478L548 452L560 440Z" fill="#000"/><image href="assets/campus/presenter-mask-cut.png" x="240" y="260" width="460" height="460"/></mask>
+        <mask id="mask-building-glonari-homes" maskUnits="userSpaceOnUse" x="0" y="0" width="1280" height="720"><path d="M1097 178L1137 178A54.5 70 0 0 1 1246 178L1280 178L1280 356L1097 356Z" fill="#fff" filter="url(#feather)"/><path d="M0 398L104 398A85.0 76 0 0 1 274 398L346 398L346 572L0 572Z" fill="#000"/><path d="M930 400L1019 400A80.0 76 0 0 1 1179 400L1276 400L1276 582L930 582Z" fill="#000"/><path d="M557 398A80 80 0 0 1 717 398L722 440L790 446L860 462L888 488L882 512L840 528L700 535L570 532L532 516L528 478L548 452L560 440Z" fill="#000"/><image href="assets/campus/presenter-mask-cut.png" x="240" y="260" width="460" height="460"/></mask>
+        <mask id="mask-building-glonari-journey" maskUnits="userSpaceOnUse" x="0" y="0" width="1280" height="720"><path d="M0 398L104 398A85.0 76 0 0 1 274 398L346 398L346 572L0 572Z" fill="#fff" filter="url(#feather)"/><path d="M930 400L1019 400A80.0 76 0 0 1 1179 400L1276 400L1276 582L930 582Z" fill="#000"/><path d="M557 398A80 80 0 0 1 717 398L722 440L790 446L860 462L888 488L882 512L840 528L700 535L570 532L532 516L528 478L548 452L560 440Z" fill="#000"/><image href="assets/campus/presenter-mask-cut.png" x="240" y="260" width="460" height="460"/></mask>
+        <mask id="mask-building-persona" maskUnits="userSpaceOnUse" x="0" y="0" width="1280" height="720"><path d="M930 400L1019 400A80.0 76 0 0 1 1179 400L1276 400L1276 582L930 582Z" fill="#fff" filter="url(#feather)"/><path d="M557 398A80 80 0 0 1 717 398L722 440L790 446L860 462L888 488L882 512L840 528L700 535L570 532L532 516L528 478L548 452L560 440Z" fill="#000"/><image href="assets/campus/presenter-mask-cut.png" x="240" y="260" width="460" height="460"/></mask>
+        <mask id="mask-fountain" maskUnits="userSpaceOnUse" x="0" y="0" width="1280" height="720"><path d="M557 398A80 80 0 0 1 717 398L722 440L790 446L860 462L888 488L882 512L840 528L700 535L570 532L532 516L528 478L548 452L560 440Z" fill="#fff" filter="url(#feather)"/><image href="assets/campus/presenter-mask-cut.png" x="240" y="260" width="460" height="460"/></mask>
+        <mask id="mask-presenter" maskUnits="userSpaceOnUse" x="0" y="0" width="1280" height="720"><image href="assets/campus/presenter-mask-add.png" x="240" y="260" width="460" height="460"/></mask>
+      </defs>
+      <rect class="campus__dim" width="1280" height="720" mask="url(#dim-mask)"/>
+      <g class="zone" data-key="building-pulse" data-name="Glonari Pulse" data-label-x="95" data-label-y="104" tabindex="-1" role="button" aria-label="Glonari Pulse — open section">
+        <image class="zone__lift" href="assets/campus/campus-still-lift.webp" width="1280" height="720" mask="url(#mask-building-pulse)"/>
+        <path class="zone__glow" d="M0 178L40 178A54.0 70 0 0 1 148 178L190 178L190 352L0 352Z" mask="url(#mask-building-pulse)"/>
+        <path class="zone__hit" d="M0 178L40 178A54.0 70 0 0 1 148 178L190 178L190 352L0 352Z"/>
+      </g>
+      <g class="zone" data-key="building-glonari-news" data-name="Glonari News" data-label-x="278" data-label-y="136" tabindex="-1" role="button" aria-label="Glonari News — open section">
+        <image class="zone__lift" href="assets/campus/campus-still-lift.webp" width="1280" height="720" mask="url(#mask-building-glonari-news)"/>
+        <path class="zone__glow" d="M200 205L247 205A40.5 65 0 0 1 328 205L356 205L356 342L200 342Z" mask="url(#mask-building-glonari-news)"/>
+        <path class="zone__hit" d="M200 205L247 205A40.5 65 0 0 1 328 205L356 205L356 342L200 342Z"/>
+      </g>
+      <g class="zone" data-key="building-global-connections" data-name="Global Connections" data-label-x="436" data-label-y="114" tabindex="-1" role="button" aria-label="Global Connections — open section">
+        <image class="zone__lift" href="assets/campus/campus-still-lift.webp" width="1280" height="720" mask="url(#mask-building-global-connections)"/>
+        <path class="zone__glow" d="M352 172L397 172A39.5 54 0 0 1 476 172L518 172L518 306L352 306Z" mask="url(#mask-building-global-connections)"/>
+        <path class="zone__hit" d="M352 172L397 172A39.5 54 0 0 1 476 172L518 172L518 306L352 306Z"/>
+      </g>
+      <g class="zone" data-key="building-banker" data-name="Digital Banker" data-label-x="639" data-label-y="40" tabindex="-1" role="button" aria-label="Digital Banker — enter">
+        <image class="zone__lift" href="assets/campus/campus-still-lift.webp" width="1280" height="720" mask="url(#mask-building-banker)"/>
+        <path class="zone__glow" d="M528 126L578 126A59.0 68 0 0 1 696 126L750 126L750 312L528 312Z" mask="url(#mask-building-banker)"/>
+        <path class="zone__hit" d="M528 126L578 126A59.0 68 0 0 1 696 126L750 126L750 312L528 312Z"/>
+      </g>
+      <g class="zone" data-key="building-global-dream" data-name="Global Dream" data-label-x="846" data-label-y="114" tabindex="-1" role="button" aria-label="Global Dream — open section">
+        <image class="zone__lift" href="assets/campus/campus-still-lift.webp" width="1280" height="720" mask="url(#mask-building-global-dream)"/>
+        <path class="zone__glow" d="M760 174L807 174A39.5 56 0 0 1 886 174L932 174L932 306L760 306Z" mask="url(#mask-building-global-dream)"/>
+        <path class="zone__hit" d="M760 174L807 174A39.5 56 0 0 1 886 174L932 174L932 306L760 306Z"/>
+      </g>
+      <g class="zone" data-key="building-glonari-commercial" data-name="Glonari Commercial" data-label-x="997" data-label-y="138" tabindex="-1" role="button" aria-label="Glonari Commercial — open section">
+        <image class="zone__lift" href="assets/campus/campus-still-lift.webp" width="1280" height="720" mask="url(#mask-building-glonari-commercial)"/>
+        <path class="zone__glow" d="M920 204L956 204A41.0 62 0 0 1 1038 204L1086 204L1086 342L920 342Z" mask="url(#mask-building-glonari-commercial)"/>
+        <path class="zone__hit" d="M920 204L956 204A41.0 62 0 0 1 1038 204L1086 204L1086 342L920 342Z"/>
+      </g>
+      <g class="zone" data-key="building-glonari-homes" data-name="Glonari Homes" data-label-x="1190" data-label-y="104" tabindex="-1" role="button" aria-label="Glonari Homes — open section">
+        <image class="zone__lift" href="assets/campus/campus-still-lift.webp" width="1280" height="720" mask="url(#mask-building-glonari-homes)"/>
+        <path class="zone__glow" d="M1097 178L1137 178A54.5 70 0 0 1 1246 178L1280 178L1280 356L1097 356Z" mask="url(#mask-building-glonari-homes)"/>
+        <path class="zone__hit" d="M1097 178L1137 178A54.5 70 0 0 1 1246 178L1280 178L1280 356L1097 356Z"/>
+      </g>
+      <g class="zone" data-key="building-glonari-journey" data-name="Glonari Journey" data-label-x="189" data-label-y="318" tabindex="-1" role="button" aria-label="Glonari Journey — open section">
+        <image class="zone__lift" href="assets/campus/campus-still-lift.webp" width="1280" height="720" mask="url(#mask-building-glonari-journey)"/>
+        <path class="zone__glow" d="M0 398L104 398A85.0 76 0 0 1 274 398L346 398L346 572L0 572Z" mask="url(#mask-building-glonari-journey)"/>
+        <path class="zone__hit" d="M0 398L104 398A85.0 76 0 0 1 274 398L346 398L346 572L0 572Z"/>
+      </g>
+      <g class="zone" data-key="building-persona" data-name="Signature Personas" data-label-x="1099" data-label-y="320" tabindex="-1" role="button" aria-label="Signature Personas — open section">
+        <image class="zone__lift" href="assets/campus/campus-still-lift.webp" width="1280" height="720" mask="url(#mask-building-persona)"/>
+        <path class="zone__glow" d="M930 400L1019 400A80.0 76 0 0 1 1179 400L1276 400L1276 582L930 582Z" mask="url(#mask-building-persona)"/>
+        <path class="zone__hit" d="M930 400L1019 400A80.0 76 0 0 1 1179 400L1276 400L1276 582L930 582Z"/>
+      </g>
+      <g class="zone" data-key="fountain" data-name="Glonari" data-label-x="637" data-label-y="312" tabindex="-1" role="button" aria-label="Glonari — about Glonari">
+        <ellipse class="zone__halo" cx="637" cy="430" rx="190" ry="130"/>
+        <path class="zone__glow" d="M557 398A80 80 0 0 1 717 398L722 440L790 446L860 462L888 488L882 512L840 528L700 535L570 532L532 516L528 478L548 452L560 440Z" mask="url(#mask-fountain)"/>
+        <path class="zone__hit" d="M557 398A80 80 0 0 1 717 398L722 440L790 446L860 462L888 488L882 512L840 528L700 535L570 532L532 516L528 478L548 452L560 440Z"/>
+      </g>
+      <g class="zone" data-key="presenter" data-name="Meet Gia" data-label-x="424" data-label-y="282" tabindex="-1" role="button" aria-label="Meet Gia — open">
+        <image class="zone__lift" href="assets/campus/campus-still-lift.webp" width="1280" height="720" mask="url(#mask-presenter)"/>
+        <path class="zone__glow" d="M437 288L416 288L403 294L389 309L372 334L367 345L365 357L367 375L353 396L349 406L337 413L332 420L312 467L292 525L292 532L300 551L302 567L317 569L329 582L351 613L348 625L348 636L344 648L345 655L332 719L402 719L409 693L418 671L420 675L420 688L416 719L483 719L494 654L495 620L487 581L476 557L494 552L510 540L523 536L527 531L535 509L543 499L558 486L583 483L617 470L623 465L622 463L600 467L587 467L586 465L588 460L585 458L563 462L553 466L519 498L512 502L505 502L497 461L488 447L493 432L493 421L487 408L488 396L480 389L478 385L479 370L473 341L465 318L454 299L446 292Z" mask="url(#mask-presenter)"/>
+        <path class="zone__hit" d="M437 288L416 288L403 294L389 309L372 334L367 345L365 357L367 375L353 396L349 406L337 413L332 420L312 467L292 525L292 532L300 551L302 567L317 569L329 582L351 613L348 625L348 636L344 648L345 655L332 719L402 719L409 693L418 671L420 675L420 688L416 719L483 719L494 654L495 620L487 581L476 557L494 552L510 540L523 536L527 531L535 509L543 499L558 486L583 483L617 470L623 465L622 463L600 467L587 467L586 465L588 460L585 458L563 462L553 466L519 498L512 502L505 502L497 461L488 447L493 432L493 421L487 408L488 396L480 389L478 385L479 370L473 341L465 318L454 299L446 292Z"/>
+      </g>
+    </svg>
+  </div>
+  <!-- Hover/focus name tag: outside .campus so its edge fade never dims it. -->
+  <div class="campus__label" aria-hidden="true"><span class="campus__label-name"></span></div>
+  </div>
+
+  <!-- Section modal: unchanged; sibling of .stage-viewport. -->
+  <div id="modal-overlay">
+    <div id="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-desc">
+      <h2 id="modal-title"></h2>
+      <p id="modal-desc"></p>
+      <button id="modal-close" type="button">Close</button>
+    </div>
+  </div>
+
+  <div class="explore-hint" aria-hidden="true">
+    <span class="explore-hint__text">Explore</span>
+  </div>
+
+  <div class="cursor-dot" aria-hidden="true"></div>
+  <div class="cursor-ring" aria-hidden="true"></div>
+
+  <!-- Cross-project navigation fade (Digital Banker, Meet Gia). -->
+  <div id="exit-transition" aria-hidden="true"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/gsap.min.js" defer></script>
+  <script src="intro.js" defer></script>
+  <script src="section-modal.js" defer></script>
+  <script src="main.js" defer></script>
+</body>
+</html>

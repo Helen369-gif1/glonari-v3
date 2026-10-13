@@ -1,0 +1,254 @@
+GLOBAL DREAM — GIA PAGE STRUCTURE (EN)
+
+Working format: 4 screens total
+Purpose: Present Gia as the main AI guide who helps a person understand options, organize next steps, and explore housing, finances, moving, and other life decisions.
+Tone: Clear, premium, calm, modern, minimal.
+
+--------------------------------------------------
+SCREEN 1 — HERO / SCROLL VIDEO
+--------------------------------------------------
+
+Screen purpose:
+Introduce Gia immediately as the central idea of the page.
+Create an emotional first impression with a premium scroll-based video.
+Keep the copy extremely short.
+
+On-screen text:
+GIA
+
+Your AI for the life you want to build.
+
+Start with Gia.
+Talk. Explore. Plan.
+
+Button:
+Meet Gia
+
+*Technical notes: This screen uses a scroll-controlled video. The camera moves smoothly through a refined architectural environment. Short phrases appear one after another as text overlays. The layout must leave clean negative space for text and button. No extra interface, no long paragraphs, no visual clutter.*
+
+Suggested imagery:
+A cinematic architectural scene with a premium, elegant, aspirational feeling. The space should feel warm, refined, and contemporary-classical. It should support text overlay and feel suitable for a luxury AI/lifestyle brand.
+
+Design direction:
+Light theme. Clean typography. Strong hierarchy. Large headline. Minimal copy. Calm motion. Text should feel integrated with the video, not placed randomly. The overall impression should be elegant and confident.
+
+--------------------------------------------------
+SCREEN 2 — WHAT GIA DOES
+--------------------------------------------------
+
+Screen purpose:
+Explain Gia in a calm and simple way after the emotional hero.
+Help the user understand that Gia is not just a chatbot, but a guide for decisions and next steps.
+
+Section title:
+One conversation can change what you see next.
+
+Body copy:
+Gia helps you make sense of where you are, what you want, and what your next step could be.
+
+Ask a question.
+Explore an idea.
+Compare possibilities.
+Build a plan.
+
+You don’t need to know where to start.
+You can start with Gia.
+
+Button:
+Talk to Gia
+
+*Technical notes: This screen should be visually calm and readable. It can be static or use very light reveal animation. The content should be presented in a simple structured layout, with one main statement, one short paragraph, and a list of short action phrases. Keep the pacing slower than Screen 1.*
+
+Suggested imagery:
+Minimal supporting visual language. This can be abstract interface-inspired shapes, a subtle soft-background composition, or a very light visual hint of an AI-guided system. Avoid busy visuals.
+
+Design direction:
+Use a calm editorial layout with plenty of white space. Emphasize clarity and trust. This screen should feel like the page is becoming more understandable and grounded.
+
+--------------------------------------------------
+SCREEN 3 — EVERYTHING CONNECTS
+--------------------------------------------------
+
+Screen purpose:
+Show that Gia helps connect different parts of a person’s life.
+Prepare the user for the more practical examples in Screen 4.
+
+Section title:
+Your life isn’t made of separate decisions.
+
+Body copy:
+A home.
+Money.
+A move.
+Business.
+What comes next.
+
+Gia helps you see how those decisions connect — and what opportunities may be relevant to you.
+
+She brings your goals, progress and next steps into one clear picture.
+
+One place to understand what’s possible.
+
+Button:
+Explore with Gia
+
+*Technical notes: This screen can use progressive reveal. Individual life areas can appear one by one, then visually connect around Gia or around a central message. The motion should remain restrained and elegant. Avoid making this look like a complex dashboard. The purpose is conceptual clarity, not product detail.*
+
+Suggested imagery:
+Clean conceptual composition. Words or short content blocks can appear in a structured visual rhythm. Optional subtle connector lines or grouping logic may be used to show connection between life areas.
+
+Design direction:
+Minimal, intelligent, and highly structured. This screen should visually communicate “connection” and “clarity.” Keep the layout simple enough that users understand the idea immediately.
+
+--------------------------------------------------
+SCREEN 4 — GIA IN YOUR LIFE / HORIZONTAL SCROLL STORY
+--------------------------------------------------
+
+Screen purpose:
+Show concrete examples of how Gia helps in real life.
+Create an engaging horizontal scroll sequence with Gia walking through one continuous environment.
+Allow each topic to open a side brochure or side panel for more detail.
+Include the final CTA at the end of this same screen.
+
+Overall motion concept:
+Gia walks calmly along the same street or promenade during the whole sequence.
+The user scrolls horizontally.
+As the user scrolls, short content modules appear one by one.
+Each module has a headline, short explanatory line, and button.
+When a button is activated, a brochure/panel opens from the side.
+
+Important final motion note:
+Gia should continue walking in the same calm way until the end. She does not need to stop. In the final moment, the camera gradually pulls back into a slightly wider shot, keeping the same location, lighting, and atmosphere, while creating more negative space for the final text and button.
+
+---
+BLOCK 4.1 — FIND A HOME
+---
+
+Headline:
+Find a home that fits the life you want.
+
+Short text:
+Gia helps you explore housing options, compare possibilities, and understand what may fit your plans.
+
+Button:
+Explore Homes
+
+*Technical notes: This is the first content stop in the horizontal sequence. The side brochure can introduce housing pathways, living options, and related opportunities in a concise format.*
+
+Suggested imagery:
+Gia walking with elegant architectural surroundings. Housing-related side visuals may appear in the brochure panel only.
+
+Design direction:
+Keep the main scrolling layer visually clean. Detailed information should live in the side panel, not on the main path.
+
+---
+BLOCK 4.2 — UNDERSTAND YOUR FINANCES
+---
+
+Headline:
+See what’s possible before you decide what’s next.
+
+Short text:
+Gia helps bring your financial picture, goals, and available options together so you can plan with more clarity.
+
+Button:
+Explore Your Options
+
+*Technical notes: The side brochure can introduce financial clarity, planning support, progress visibility, and Digital Banker-related ideas in a simple non-technical way.*
+
+Suggested imagery:
+The main scene remains the same. Visual change comes from the text module and optional side panel content.
+
+Design direction:
+This topic should feel reassuring, clear, and practical rather than overly financial or corporate.
+
+---
+BLOCK 4.3 — PLAN A MOVE
+---
+
+Headline:
+Turn a move into a plan.
+
+Short text:
+Gia can help organize the steps around moving, property decisions, and what comes next.
+
+Button:
+Explore Moving
+
+*Technical notes: The side brochure can explain moving support, process guidance, and next-step organization. Keep it outcome-focused and easy to understand.*
+
+Suggested imagery:
+The walking sequence continues without a scene change. The content appears as the user progresses horizontally.
+
+Design direction:
+This section should communicate guidance, order, and reduced stress.
+
+---
+BLOCK 4.4 — BUILD WHAT COMES NEXT
+---
+
+Headline:
+Your next opportunity may start with one conversation.
+
+Short text:
+Explore business, travel, education, and other possibilities as they become part of your journey.
+
+Button:
+Explore Possibilities
+
+*Technical notes: This block opens the page beyond a single use case. It should feel expansive, but still concise. The side brochure can preview broader categories without overwhelming the user.*
+
+Suggested imagery:
+Continue the same elegant walking environment. Keep the feeling open and forward-looking.
+
+Design direction:
+This should feel like the broadest and most aspirational point in the horizontal story.
+
+---
+FINAL MOMENT INSIDE SCREEN 4
+---
+
+Final CTA text:
+Start with Gia.
+
+You don’t have to plan everything today.
+Start with one question.
+
+Button:
+Meet Gia
+
+Small supporting line:
+Talk. Explore. Plan what’s next.
+
+*Technical notes: After the last block, the interface becomes quieter. The previous content recedes. Gia keeps walking at the same pace. The camera smoothly widens slightly to create more negative space around her. No scene change, no abrupt stop, no new location. This final moment should feel calm, confident, and inviting.*
+
+Suggested imagery:
+The same promenade or architectural street, now shown a little wider, with clean space for the CTA.
+
+Design direction:
+This should feel resolved, calm, and premium. The user should understand that everything begins with a simple conversation with Gia.
+
+--------------------------------------------------
+GENERAL PAGE NOTES
+--------------------------------------------------
+
+Structure summary:
+1. Hero introduction
+2. Calm explanation of Gia
+3. Conceptual connection between life decisions
+4. Horizontal real-life use cases + final CTA
+
+Design summary:
+- Light, premium, minimal visual system
+- Elegant motion, never noisy
+- Short copy, easy to scan
+- Strong white space and clean typography
+- Gia presented as the main guide throughout the experience
+
+Content strategy summary:
+This page should not try to explain the entire Global Dream ecosystem in detail.
+It should help the user quickly understand:
+- who Gia is,
+- why she matters,
+- how she helps,
+- and where the user can start.

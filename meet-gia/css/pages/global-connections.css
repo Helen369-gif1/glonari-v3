@@ -1,0 +1,121 @@
+/* Global Connections (global-connections.html) — page-specific sections. Shared components: css/components.css. */
+
+.gc-eyebrow { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; }
+.gc-head { max-width: 720px; }
+.gc-note { margin-top: 32px; max-width: 720px; }
+.gc-note--left { max-width: 720px; }
+.gc-principle { margin-top: 56px; }
+.gc-cta { margin-top: 32px; }
+
+/* ===== 02 Where the work comes from ===== */
+.gc-intro { align-items: end; }
+.gc-intro__body { display: grid; gap: 16px; max-width: 560px; }
+.gc-define { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 24px; align-items: stretch; }
+.gc-define > * { min-width: 0; }
+.gc-payer { display: flex; flex-direction: column; justify-content: center; gap: 16px; }
+.gc-payer__who { margin: 0; font-family: var(--font-mono); font-size: 12px; font-weight: 600; letter-spacing: .06em; color: var(--gp-copper); }
+.gc-payer__line { margin: 0; font-size: clamp(22px, 2.2vw, 28px); font-weight: 600; line-height: 1.25; color: var(--gp-champagne); }
+@media (max-width: 960px) { .gc-define { grid-template-columns: minmax(0, 1fr); } }
+
+/* ===== 03 Gia finds a project ===== */
+.gc-rec { align-items: start; }
+.gc-rec__chat { padding: 0 0 20px; display: grid; gap: 16px; }
+.gc-rec__chat .bubble { margin-inline: 20px; max-width: none; }
+.gc-chat__head { display: flex; align-items: center; gap: 10px; padding: 16px 20px; border-bottom: 1px solid var(--gp-glass-border); }
+.gc-chat__name { font-family: var(--font-display); font-size: 22px; font-weight: 600; color: var(--gp-champagne); }
+.gc-chat__sub { margin-left: auto; font-size: 12px; color: var(--gp-text-muted); }
+.gc-card { padding: 24px; display: grid; gap: 16px; }
+.gc-card__label { margin: 0 0 8px; font-family: var(--font-mono); font-size: 11px; font-weight: 600; letter-spacing: .06em; color: var(--gp-copper); }
+.gc-why { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.gc-why li { position: relative; padding-left: 18px; font-size: 15px; line-height: 1.5; color: var(--gp-text-2); }
+.gc-why li::before { content: ""; position: absolute; left: 0; top: .65em; width: 8px; height: 1px; background: var(--gp-gold-mid); }
+.gc-card__actions { gap: 8px; }
+.gc-card__msg { margin: 0; min-height: 22px; font-size: 14px; color: var(--gp-text-2); }
+.gc-card.is-declined { border-color: var(--gp-glass-border); }
+.gc-card.is-declined .gc-card__why, .gc-card.is-declined .terms__list { opacity: .45; }
+
+/* ===== 04 Review and authorize ===== */
+.gc-auth { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+.gc-auth > * { min-width: 0; }
+.gc-history .log { margin-top: 8px; }
+@media (max-width: 960px) { .gc-auth { grid-template-columns: minmax(0, 1fr); } }
+
+/* ===== 05 Gia goes to work ===== */
+.gc-work { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+.gc-work > * { min-width: 0; }
+.gc-ws { border-radius: 16px; }
+.gc-ws__top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.gc-ws__top .ws__label { margin: 0; }
+.gc-ws .tasks { margin-top: 16px; }
+.gc-ms-btn { grid-column: 1 / -1; justify-self: start; margin-top: 10px; }
+.gc-inspect { margin-top: 24px; }
+.gc-tabs { margin-top: 0; }
+.gc-panel { margin-top: 16px; }
+.gc-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.gc-list li { display: flex; justify-content: space-between; gap: 16px; font-size: 14px; line-height: 1.5; color: var(--gp-text); padding-bottom: 10px; border-bottom: 1px solid rgba(63, 42, 29, .7); }
+.gc-list li span { flex: none; font-family: var(--font-mono); font-size: 11px; color: var(--gp-text-muted); }
+.gc-role__list { list-style: none; margin: 16px 0 0; padding: 0; display: grid; gap: 14px; }
+.gc-role__list li { position: relative; padding-left: 30px; font-size: 15px; line-height: 1.5; color: var(--gp-text-2); }
+.gc-role__list li::before { content: ""; position: absolute; left: 0; top: .15em; width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid var(--gp-gold-mid); }
+.gc-role__list li::after { content: ""; position: absolute; left: 7px; top: calc(.15em + 4px); width: 4px; height: 8px; border: solid var(--gp-gold-mid); border-width: 0 1.5px 1.5px 0; transform: rotate(45deg); }
+@media (max-width: 960px) { .gc-work { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 480px) { .gc-list li { flex-direction: column; gap: 2px; } }
+
+/* ===== 07 Compensation ===== */
+.gc-comp { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 24px; align-items: center; max-width: 1040px; margin-inline: auto; }
+.gc-comp > * { min-width: 0; }
+.gc-timeline { list-style: none; margin: 0; padding: 0; position: relative; display: grid; gap: 0; }
+.gc-timeline li { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 12px; padding: 0 0 24px 28px; }
+.gc-timeline li::before { content: ""; position: absolute; left: 0; top: 4px; width: 11px; height: 11px; border-radius: 50%; border: 1px solid var(--gp-gold-mid); background: var(--gp-bg); }
+.gc-timeline li:not(:last-child)::after { content: ""; position: absolute; left: 5px; top: 18px; bottom: 2px; width: 1px; background: var(--gp-line); }
+.gc-timeline__when { grid-column: 1; font-family: var(--font-mono); font-size: 11px; color: var(--gp-text-muted); }
+.gc-timeline__what { grid-column: 1; font-size: 15px; color: var(--gp-text); }
+.gc-timeline .status { grid-column: 2; grid-row: 1 / span 2; align-self: center; }
+/* .gc-timeline[data-draw]: the lines between the dots open from the top, one after another
+   (--draw-i from js/components.js), like .path__steps[data-draw]; the dots do not move. */
+@media (prefers-reduced-motion: no-preference) {
+  .gc-timeline.draw-on > li::after { transform: scaleY(0); transform-origin: center top; }
+  .gc-timeline.draw-on.is-drawn > li::after { transform: none; transition: transform .45s var(--ease) calc(var(--draw-i, 0) * .2s); }
+}
+.gc-comp-notes { margin-top: 56px; display: grid; gap: 12px; text-align: center; }
+@media (max-width: 960px) { .gc-comp { grid-template-columns: minmax(0, 1fr); } }
+
+/* ===== 08 When the project ends ===== */
+.gc-end-head { align-items: end; }
+.gc-end { display: grid; grid-template-columns: minmax(0, 1fr) 56px minmax(0, 1fr); align-items: center; gap: 16px; }
+.gc-end > * { min-width: 0; }
+.gc-end__state { margin: 0 0 16px; display: flex; align-items: center; gap: 10px; font-size: 18px; font-weight: 600; color: var(--gp-text); }
+.gc-check { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--gp-gold-mid); position: relative; flex: none; }
+.gc-check::after { content: ""; position: absolute; left: 7px; top: 3px; width: 5px; height: 10px; border: solid var(--gp-gold-mid); border-width: 0 2px 2px 0; transform: rotate(45deg); }
+.gc-end__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.gc-end__list li { font-size: 15px; color: var(--gp-text-2); }
+.gc-end__arrow { height: 1px; background: var(--gp-gold-mid); position: relative; }
+.gc-end__arrow::after { content: ""; position: absolute; right: -1px; top: -4px; border-left: 7px solid var(--gp-gold-mid); border-block: 4.5px solid transparent; }
+.gc-end__cap { padding: 24px; display: grid; gap: 16px; }
+.gc-end__cap .gc-end__state { margin: 0; }
+.gc-end__cap .owner { justify-self: start; }
+.gc-cap { height: 10px; border-radius: 999px; background: var(--gp-surface-2); border: 1px solid var(--gp-line); overflow: hidden; }
+.gc-cap i { display: block; height: 100%; width: 100%; background: linear-gradient(90deg, var(--gp-gold-dark), var(--gp-gold-mid)); }
+@media (max-width: 768px) {
+  .gc-end { grid-template-columns: minmax(0, 1fr); }
+  .gc-end__arrow { width: 1px; height: 32px; justify-self: center; }
+  .gc-end__arrow::after { right: -4px; top: auto; bottom: -1px; border-left: 4.5px solid transparent; border-right: 4.5px solid transparent; border-top: 7px solid var(--gp-gold-mid); border-bottom: 0; }
+}
+/* .gc-end[data-draw]: the arrow line opens (scaleX from the left; scaleY from the top where it is vertical),
+   its arrowhead (::after) appears after it, like a .flow arrow; then the capacity bar fills from the left.
+   No [data-stagger] here: it would override the children's transform. */
+@media (prefers-reduced-motion: no-preference) {
+  .gc-end.draw-on .gc-end__arrow { transform: scaleX(0); transform-origin: left center; }
+  .gc-end.draw-on .gc-end__arrow::after { opacity: 0; }
+  .gc-end.draw-on .gc-cap i { transform: scaleX(0); transform-origin: left center; }
+  .gc-end.draw-on.is-drawn .gc-end__arrow { transform: none; transition: transform .45s var(--ease); }
+  .gc-end.draw-on.is-drawn .gc-end__arrow::after { opacity: 1; transition: opacity .15s linear .4s; }
+  .gc-end.draw-on.is-drawn .gc-cap i { transform: none; transition: transform 1s var(--ease) .55s; }
+  /* After the scaleX rule (same specificity, order decides). */
+  @media (max-width: 768px) {
+    .gc-end.draw-on .gc-end__arrow { transform: scaleY(0); transform-origin: center top; }
+  }
+}
+
+/* ===== 09 Final ===== */
+.gc-final-actions { margin-top: 40px; }

@@ -1,0 +1,33 @@
+/* Introducing GLO (glo.html) — page-specific sections. Shared components: css/components.css. */
+
+/* ===== Notes under components ===== */
+.glo-note { margin: 32px auto 0; max-width: 720px; text-align: center; }
+.glo-note--left { margin-inline: 0; text-align: left; }
+
+/* ===== 03 What GLO is ===== */
+.glo-what { align-items: center; }
+.glo-what__text { display: grid; gap: 24px; }
+.glo-what__body { display: grid; gap: 16px; max-width: 560px; }
+.glo-principle { margin-top: 56px; }
+
+/* ===== 05 How Gia puts it to work ===== */
+.glo-how { align-items: start; }
+.glo-steps { list-style: none; margin: 0; padding: 0; }
+.glo-steps li { display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: 16px; padding: 20px 0; border-top: 1px solid var(--gp-line); font-size: 17px; line-height: 1.55; color: var(--gp-text); }
+.glo-steps li:last-child { border-bottom: 1px solid var(--gp-line); }
+.glo-steps__num { font-family: var(--font-mono); font-size: 12px; font-weight: 600; color: var(--gp-copper); padding-top: 4px; }
+.glo-chips { margin-bottom: 28px; }
+.glo-appr-note { margin-top: 12px; }
+
+/* ===== 06 Your options ===== */
+.glo-options .accordion { max-width: 880px; }
+.glo-after { margin-top: 24px; max-width: 880px; }
+.glo-cta { margin-top: 40px; }
+
+/* ===== 08 Limits ===== */
+.glo-limits-head { max-width: 720px; }
+.glo-status { margin-top: 32px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; }
+.glo-status__row { gap: 8px; }
+
+/* ===== 09 Final CTA ===== */
+.glo-final-actions { margin-top: 40px; }

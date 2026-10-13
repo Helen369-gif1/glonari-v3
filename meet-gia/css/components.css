@@ -1,0 +1,551 @@
+/* Gia site — shared components: product-UI glass, chat atoms, status, cards, split,
+   activity log, status tiers, task workspace. Used on more than one page (or planned to be). */
+
+/* ===== Glass (product UI) ===== */
+.glass {
+  background: var(--gp-glass);
+  -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px);
+  border: 1px solid var(--gp-glass-border); border-radius: 16px;
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { .glass { background: var(--gp-surface); } }
+.glass.is-active { border-color: var(--gp-glass-border-active); }
+
+/* Chat atoms reused across mockups */
+.bubble { max-width: 88%; padding: 10px 14px; border-radius: 12px; font-size: 14px; line-height: 1.5; }
+.bubble--user { margin-left: auto; background: rgba(246, 240, 231, 0.08); border: 1px solid rgba(246, 240, 231, 0.10); color: var(--gp-text); border-bottom-right-radius: 4px; }
+.bubble--gia { background: rgba(242, 179, 90, 0.07); border: 1px solid var(--gp-glass-border); color: var(--gp-text); border-bottom-left-radius: 4px; }
+.gia-tag { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--gp-text-muted); margin-bottom: 6px; }
+.gia-dot { width: 18px; height: 18px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, var(--gp-gold-glow), var(--gp-gold-deep)); box-shadow: 0 0 10px rgba(250, 185, 90, .45); flex: none; }
+.status { display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-mono); font-size: 11px; font-weight: 500; letter-spacing: .04em; white-space: nowrap; }
+.status::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.status--ready { color: var(--gp-gold-mid); }
+.status--working { color: var(--gp-blue); }
+.status--review { color: var(--gp-warning); }
+.status--muted { color: var(--gp-text-muted); }
+.msg-in { animation: msgIn .45s var(--ease) both; }
+@keyframes msgIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+/* ===== Card ===== */
+.card { background: var(--gp-surface); border: 1px solid var(--gp-line); border-radius: 8px; padding: 28px; }
+
+/* ===== Split ===== */
+.split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--grid-gap); align-items: center; }
+.split > * { min-width: 0; }
+@media (max-width: 960px) { .split { grid-template-columns: minmax(0, 1fr); gap: 56px; } }
+
+/* ===== Activity history ===== */
+.log { list-style: none; margin: 16px 0 0; padding: 0; }
+.log li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 16px; padding: 14px 0; border-top: 1px solid var(--gp-line); font-size: 14px; }
+.log li small { color: var(--gp-text-muted); font-size: 12px; }
+.log li .status { grid-row: 1; grid-column: 2; }
+.log li.is-new { animation: msgIn .45s var(--ease) both; }
+
+/* ===== Status tiers (Available now / With approval / Coming next) ===== */
+.tiers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; margin-top: 24px; }
+.tier { padding: 28px; }
+.tier__name { display: flex; align-items: center; gap: 10px; font-size: 18px; font-weight: 600; margin: 0 0 8px; }
+.tier__name::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--dot); }
+@media (max-width: 960px) { .tiers { grid-template-columns: minmax(0, 1fr); } }
+
+/* ===== Task workspace (request + approvals | progress) ===== */
+.ws { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); overflow: hidden; }
+.ws__pane { padding: 28px; min-width: 0; }
+.ws__pane + .ws__pane { border-left: 1px solid var(--gp-glass-border); }
+.ws__label { font-family: var(--font-mono); font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--gp-copper); margin: 0 0 12px; }
+.ws__goal { font-size: 18px; line-height: 1.5; margin: 0 0 28px; }
+.appr { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.appr li { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 14px; border: 1px solid var(--gp-line); border-radius: 10px; font-size: 14px; flex-wrap: wrap; }
+.tasks { list-style: none; margin: 0 0 24px; padding: 0; }
+.tasks li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 16px; padding: 12px 0; border-bottom: 1px solid rgba(63, 42, 29, .7); font-size: 15px; }
+.tasks small { color: var(--gp-text-muted); font-size: 12px; }
+.tasks .status { grid-row: 1; grid-column: 2; }
+.bar { grid-column: 1 / -1; height: 3px; border-radius: 3px; background: var(--gp-line); overflow: hidden; margin-top: 4px; }
+.bar i { display: block; height: 100%; width: 62%; background: var(--gp-blue); }
+.ws__cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font-size: 12px; padding: 5px 10px; border-radius: 999px; border: 1px solid var(--gp-line); color: var(--gp-text-2); }
+.draft { list-style: none; margin: 0; padding: 0; counter-reset: sl; font-size: 13px; color: var(--gp-text-2); }
+.draft li { counter-increment: sl; padding: 6px 0; display: flex; gap: 10px; }
+.draft li::before { content: counter(sl, decimal-leading-zero); font-family: var(--font-mono); font-size: 11px; color: var(--gp-text-muted); padding-top: 2px; }
+.assume { font-size: 13px; color: var(--gp-text-2); margin: 0; padding-left: 12px; border-left: 2px solid var(--gp-warning); }
+@media (max-width: 960px) { .ws { grid-template-columns: minmax(0, 1fr); } .ws__pane + .ws__pane { border-left: 0; border-top: 1px solid var(--gp-glass-border); } }
+@media (max-width: 600px) { .ws__cols { grid-template-columns: minmax(0, 1fr); } .ws__pane { padding: 22px; } }
+
+
+/* ===== Tabs (Meet Gia "In action", Global Connections workspace) ===== */
+.tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 40px; }
+.tab { all: unset; box-sizing: border-box; cursor: pointer; padding: 10px 16px; border-radius: 8px; border: 1px solid var(--gp-line); font-size: 14px; color: var(--gp-text-2); transition: border-color .2s var(--ease), color .2s var(--ease); }
+.tab:hover { color: var(--gp-text); }
+.tab[aria-selected="true"] { border-color: var(--gp-gold); color: var(--gp-gold); }
+.tab:focus-visible { outline: 2px solid var(--gp-gold); outline-offset: 2px; }
+
+/* ===== Final call to action (every page) ===== */
+.final { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: var(--grid-gap); align-items: center; }
+.final > * { min-width: 0; }
+.final__h { font-family: var(--font-display); font-size: clamp(36px, 4.5vw, 56px); font-weight: 600; line-height: 1.08; letter-spacing: -0.01em; color: var(--gp-champagne); margin: 0; text-wrap: balance; }
+.uses { list-style: none; margin: 32px 0 0; padding: 0; display: grid; gap: 12px; max-width: 520px; }
+.uses li { font-size: 16px; color: var(--gp-text-2); padding-left: 20px; position: relative; }
+.uses li::before { content: ""; position: absolute; left: 0; top: .7em; width: 8px; height: 1px; background: var(--gp-gold-mid); }
+.uses b { color: var(--gp-text); font-weight: 600; }
+.final__media { margin: 0; }
+.final__img { aspect-ratio: 16 / 9; width: 100%; height: auto; object-fit: cover; border-radius: 16px; border: 1px solid var(--gp-glass-border); background: var(--gp-surface-2); }
+.final__media figcaption { margin-top: 12px; }
+@media (max-width: 960px) { .final { grid-template-columns: minmax(0, 1fr); gap: 56px; } }
+
+/* ============================================================
+   Stage 3 components for Introducing GLO, Global Connections, How GLO Works.
+   Catalogue and usage: docs/GIA-SITE-DESIGN-SYSTEM.md section 9; live examples: docs/components.html
+   ============================================================ */
+
+/* ===== Page hero (pages 2-4): full-screen image or video, text over a darkened side or center =====
+   .page-hero            text on the left, the image darkened from the left
+   .page-hero--right     text on the right, the image darkened from the right (subject on the left)
+   .page-hero--center    text centered, the image dimmed evenly
+   Media fills the screen behind the fixed header; --focus sets object-position. */
+.page-hero {
+  position: relative; isolation: isolate; overflow: hidden; display: flex; align-items: center;
+  min-height: max(640px, 100svh); padding-top: calc(var(--header-h) + 48px); padding-bottom: 96px;
+  background: var(--gp-black);
+}
+.page-hero__media { position: absolute; inset: 0; z-index: -2; margin: 0; }
+.page-hero__media > picture { display: contents; }
+.page-hero__media > img, .page-hero__media > picture > img, .page-hero__media > video { width: 100%; height: 100%; object-fit: cover; object-position: var(--focus, 50% 50%); display: block; }
+/* --below-header: the media starts below the solid fixed header, so a subject at the top of the frame (a head) is
+   never hidden under it; pair it with a --focus near the top (e.g. 30% 10%) so any excess is cropped from the bottom. */
+.page-hero--below-header .page-hero__media { top: var(--header-h); }
+.page-hero__media--placeholder { background: radial-gradient(ellipse at 68% 40%, rgba(241, 167, 77, .16), transparent 60%), var(--gp-black); }
+/* Darkening: strongest behind the text, fading toward the subject; a soft fade into the next section. */
+.page-hero::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(5, 4, 2, .94) 0%, rgba(5, 4, 2, .84) 34%, rgba(5, 4, 2, .5) 56%, rgba(5, 4, 2, 0) 80%),
+    linear-gradient(180deg, rgba(5, 4, 2, .55) 0%, rgba(5, 4, 2, 0) 22%, rgba(5, 4, 2, 0) 72%, var(--hero-fade, var(--gp-black)) 100%);
+}
+.page-hero--center::before {
+  background:
+    radial-gradient(ellipse 62% 58% at 50% 54%, rgba(5, 4, 2, .82), rgba(5, 4, 2, .6) 65%, rgba(5, 4, 2, .45)),
+    linear-gradient(180deg, rgba(5, 4, 2, .5) 0%, rgba(5, 4, 2, 0) 25%, rgba(5, 4, 2, 0) 72%, var(--hero-fade, var(--gp-black)) 100%);
+}
+.page-hero--right::before {
+  background:
+    linear-gradient(270deg, rgba(5, 4, 2, .94) 0%, rgba(5, 4, 2, .84) 34%, rgba(5, 4, 2, .5) 56%, rgba(5, 4, 2, 0) 80%),
+    linear-gradient(180deg, rgba(5, 4, 2, .55) 0%, rgba(5, 4, 2, 0) 22%, rgba(5, 4, 2, 0) 72%, var(--hero-fade, var(--gp-black)) 100%);
+}
+.page-hero > .container { position: relative; z-index: 1; width: min(100%, var(--container-max)); }
+.page-hero__text { max-width: 600px; text-shadow: 0 1px 24px rgba(0, 0, 0, .45); }
+.page-hero--right .page-hero__text { margin-left: auto; }
+.page-hero--center .page-hero__text { margin-inline: auto; max-width: 760px; text-align: center; }
+.page-hero--center .lead { margin-inline: auto; }
+.page-hero--center .btn-row { justify-content: center; }
+.page-hero__title { font-family: var(--font-display); font-size: clamp(40px, 5.4vw, 76px); font-weight: 600; line-height: 1.04; letter-spacing: -0.01em; color: var(--gp-champagne); margin: 0; text-wrap: balance; }
+.page-hero .lead { color: var(--gp-text); }
+.page-hero .principle { margin-top: 28px; }
+.page-hero .btn-row { margin-top: 40px; }
+.page-hero .btn { text-shadow: none; }
+.page-hero__tag { position: absolute; right: var(--page-pad); bottom: 24px; margin: 0; font-family: var(--font-mono); font-size: 11px; letter-spacing: .04em; color: var(--gp-text-muted); max-width: 40ch; text-align: right; }
+.page-hero--right .page-hero__tag { right: auto; left: var(--page-pad); text-align: left; }
+@media (max-width: 768px) {
+  .page-hero--right .page-hero__text { margin-left: 0; }
+  /* Phones: the image fills the screen and the text sits at the bottom over a stronger fade. */
+  .page-hero { align-items: flex-end; padding-bottom: 72px; }
+  .page-hero::before, .page-hero--center::before, .page-hero--right::before {
+    background: linear-gradient(180deg, rgba(5, 4, 2, .55) 0%, rgba(5, 4, 2, .1) 28%, rgba(5, 4, 2, .7) 52%, rgba(5, 4, 2, .94) 74%, var(--hero-fade, var(--gp-black)) 100%);
+  }
+  .page-hero__tag { left: var(--page-pad); right: auto; top: calc(var(--header-h) + 14px); bottom: auto; text-align: left; }
+}
+
+/* ===== Principle: one short line the page wants remembered ===== */
+.principle { margin: 0; font-size: clamp(20px, 2vw, 26px); font-weight: 600; line-height: 1.3; letter-spacing: -0.01em; color: var(--gp-champagne); text-wrap: balance; }
+.principle--center { text-align: center; margin-inline: auto; max-width: 720px; }
+
+/* ===== Media frame (video, photo or a placeholder that keeps the layout) ===== */
+.media-frame { margin: 0; }
+.media-frame__box { position: relative; aspect-ratio: var(--ratio, 16 / 10); border-radius: 16px; border: 1px solid var(--gp-glass-border); overflow: hidden; background: var(--gp-surface-2); }
+.media-frame__box > img, .media-frame__box > video, .media-frame__box > picture > img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.media-frame__box > picture { display: contents; }
+.media-frame figcaption { margin-top: 12px; }
+/* Wide photo across the container: 21:9, 16:9 at 768px and below. --focus on the figure sets object-position
+   (same idea as the page hero), so the subject stays in frame when the narrower ratio crops the sides. */
+.media-frame--wide .media-frame__box { aspect-ratio: 21 / 9; }
+.media-frame--wide .media-frame__box > picture > img { object-position: var(--focus, 50% 50%); }
+@media (max-width: 768px) { .media-frame--wide .media-frame__box { aspect-ratio: 16 / 9; } }
+/* .media-frame resets its margin; keep the shared heading-to-component distance when .gap-major is set. */
+.media-frame.gap-major { margin-top: clamp(64px, 7vw, 96px); }
+.media-frame--placeholder .media-frame__box {
+  display: grid; place-items: center; padding: 24px; text-align: center;
+  background: radial-gradient(ellipse at 70% 25%, rgba(241, 167, 77, .16), transparent 60%), var(--gp-surface-2);
+}
+.media-frame__note { font-family: var(--font-mono); font-size: 12px; line-height: 1.5; color: var(--gp-text-muted); max-width: 34ch; }
+.media-frame__note b { display: block; font-weight: 600; color: var(--gp-copper); margin-bottom: 4px; }
+
+
+/* ===== Badge: capability status and other short labels ===== */
+.badge {
+  display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 10px; border-radius: 999px;
+  border: 1px solid var(--gp-line); font-family: var(--font-mono); font-size: 11px; font-weight: 500; letter-spacing: .04em;
+  line-height: 1; white-space: nowrap; color: var(--gp-text-2); flex: none;
+}
+.badge::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.badge--now { color: var(--gp-gold-mid); border-color: var(--gp-glass-border); }
+.badge--approval { color: var(--gp-blue); border-color: rgba(47, 140, 240, .4); }
+.badge--next { color: var(--gp-violet); border-color: rgba(163, 92, 224, .45); }
+.badge--vision { color: var(--gp-text-muted); border-style: dashed; }
+.badge--plain { color: var(--gp-champagne); border-color: var(--gp-glass-border); }
+.badge--plain::before { display: none; }
+
+/* ===== Card extras ===== */
+.cards { display: grid; gap: 24px; }
+.cards--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.cards--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.cards--4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.cards > * { min-width: 0; }
+.card--flex { display: flex; flex-direction: column; gap: 12px; }
+.card__head { display: flex; flex-direction: column-reverse; align-items: flex-start; gap: 12px; } /* markup: title, then badge; badge shows on top */
+.card__example { margin-top: auto; padding-top: 16px; border-top: 1px solid var(--gp-line); font-size: 14px; line-height: 1.55; color: var(--gp-text-2); }
+.card__example b { display: block; margin-bottom: 4px; font-family: var(--font-mono); font-size: 11px; font-weight: 600; letter-spacing: .06em; color: var(--gp-copper); }
+.card__link { font-size: 15px; font-weight: 600; color: var(--gp-gold); text-underline-offset: 4px; }
+.card--key { border-color: var(--gp-glass-border-active); }
+@media (max-width: 1100px) { .cards--4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 960px) { .cards--3 { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 768px) { .cards--2 { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 560px) { .cards--4 { grid-template-columns: minmax(0, 1fr); } .cards > .card { padding: 24px; } }
+
+/* ===== Card art (optional, first child of a card; DS 8.1) =====
+   96px area (72px at 560px and below), drawing aligned left, line art in currentColor.
+   A slot without an svg or img takes no space. */
+.card__art { display: flex; align-items: center; justify-content: flex-start; height: 96px; margin-bottom: 20px; color: var(--gp-gold); }
+.card--flex > .card__art, .option > .card__art { margin-bottom: 8px; } /* plus the card's 12px gap */
+.card__art > svg { display: block; height: 100%; width: auto; max-width: 100%; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; overflow: visible; }
+.card__art > img { display: block; width: auto; height: auto; max-height: 100%; max-width: 100%; }
+.card__art:not(:has(svg, img)) { display: none; }
+@media (max-width: 560px) { .card__art { height: 72px; } }
+
+/* ===== Flow: boxes joined by arrows (left to right; top to bottom at 768px and below) ===== */
+.flow { --flow-gap: 36px; list-style: none; margin: 0; padding: 0; display: flex; gap: var(--flow-gap); counter-reset: flow; }
+.flow__node {
+  position: relative; flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; justify-content: center; gap: 4px;
+  padding: 18px 14px; text-align: center; background: var(--gp-surface); border: 1px solid var(--gp-line); border-radius: 8px;
+}
+.flow__title { font-size: 16px; font-weight: 600; line-height: 1.3; color: var(--gp-text); }
+.flow__sub { font-size: 13px; line-height: 1.45; color: var(--gp-text-2); }
+.flow__node.is-key { flex-grow: 1.35; padding-block: 24px; border-color: var(--gp-glass-border-active); background: rgba(242, 179, 90, .06); }
+.flow__node.is-key .flow__title { font-size: 20px; color: var(--gp-gold); }
+.flow__node.is-end { border-color: var(--gp-gold-dark); }
+.flow__node:not(:last-child)::after { content: ""; position: absolute; top: 50%; left: calc(100% + 6px); width: calc(var(--flow-gap) - 14px); height: 1px; background: var(--gp-gold-mid); }
+.flow__node:not(:last-child)::before { content: ""; position: absolute; top: calc(50% - 4px); left: calc(100% + var(--flow-gap) - 9px); border-left: 6px solid var(--gp-gold-mid); border-block: 4.5px solid transparent; }
+.flow--numbered .flow__node { counter-increment: flow; }
+.flow--numbered .flow__title::before { content: counter(flow); display: block; margin-bottom: 6px; font-family: var(--font-mono); font-size: 11px; font-weight: 600; color: var(--gp-copper); }
+
+/* Node icon (DS 8.1): first child of a node, centered in a 40px slot above the title (32px at 768px and below).
+   A 24px line icon, or for Gia a small .gia-core without the plate. Nodes with an icon align to the top,
+   and .is-key keeps the same top padding, so icons and titles line up across the row. */
+.flow__icon { flex: none; align-self: center; margin-bottom: 6px; color: var(--gp-gold-mid); --draw-dur: .8s; }
+svg.flow__icon { width: 24px; height: 24px; margin-top: 8px; margin-bottom: 14px; overflow: visible; }
+.flow__icon--gia { width: 40px; height: 40px; }
+.flow__icon--gia .gia-core { --core: 40px; }
+.flow__icon--gia .gia-core__photo { box-shadow: 0 0 6px rgba(242, 179, 90, .16); } /* the 180px core's halo would spill onto the arrows */
+.flow__node:has(> .flow__icon) { justify-content: flex-start; }
+.flow__node.is-key:has(> .flow__icon) { padding-top: 18px; }
+
+/* Lists reset their margins; keep the shared heading-to-component distance when .gap-major is set. */
+.flow.gap-major, .steps-line.gap-major { margin-top: clamp(64px, 7vw, 96px); }
+
+/* Pinned bar under a flow: what stays true through the whole sequence */
+.flow-keep { margin-top: 16px; display: flex; align-items: center; justify-content: center; gap: 10px; padding: 12px 20px; border-radius: 8px; border: 1px solid var(--gp-line); background: var(--gp-surface); font-size: 15px; font-weight: 500; color: var(--gp-text); text-align: center; }
+.flow-keep::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--gp-gold-mid); flex: none; }
+.flow-keep--change { border-color: rgba(195, 115, 78, .5); background: rgba(195, 115, 78, .06); }
+.flow-keep--change::before { background: none; border: 1.5px solid var(--gp-warning); }
+
+/* Cycle: a return path from the last node back to the first */
+.flow-return { position: relative; height: 28px; margin-inline: calc((100% - (var(--n, 5) - 1) * 36px) / var(--n, 5) / 2); border: 1px solid var(--gp-gold-dark); border-top: 0; border-radius: 0 0 8px 8px; }
+.flow-return::before { content: ""; position: absolute; left: -5px; top: -7px; border-bottom: 7px solid var(--gp-gold-dark); border-inline: 4.5px solid transparent; }
+.flow-return__label { position: absolute; left: 50%; bottom: -10px; transform: translateX(-50%); padding: 0 12px; background: var(--section-bg, var(--gp-bg)); font-size: 13px; color: var(--gp-text-2); white-space: nowrap; }
+.section--deep { --section-bg: var(--gp-black); }
+
+@media (max-width: 768px) {
+  .flow { flex-direction: column; --flow-gap: 28px; }
+  .flow__node { flex: none; padding: 14px 16px; }
+  svg.flow__icon { margin-top: 4px; margin-bottom: 10px; }
+  .flow__icon--gia { width: 32px; height: 32px; }
+  .flow__icon--gia .gia-core { --core: 32px; }
+  .flow__node.is-key:has(> .flow__icon) { padding-top: 14px; }
+  .flow__node:not(:last-child)::after { top: calc(100% + 5px); left: 50%; width: 1px; height: calc(var(--flow-gap) - 14px); }
+  .flow__node:not(:last-child)::before { top: calc(100% + var(--flow-gap) - 9px); left: calc(50% - 4px); border-left: 4.5px solid transparent; border-right: 4.5px solid transparent; border-top: 6px solid var(--gp-gold-mid); border-bottom: 0; }
+  .flow-return { height: auto; margin: 12px 0 0; border: 0; border-radius: 0; text-align: center; }
+  .flow-return::before { display: none; }
+  .flow-return__label { position: static; transform: none; padding: 0; white-space: normal; }
+  .flow-return__label::before { content: "↺ "; color: var(--gp-gold-mid); }
+}
+
+/* ===== Steps line: numbered circles on one line ===== */
+.steps-line { list-style: none; margin: 0; padding: 0; display: flex; counter-reset: sl; }
+.steps-line__item { position: relative; flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 12px; padding-inline: 8px; text-align: center; counter-increment: sl; }
+.steps-line__item::before { content: counter(sl); position: relative; z-index: 1; width: 44px; height: 44px; display: grid; place-items: center; border-radius: 50%; border: 1px solid var(--gp-gold-mid); background: var(--section-bg, var(--gp-bg)); font-family: var(--font-mono); font-size: 14px; font-weight: 600; color: var(--gp-gold); }
+.steps-line__item:not(:last-child)::after { content: ""; position: absolute; top: 22px; left: calc(50% + 30px); right: calc(-50% + 30px); height: 1px; background: var(--gp-line); }
+.steps-line__label { font-size: 15px; font-weight: 500; line-height: 1.4; color: var(--gp-text); }
+.steps-line__who { font-family: var(--font-mono); font-size: 11px; letter-spacing: .06em; color: var(--gp-text-muted); }
+.steps-line__item.is-you::before { border-color: var(--gp-champagne); color: var(--gp-champagne); }
+@media (max-width: 768px) {
+  .steps-line { flex-direction: column; }
+  .steps-line__item { display: grid; grid-template-columns: 44px minmax(0, 1fr); column-gap: 16px; row-gap: 2px; align-items: center; text-align: left; padding: 0 0 20px; }
+  .steps-line__item::before { grid-row: 1 / span 2; }
+  .steps-line__item:not(:last-child)::after { top: 50px; bottom: 6px; left: 22px; right: auto; width: 1px; height: auto; }
+}
+
+/* ===== Gia core: Gia's photo in a gold ring, name plate over the lower edge (hub, ecosystem) ===== */
+.gia-core { --core: 180px; position: relative; z-index: 1; width: var(--core); aspect-ratio: 1; justify-self: center; }
+.gia-core__photo {
+  position: absolute; inset: 0; overflow: hidden; border-radius: 50%; background: var(--gp-surface-2);
+  border: 1px solid var(--gp-gold); box-shadow: 0 0 32px rgba(242, 179, 90, .16), 0 0 72px rgba(242, 179, 90, .06);
+}
+.gia-core__photo img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center 25%; }
+.gia-core__glow { position: absolute; inset: -1px; border-radius: 50%; pointer-events: none; opacity: 0; box-shadow: 0 0 0 1px var(--gp-gold-glow), 0 0 28px rgba(250, 185, 90, .55), 0 0 72px rgba(250, 185, 90, .25); }
+.gia-core__plate {
+  position: absolute; left: 50%; top: 100%; z-index: 1; transform: translate(-50%, -50%); width: max-content; max-width: 240px;
+  margin: 0; padding: 8px 14px; display: grid; gap: 3px; text-align: center;
+  background: rgba(15, 15, 14, .94); border: 1px solid var(--gp-glass-border); border-radius: 10px;
+}
+.gia-core__name { font-family: var(--font-display); font-size: 20px; font-weight: 600; line-height: 1; color: var(--gp-champagne); }
+.gia-core__sub { font-size: 12px; line-height: 1.35; color: var(--gp-text-2); }
+
+/* ===== Pulse diagram [data-pulse]: wiring, pulses and card status drawn by js/components.js ===== */
+[data-pulse] { position: relative; }
+.pulse-wires { position: absolute; inset: 0; z-index: 2; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.pulse-wires path, .pulse-wires circle { fill: none; }
+.pulse-lines { opacity: .62; transition: opacity .6s var(--ease); }
+.pulse-line { stroke: var(--gp-gold); stroke-opacity: .4; stroke-width: 1; }
+.pulse-line--muted { stroke: var(--gp-text-muted); stroke-opacity: .7; }
+.pulse-wires .pulse-arrow { fill: var(--gp-gold-mid); }
+.pulse-comet { opacity: 0; stroke: var(--gp-gold-glow); stroke-linecap: round; }
+.pulse-comets { filter: drop-shadow(0 0 3px rgba(250, 185, 90, .9)) drop-shadow(0 0 8px rgba(250, 185, 90, .45)); }
+.pulse-wires .pulse-dot { fill: var(--gp-gold-glow); opacity: 0; transform-box: fill-box; transform-origin: center; filter: drop-shadow(0 0 4px rgba(250, 185, 90, .95)); }
+.pulse-status { position: absolute; top: var(--status-top, 10px); left: var(--status-left, 10px); width: 16px; height: 16px; pointer-events: none; }
+.pulse-status > span { position: absolute; inset: 0; opacity: 0; }
+.pulse-status svg { display: block; width: 100%; height: 100%; overflow: visible; transform-origin: 50% 50%; }
+.pulse-status__track { fill: none; stroke: var(--gp-gold); stroke-opacity: .2; stroke-width: 1.5; }
+.pulse-status__arc { fill: none; stroke: var(--gp-gold); stroke-width: 1.5; stroke-linecap: round; }
+.pulse-status__disc { fill: var(--gp-gold); }
+.pulse-status__tick { fill: none; stroke: var(--gp-on-gold); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 1; }
+.pulse-hl { position: absolute; inset: -1px; pointer-events: none; opacity: 0; border: 1px solid var(--gp-gold); border-style: inherit; border-radius: inherit; box-shadow: 0 0 14px rgba(242, 179, 90, .22); }
+/* final state: after the last cycle and under reduced motion */
+.is-final .pulse-lines { opacity: 1; }
+.is-final .pulse-status__check { opacity: 1; }
+.is-final .pulse-status__tick { stroke-dashoffset: 0; }
+
+/* ===== Hub: Gia in the center, resources on both sides ===== */
+.hub { --hub-gap: 88px; display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); column-gap: var(--hub-gap); align-items: center; }
+.hub__side { position: relative; z-index: 1; list-style: none; margin: 0; padding: 0; display: grid; grid-auto-rows: 1fr; gap: 12px; }
+.hub__node { --status-top: 18px; --status-left: 16px; position: relative; padding: 14px 18px 14px 44px; background: var(--gp-surface); border: 1px solid var(--gp-line); border-radius: 8px; display: grid; gap: 2px; }
+.hub__name { font-size: 16px; font-weight: 600; color: var(--gp-text); }
+.hub__desc { font-size: 13px; line-height: 1.45; color: var(--gp-text-2); }
+/* Vertical below 960px: Compute, Models, Tools above Gia, Agents, Research, Execution below, wired along side rails.
+   This replaces the wireframe's two compact columns (approved change, so the wiring and pulses can run vertically). */
+@media (max-width: 960px) {
+  .hub { --pulse-layout: vertical; grid-template-columns: minmax(0, 1fr); row-gap: 64px; max-width: 600px; margin-inline: auto; padding-inline: 28px; }
+  .hub .gia-core { --core: 140px; }
+  .hub__side--right { margin-top: 20px; } /* room for the name plate under Gia */
+}
+@media (max-width: 480px) { .hub { padding-inline: 22px; } .hub__node { padding: 12px 12px 12px 38px; --status-top: 15px; --status-left: 12px; } .hub__desc { font-size: 12.5px; } }
+
+/* ===== Accordion (native details/summary; give a group the same name="" to keep one open) ===== */
+.accordion { display: grid; gap: 12px; }
+.acc { background: var(--gp-surface); border: 1px solid var(--gp-line); border-radius: 8px; transition: border-color .2s var(--ease); }
+.acc[open] { border-color: var(--gp-glass-border-active); }
+.acc__sum { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 12px; padding: 20px 24px; font-size: 18px; font-weight: 600; color: var(--gp-text); border-radius: 8px; }
+.acc__sum::-webkit-details-marker { display: none; }
+.acc__sum:focus-visible { outline-offset: -2px; }
+.acc__icon { margin-left: auto; width: 14px; height: 14px; position: relative; flex: none; }
+.acc__icon::before, .acc__icon::after { content: ""; position: absolute; left: 0; top: 50%; width: 14px; height: 1.5px; background: var(--gp-gold); }
+.acc__icon::after { transform: rotate(90deg); }
+.acc[open] .acc__icon::after { display: none; }
+.acc__body { padding: 0 24px 24px; display: grid; gap: 12px; max-width: 720px; }
+.acc__body > * { margin: 0; }
+.acc__body .owner { justify-self: start; }
+.acc__meta { display: flex; flex-wrap: wrap; gap: 8px; }
+@media (max-width: 560px) { .acc__sum { padding: 18px 20px; font-size: 17px; flex-wrap: wrap; } .acc__body { padding: 0 20px 20px; } }
+
+/* ===== Ownership indicator ===== */
+.owner { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 8px 12px; border-radius: 999px; border: 1px solid var(--gp-line); font-size: 13px; font-weight: 500; color: var(--gp-text-2); text-align: center; }
+.owner::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; flex: none; }
+.owner--keep { color: var(--gp-gold-mid); border-color: var(--gp-glass-border); background: rgba(242, 179, 90, .05); }
+.owner--change { color: var(--gp-warning); border-color: rgba(195, 115, 78, .5); background: rgba(195, 115, 78, .06); }
+.owner--change::before { background: none; border: 1.5px solid currentColor; }
+.owner--terms { color: var(--gp-text-muted); border-style: dashed; }
+.owner span { color: var(--gp-text); }
+
+/* ===== Option card (Use · Put it to work · Support · Transfer) ===== */
+.options { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; }
+.option { min-width: 0; display: flex; flex-direction: column; gap: 12px; padding: 24px; background: var(--gp-surface); border: 1px solid var(--gp-line); border-radius: 8px; }
+.option__head { display: flex; flex-direction: column-reverse; align-items: flex-start; gap: 12px; }
+.option__name { margin: 0; font-size: 20px; font-weight: 600; line-height: 1.25; color: var(--gp-text); }
+.option--conditional { border-style: dashed; }
+/* Keep titles aligned across a row when only some cards carry a status */
+.option__head:not(:has(.badge))::after, .cards .card__head:not(:has(.badge))::after { content: ""; height: 24px; }
+.option__more { border-top: 1px solid var(--gp-line); padding-top: 12px; }
+.option__more summary { list-style: none; cursor: pointer; font-size: 14px; font-weight: 600; color: var(--gp-gold); }
+.option__more summary::-webkit-details-marker { display: none; }
+.option__more summary::after { content: " +"; }
+.option__more[open] summary::after { content: " –"; }
+.option__more dl { margin: 12px 0 0; display: grid; gap: 8px; font-size: 14px; }
+.option__more dt { font-family: var(--font-mono); font-size: 11px; font-weight: 600; letter-spacing: .06em; color: var(--gp-copper); }
+.option__more dd { margin: 0 0 4px; color: var(--gp-text-2); line-height: 1.5; }
+.option .owner { margin-top: auto; }
+@media (max-width: 1100px) { .options { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .options { grid-template-columns: minmax(0, 1fr); } }
+
+/* ===== Terms sheet: project fields, optional total ===== */
+.terms { padding: 24px; display: grid; gap: 16px; }
+.terms__head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.terms__title { margin: 0; font-size: 18px; font-weight: 600; line-height: 1.35; color: var(--gp-text); }
+.terms__list { margin: 0; display: grid; }
+.terms__row { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 4px 20px; padding: 12px 0; border-top: 1px solid var(--gp-line); }
+.terms__row dt { font-size: 14px; color: var(--gp-text-muted); }
+.terms__row dd { margin: 0; font-size: 15px; line-height: 1.5; color: var(--gp-text); }
+.terms__row--total { border-top-color: var(--gp-glass-border-active); padding-top: 16px; }
+.terms__row--total dt { font-size: 15px; font-weight: 600; color: var(--gp-text); }
+.terms__row--total dd { font-size: 20px; font-weight: 600; color: var(--gp-gold); }
+.terms__note { margin: 0; }
+@media (max-width: 480px) { .terms { padding: 20px; } .terms__row { grid-template-columns: minmax(0, 1fr); } }
+
+/* ===== Approval sheet: terms to review, then an explicit authorization ===== */
+.approval { padding: 24px; display: grid; gap: 16px; }
+.approval__title { margin: 0; font-size: 18px; font-weight: 600; color: var(--gp-text); }
+.approval__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.approval__item { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 14px; border: 1px solid var(--gp-line); border-radius: 10px; }
+.approval__item label { display: flex; align-items: center; gap: 12px; cursor: pointer; font-size: 15px; line-height: 1.4; color: var(--gp-text); min-width: 0; }
+.approval__check { appearance: none; -webkit-appearance: none; margin: 0; flex: none; width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--gp-warning); background: transparent; cursor: pointer; display: grid; place-items: center; }
+.approval__check:checked { border-color: var(--gp-gold-mid); background: rgba(242, 179, 90, .1); }
+.approval__check:checked::after { content: ""; width: 6px; height: 10px; border: solid var(--gp-gold-mid); border-width: 0 2px 2px 0; transform: translateY(-1px) rotate(45deg); }
+.approval__check:focus-visible { outline: 2px solid var(--gp-gold); outline-offset: 2px; }
+.approval__item.is-open { border-color: rgba(195, 115, 78, .45); }
+.approval__actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.approval__confirm { display: grid; gap: 12px; padding: 16px; border-radius: 10px; border: 1px solid var(--gp-glass-border-active); background: rgba(242, 179, 90, .05); }
+.approval__confirm[hidden] { display: none; }
+.approval__confirm p { margin: 0; font-size: 15px; color: var(--gp-text); }
+.approval__msg { margin: 0; min-height: 22px; font-size: 14px; color: var(--gp-text-2); }
+.approval__msg.is-warn { color: var(--gp-warning); }
+.approval__msg.is-ok { color: var(--gp-gold-mid); }
+.approval.is-done .approval__check { pointer-events: none; }
+@media (max-width: 480px) { .approval { padding: 20px; } .approval__item { flex-direction: column; align-items: flex-start; } }
+
+/* ===== Is / is not ===== */
+.isnot { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+.isnot > * { min-width: 0; }
+.isnot__col { padding: 28px; background: var(--gp-surface); border: 1px solid var(--gp-line); border-radius: 8px; }
+.isnot__col h3 { margin: 0 0 16px; }
+.isnot__col ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.isnot__col li { position: relative; padding-left: 28px; font-size: 15px; line-height: 1.55; color: var(--gp-text-2); }
+.isnot__col li::before { content: ""; position: absolute; left: 0; top: .2em; width: 16px; height: 16px; border-radius: 50%; }
+.isnot__col--is li::before { border: 1.5px solid var(--gp-gold-mid); }
+.isnot__col--is li::after { content: ""; position: absolute; left: 6px; top: calc(.2em + 3px); width: 4px; height: 7px; border: solid var(--gp-gold-mid); border-width: 0 1.5px 1.5px 0; transform: rotate(45deg); }
+.isnot__col--not li::before { border: 1.5px solid var(--gp-text-muted); }
+.isnot__col--not li::after { content: ""; position: absolute; left: 4px; top: calc(.2em + 7.25px); width: 8px; height: 1.5px; background: var(--gp-text-muted); }
+@media (max-width: 768px) { .isnot { grid-template-columns: minmax(0, 1fr); } .isnot__col { padding: 24px; } }
+
+/* ===== Important information ===== */
+.notice { padding: 28px; background: var(--gp-surface); border: 1px solid var(--gp-line); border-left: 2px solid var(--gp-gold-mid); border-radius: 8px; display: grid; gap: 16px; }
+.notice__title { margin: 0; font-size: 18px; font-weight: 600; color: var(--gp-text); }
+.notice__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.notice__list li { position: relative; padding-left: 20px; font-size: 15px; line-height: 1.55; color: var(--gp-text-2); }
+.notice__list li::before { content: ""; position: absolute; left: 0; top: .75em; width: 8px; height: 1px; background: var(--gp-gold-mid); }
+@media (max-width: 560px) { .notice { padding: 24px; } }
+
+/* ===== Quiet effects (DS 10.1), switched on by js/components.js =====
+   Every hiding start state needs a class the script adds (.stagger-on, .draw-on) and sits inside
+   prefers-reduced-motion: no-preference, so without JS or under reduced motion the final state shows. */
+
+/* Parallax on hover [data-parallax] on .media-frame__box, .final__media: the frame clips the media.
+   At rest the photo is its normal size (object-fit: cover). With a mouse, on hover the frame grows to 1.02 with a
+   brighter gold border and a soft shadow; the photo grows to 1.08 and the script moves it against the pointer
+   (translate, at most 12px). In 400ms, back in 600ms. Never on touch devices or under reduced motion. */
+[data-parallax] { overflow: hidden; }
+.final__media[data-parallax] { border-radius: 16px; border: 1px solid var(--gp-glass-border); background: var(--gp-surface-2); }
+.final__media[data-parallax] > .final__img { display: block; border: 0; border-radius: 0; }
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .parallax-on { transition: scale .6s var(--ease), border-color .6s var(--ease), box-shadow .6s var(--ease); }
+  .parallax-on .parallax-media { transition: scale .6s var(--ease); }
+  .parallax-on.is-hover {
+    scale: 1.02; border-color: var(--gp-glass-border-active);
+    box-shadow: 0 18px 48px rgba(0, 0, 0, .45), 0 0 24px rgba(250, 185, 90, .12);
+    transition-duration: .4s;
+  }
+  .parallax-on.is-hover .parallax-media { scale: 1.08; transition-duration: .4s; will-change: scale, translate; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Staggered entry [data-stagger]: children appear 120ms apart, on every visit (the script re-arms it). */
+  .stagger-on > * { opacity: 0; transform: translateY(24px); filter: blur(4px); }
+  .stagger-on.is-in > * {
+    opacity: 1; transform: none; filter: none;
+    transition: opacity .7s var(--ease), transform .7s var(--ease), filter .7s var(--ease);
+    transition-delay: calc(var(--stagger-i, 0) * 120ms);
+  }
+
+  /* Line drawing [data-draw]: SVG strokes (.draw-path, pathLength 1) and .draw-x bars; --draw-delay staggers parts. */
+  /* stroke-opacity hides the dot a round line cap leaves at the start before a part begins. */
+  .draw-on .draw-path { stroke-dasharray: 1 1; stroke-dashoffset: 1; }
+  .draw-on:not(.is-drawn) .draw-path { stroke-opacity: 0; }
+  .draw-on.is-drawn .draw-path {
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset var(--draw-dur, 1.2s) var(--ease) var(--draw-delay, 0s), stroke-opacity 0s linear var(--draw-delay, 0s);
+  }
+  .draw-on .draw-x { transform: scaleX(0); transform-origin: left center; }
+  .draw-on.is-drawn .draw-x { transform: none; transition: transform 1s var(--ease) var(--draw-delay, 0s); }
+
+  /* .flow[data-draw], .steps-line[data-draw]: the connector lines (::after) open one after another,
+     by item order (--draw-i from the script); a .flow arrowhead (::before) appears after its line. */
+  .flow.draw-on > .flow__node::after,
+  .steps-line.draw-on > .steps-line__item::after { transform: scaleX(0); transform-origin: left center; }
+  .flow.draw-on > .flow__node::before { opacity: 0; }
+  .flow.draw-on.is-drawn > .flow__node::after { transform: none; transition: transform .45s var(--ease) calc(var(--draw-i, 0) * .25s); }
+  .flow.draw-on.is-drawn > .flow__node::before { opacity: 1; transition: opacity .15s linear calc(var(--draw-i, 0) * .25s + .4s); }
+  .steps-line.draw-on.is-drawn > .steps-line__item::after { transform: none; transition: transform .45s var(--ease) calc(var(--draw-i, 0) * .2s); }
+  /* A node icon starts with the arrow leaving its node (--draw-i × .25s), parts .1s apart (--draw-k from the script),
+     each part in .8s (--draw-dur on .flow__icon), so five parts take 1.2s. */
+  .flow.draw-on > .flow__node .draw-path { --draw-delay: calc(var(--draw-i, 0) * .25s + var(--draw-k, 0) * .1s); }
+
+  /* .flow[data-draw] + .flow-return: after the last chain arrow, the return line opens from the last node back to
+     the first. Its border is covered by a curtain (::after) in the section color that shrinks to the left, then the
+     arrowhead (::before) appears. Only on a solid section background (as the label's own background). */
+  .flow.draw-on + .flow-return::after {
+    content: ""; position: absolute; inset: 0 -1px -1px; background: var(--section-bg, var(--gp-bg));
+    transform-origin: left center; pointer-events: none;
+  }
+  .flow.draw-on + .flow-return::before { opacity: 0; }
+  .flow.draw-on + .flow-return > .flow-return__label { z-index: 1; }
+  .flow.draw-on.is-drawn + .flow-return::after { transform: scaleX(0); transition: transform .9s var(--ease) calc((var(--n, 5) - 2) * .25s + .55s); }
+  .flow.draw-on.is-drawn + .flow-return::before { opacity: 1; transition: opacity .15s linear calc((var(--n, 5) - 2) * .25s + 1.4s); }
+
+  @media (max-width: 768px) {
+    .flow.draw-on > .flow__node::after,
+    .steps-line.draw-on > .steps-line__item::after { transform: scaleY(0); transform-origin: center top; }
+    .flow.draw-on + .flow-return::after { content: none; }
+  }
+
+  /* Shine [data-shine]: one pass of light; the class is removed after it, leaving the solid color. */
+  [data-shine].is-shining {
+    background-image: linear-gradient(110deg, currentColor 40%, var(--gp-white) 50%, currentColor 60%);
+    background-size: 250% 100%; background-position: 100% 0;
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; text-shadow: none;
+    animation: gia-shine 1.8s var(--ease) forwards;
+  }
+}
+@keyframes gia-shine { to { background-position: 0 0; } }
+
+/* Spotlight [data-spotlight]: a soft gold glow under the pointer, mouse only, no transform.
+   Uses the card's own ::before (free on .card); the script sets --spot-x / --spot-y. */
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .spot-on { position: relative; isolation: isolate; }
+  .spot-on::before {
+    content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit; pointer-events: none;
+    background: radial-gradient(360px circle at var(--spot-x, 50%) var(--spot-y, 50%), rgba(242, 179, 90, .14), transparent 70%);
+    opacity: 0; transition: opacity .3s var(--ease);
+  }
+  .spot-on:hover::before { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .msg-in, .log li.is-new { animation: none; }
+  .acc, .tab { transition: none; }
+  .pulse-lines { transition: none; }
+}

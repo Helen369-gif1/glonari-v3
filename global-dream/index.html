@@ -1,0 +1,711 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gia — Global Dream</title>
+
+  <link rel="icon" href="favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="media/logo/favicon-32.png">
+  <link rel="apple-touch-icon" href="media/logo/apple-touch-icon.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;700&display=swap">
+
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/screens.css">
+  <link rel="stylesheet" href="css/gia-story.css">
+  <link rel="stylesheet" href="css/site-shell.css">
+  <!-- Dark entry veil for the hand-off from the Digital Banker atrium
+       (digital-banker/atrium/index.html, whose own #veil is the same
+       #1c1005). Inline in <head>, not a linked stylesheet or a JS-added
+       class, so the very first paint is already fully opaque. Not part of
+       Screen 1: a separate full-viewport layer above everything on the page,
+       including .gd-header (z-index 2000 vs. its 100). Same technique as
+       the Global Reserve page's own entry veil. -->
+  <style>
+    #entry-veil {
+      position: fixed;
+      inset: 0;
+      z-index: 2000;
+      opacity: 1;
+      pointer-events: none;
+      background: #1c1005;
+    }
+  </style>
+</head>
+<body>
+  <div id="entry-veil" aria-hidden="true"></div>
+  <script>
+    // Lifts the dark entry veil once the header, hero poster and text have
+    // had a moment to render. Independent of js/hero-scrub.js (Screen 1)
+    // and js/site-shell.js.
+    (function () {
+      var VEIL_HOLD_MS = 90;
+      var VEIL_OUT_MS = 300;
+      var el = document.getElementById('entry-veil');
+      if (!el) return;
+      var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      window.setTimeout(function () {
+        el.style.transition = reduceMotion ? 'none' : 'opacity ' + VEIL_OUT_MS + 'ms ease-out';
+        el.style.opacity = '0';
+        window.setTimeout(function () { el.remove(); }, reduceMotion ? 0 : VEIL_OUT_MS);
+      }, reduceMotion ? 0 : VEIL_HOLD_MS);
+    })();
+  </script>
+  <!-- Global site shell — header (build spec 5.5). -->
+  <header class="gd-header">
+    <div class="gd-container gd-header__bar">
+      <a class="gd-header__back" href="../digital-banker/atrium/index.html" aria-label="Back to Digital Banker atrium">&larr;</a>
+      <a class="gd-header__brand" href="#screen-1" aria-label="Glonari Global Dream">
+        <picture>
+          <source media="(max-width: 359px)" srcset="media/logo/gd-emblem-light.webp" width="416" height="416">
+          <img src="media/logo/gd-lockup-light.webp" alt="" width="915" height="393">
+        </picture>
+      </a>
+      <nav class="gd-header__nav" id="gd-header-menu">
+        <ul class="gd-header__links">
+          <li><a class="gd-header__link" href="#screen-1">Meet Gia</a></li>
+          <li><a class="gd-header__link" href="#screen-2">How she helps</a></li>
+          <li><a class="gd-header__link" href="#screen-side">Your control</a></li>
+          <li><a class="gd-header__link" href="#screen-3">Everything connects</a></li>
+          <li><a class="gd-header__link" href="#screen-4">In your life</a></li>
+        </ul>
+      </nav>
+      <div class="gd-header__actions">
+        <!-- TODO: destination for Talk to Gia (build spec Appendix B, item 1) -->
+        <a class="gd-button gd-button--primary gd-header__action" href="#">Talk to Gia</a>
+        <button type="button" class="gd-header__toggle" aria-label="Open menu" aria-expanded="false" aria-controls="gd-header-menu">
+          <span class="gd-header__toggle-lines" aria-hidden="true"></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Screen 1 — Hero / scroll video (build spec 5.1). -->
+    <section id="screen-1" class="gd-hero" data-screen="hero">
+      <div class="gd-hero__runway">
+        <div class="gd-hero__stage">
+          <div class="gd-hero__media">
+            <video class="gd-hero__video" data-src="media/gd-hero.mp4" poster="media/gd-hero-poster.jpg" muted playsinline preload="none" aria-hidden="true" tabindex="-1"></video>
+          </div>
+          <div class="gd-hero__veil" aria-hidden="true"></div>
+          <div class="gd-hero__text">
+            <div class="gd-hero__column">
+              <div class="gd-hero__block gd-hero__block--1">
+                <h1 class="gd-hero__title" data-split>GIA</h1>
+                <p class="gd-hero__tagline" data-split>Your AI for the life you want to build.</p>
+              </div>
+              <div class="gd-hero__block gd-hero__block--2">
+                <p class="gd-hero__phrase" data-split>Start with Gia.</p>
+              </div>
+              <div class="gd-hero__block gd-hero__block--3">
+                <p class="gd-hero__phrase" data-split>Talk. Explore. Plan.</p>
+                <!-- TODO: destination for Meet Gia (build spec Appendix B, item 1) -->
+                <a class="gd-button gd-button--primary gd-hero__cta" href="#">Meet Gia</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Screen 2 — What Gia does, dark accent (build spec 5.2). -->
+    <section id="screen-2" class="gd-section gd-conversation" data-screen="conversation">
+      <div class="gd-container gd-conversation__grid">
+        <div class="gd-conversation__text">
+          <h2 class="gd-h2 gd-conversation__title" data-reveal>One conversation can change what you see next.</h2>
+          <p class="gd-lead gd-conversation__body" data-reveal data-reveal-delay="1">Gia helps you make sense of where you are, what you want, and what your next step could be.</p>
+          <div class="gd-conversation__closing" data-reveal data-reveal-delay="2">
+            <p class="gd-body gd-conversation__line">You don’t need to know where to start.</p>
+            <p class="gd-body gd-conversation__line gd-conversation__line--accent">You can start with Gia.</p>
+          </div>
+          <div class="gd-conversation__actions" data-reveal data-reveal-delay="3">
+            <!-- TODO: destination for Talk to Gia (build spec Appendix B, item 1) -->
+            <a class="gd-button gd-button--primary gd-button--on-dark" href="#">Talk to Gia</a>
+          </div>
+        </div>
+
+        <div class="gd-conversation__rail">
+          <div class="gd-rail__track" aria-hidden="true">
+            <span class="gd-rail__fill"></span>
+            <span class="gd-rail__runner gd-rail__runner--trail"></span>
+            <span class="gd-rail__runner"></span>
+          </div>
+          <ol class="gd-rail">
+            <li class="gd-rail__item">
+              <span class="gd-rail__node" aria-hidden="true">01</span>
+              <h3 class="gd-h3 gd-rail__phrase">Ask a question.</h3>
+            </li>
+            <li class="gd-rail__item">
+              <span class="gd-rail__node" aria-hidden="true">02</span>
+              <h3 class="gd-h3 gd-rail__phrase">Explore an idea.</h3>
+            </li>
+            <li class="gd-rail__item">
+              <span class="gd-rail__node" aria-hidden="true">03</span>
+              <h3 class="gd-h3 gd-rail__phrase">Compare possibilities.</h3>
+            </li>
+            <li class="gd-rail__item">
+              <span class="gd-rail__node" aria-hidden="true">04</span>
+              <h3 class="gd-h3 gd-rail__phrase">Build a plan.</h3>
+            </li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- Screen 2a — She knows you (build spec 5.2a). -->
+    <section id="screen-knows" class="gd-section gd-knows" data-screen="knows">
+      <div class="gd-container">
+        <div class="gd-knows__header">
+          <h2 class="gd-h2" data-reveal>AI should know more than your question. It should know you.</h2>
+          <p class="gd-lead gd-knows__body" data-reveal data-reveal-delay="1">Most AI starts over every time you ask. Gia is built as an ongoing relationship. She remembers what you want her to remember — and becomes more helpful over time.</p>
+        </div>
+
+        <div class="gd-knows__visual">
+          <div class="gd-knows__stage">
+            <img class="gd-knows__image" src="media/gd-knows.webp" alt="A man relaxing at home in the evening, talking with Gia on a tablet" width="3640" height="2048" loading="lazy" decoding="async">
+            <p class="gd-knows__pending" aria-hidden="true">Media pending<br>media/gd-knows.webp</p>
+          </div>
+
+          <svg class="gd-knows__threads" aria-hidden="true" focusable="false"></svg>
+
+          <div class="gd-knows__overlay">
+            <figure class="gd-memory">
+              <figcaption class="visually-hidden">An example of what Gia remembers and how she uses it.</figcaption>
+              <p class="gd-module__label">WHAT GIA REMEMBERS</p>
+              <ul class="gd-memory__list">
+                <li class="gd-memory__item">Moving to the city in spring</li>
+                <li class="gd-memory__item" data-used>Prefers a quiet neighbourhood</li>
+                <li class="gd-memory__item" data-used>Home budget agreed in March</li>
+                <li class="gd-memory__item" data-used>Daughter starts school in September</li>
+                <li class="gd-memory__item">Works from home three days a week</li>
+              </ul>
+            </figure>
+
+            <figure class="gd-quote gd-knows__quote">
+              <figcaption class="gd-quote__role gd-knows__role"><span class="gd-knows__card-node" aria-hidden="true"></span><img class="gd-knows__avatar" src="media/gia-avatar.webp" alt="" width="256" height="256" loading="lazy" decoding="async">GIA</figcaption>
+              <blockquote class="gd-quote__text"><p>“The home you saved just dropped in price. It still fits your budget, and it’s close to the school. Want me to arrange a viewing?”</p></blockquote>
+              <p class="gd-quote__outcome"><span>Gia remembered.</span> <span>Gia noticed.</span> <span>Gia acted.</span></p>
+            </figure>
+          </div>
+
+          <div class="gd-knows__closing">
+            <dl class="gd-knows__stages">
+              <div class="gd-knows__step" data-reveal>
+                <dt class="gd-eyebrow">AT FIRST</dt>
+                <dd class="gd-body">What you want. What matters. How you like things done.</dd>
+              </div>
+              <div class="gd-knows__step" data-reveal data-reveal-delay="1">
+                <dt class="gd-eyebrow">OVER TIME</dt>
+                <dd class="gd-body">Your goals, preferences, routines and plans.</dd>
+              </div>
+            </dl>
+            <p class="gd-data gd-knows__key" data-reveal data-reveal-delay="2">She doesn’t just know your question. She knows you.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Screen 2b — She’s on your side, second dark accent (build spec 5.2b). -->
+    <section id="screen-side" class="gd-side" data-screen="side">
+      <div class="gd-side__text">
+        <div class="gd-side__inner">
+          <h2 class="gd-h2 gd-side__title" data-reveal>She’s on your side.</h2>
+          <p class="gd-lead gd-side__body" data-reveal data-reveal-delay="1">Gia works under your direction. You decide what she remembers, what she can use and what she can share.</p>
+          <ul class="gd-side__controls" data-reveal data-reveal-delay="2">
+            <li class="gd-side__control">
+              <span class="gd-body gd-side__control-label" id="side-control-remembers">What Gia remembers</span>
+              <button type="button" class="gd-switch" role="switch" aria-checked="true" aria-labelledby="side-control-remembers"><span class="gd-switch__glow" aria-hidden="true"></span><span class="gd-switch__thumb" aria-hidden="true"></span></button>
+            </li>
+            <li class="gd-side__control">
+              <span class="gd-body gd-side__control-label" id="side-control-use">What she can use</span>
+              <button type="button" class="gd-switch" role="switch" aria-checked="true" aria-labelledby="side-control-use"><span class="gd-switch__glow" aria-hidden="true"></span><span class="gd-switch__thumb" aria-hidden="true"></span></button>
+            </li>
+            <li class="gd-side__control">
+              <span class="gd-body gd-side__control-label" id="side-control-approval">What needs your approval</span>
+              <button type="button" class="gd-switch" role="switch" aria-checked="true" aria-labelledby="side-control-approval"><span class="gd-switch__glow" aria-hidden="true"></span><span class="gd-switch__thumb" aria-hidden="true"></span></button>
+            </li>
+            <li class="gd-side__control">
+              <span class="gd-body gd-side__control-label" id="side-control-share">What she can share</span>
+              <button type="button" class="gd-switch" role="switch" aria-checked="true" aria-labelledby="side-control-share" data-share><span class="gd-switch__glow" aria-hidden="true"></span><span class="gd-switch__thumb" aria-hidden="true"></span></button>
+            </li>
+          </ul>
+          <p class="visually-hidden">Example settings. Nothing is saved.</p>
+          <p class="gd-data gd-side__key" data-reveal data-reveal-delay="3">Your Gia. Your information. Your decision.</p>
+          <p class="gd-small gd-side__note" data-reveal data-reveal-delay="4">Glonari is designed to create value with its members, not sell their private profiles.</p>
+        </div>
+      </div>
+
+      <div class="gd-side__media">
+        <img class="gd-side__image" src="media/gd-side.webp" alt="The same man in the evening, smiling as he checks a message from Gia on his phone" width="2460" height="3072" loading="lazy" decoding="async">
+        <p class="gd-side__pending" aria-hidden="true">Media pending<br>media/gd-side.webp</p>
+        <span class="gd-side__halo" aria-hidden="true"></span>
+        <span class="gd-side__halo gd-side__halo--pulse" aria-hidden="true"></span>
+      </div>
+
+      <svg class="gd-side__thread" aria-hidden="true" focusable="false"></svg>
+
+      <figure class="gd-request">
+        <figcaption class="visually-hidden">An example of Gia sharing only the information a company needs.</figcaption>
+        <span class="gd-request__node" aria-hidden="true"></span>
+        <p class="gd-module__label gd-request__label">A COMPANY REQUESTS</p>
+        <p class="gd-small gd-request__context">To arrange your home viewing, the agency asks for:</p>
+        <ul class="gd-request__list">
+          <li class="gd-request__row" data-share-row>
+            <span class="gd-request__item">Your name and contact details</span>
+            <span class="gd-request__status" aria-live="polite">
+              <svg class="gd-request__glyph gd-request__glyph--check" viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M2 6.4 4.8 9.2 10 3.2"/></svg>
+              <svg class="gd-request__glyph gd-request__glyph--cross" viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M3 3l6 6M9 3 3 9"/></svg>
+              <span class="gd-request__status-text">Shared</span>
+            </span>
+            <span class="gd-request__scan" aria-hidden="true"></span>
+          </li>
+          <li class="gd-request__row is-withheld">
+            <span class="gd-request__item">Your purchase history</span>
+            <span class="gd-request__status">
+              <svg class="gd-request__glyph" viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M2.5 6h7"/></svg>
+              <span class="gd-request__status-text">Not needed</span>
+            </span>
+            <span class="gd-request__scan" aria-hidden="true"></span>
+          </li>
+          <li class="gd-request__row is-withheld">
+            <span class="gd-request__item">Your location history</span>
+            <span class="gd-request__status">
+              <svg class="gd-request__glyph" viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M3 3l6 6M9 3 3 9"/></svg>
+              <span class="gd-request__status-text">Not shared</span>
+            </span>
+            <span class="gd-request__scan" aria-hidden="true"></span>
+          </li>
+        </ul>
+        <figure class="gd-quote gd-side__quote">
+          <figcaption class="gd-quote__role gd-side__role"><img class="gd-side__avatar" src="media/gia-avatar.webp" alt="" width="256" height="256" loading="lazy" decoding="async">GIA</figcaption>
+          <blockquote class="gd-quote__text"><p>“They don’t need that information to complete this. I haven’t shared it.”</p></blockquote>
+        </figure>
+      </figure>
+    </section>
+
+    <!-- Screen 3 — Everything connects (build spec 5.3). -->
+    <section id="screen-3" class="gd-section gd-section--soft gd-connect" data-screen="connects">
+      <div class="gd-container">
+        <div class="gd-connect__header">
+          <h2 class="gd-h2 gd-h2--large" data-reveal>Your life isn’t made of separate decisions.</h2>
+        </div>
+
+        <div class="gd-connect__stage">
+          <div class="gd-connect__device">
+            <div class="gd-connect__halo" aria-hidden="true"></div>
+            <div class="gd-connect__orbit" aria-hidden="true">
+              <span class="gd-connect__orbit-top"></span>
+              <span class="gd-connect__speck" style="--x: 4%; --y: 22%; --s: 4px; --o: .45"></span>
+              <span class="gd-connect__speck" style="--x: 11%; --y: 44%; --s: 3px; --o: .35"></span>
+              <span class="gd-connect__speck" style="--x: 8%; --y: 86%; --s: 4px; --o: .4"></span>
+              <span class="gd-connect__speck" style="--x: 93%; --y: 20%; --s: 4px; --o: .45"></span>
+              <span class="gd-connect__speck" style="--x: 89%; --y: 50%; --s: 3px; --o: .3"></span>
+              <span class="gd-connect__speck" style="--x: 95%; --y: 84%; --s: 4px; --o: .4"></span>
+              <span class="gd-connect__speck" style="--x: 30%; --y: 3%; --s: 3px; --o: .35"></span>
+            </div>
+            <div class="gd-connect__float">
+              <div class="gd-connect__frame">
+                <img class="gd-connect__image" src="media/gia-tablet.webp" alt="Gia on a video call, speaking and gesturing as she explains" width="1279" height="1062" loading="lazy" decoding="async">
+                <p class="gd-connect__pending" aria-hidden="true">Media pending<br>media/gia-tablet.webp</p>
+                <div class="gd-connect__screen" aria-hidden="true">
+                  <p class="gd-connect__live"><span class="gd-connect__live-dot"></span>GIA</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <svg class="gd-connect__lines" aria-hidden="true" focusable="false"></svg>
+
+          <ul class="gd-areas">
+            <li class="gd-areas__item gd-areas__item--1">
+              <span class="gd-areas__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false"><path d="M12 3 2 12h3v9h5.5v-6h3v6H19v-9h3z"/></svg>
+                <span class="gd-areas__node"></span>
+              </span>
+              <h3 class="gd-h3 gd-areas__title">A home.</h3>
+            </li>
+            <li class="gd-areas__item gd-areas__item--2">
+              <span class="gd-areas__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false"><path d="M12 3C7.58 3 4 4.34 4 6s3.58 3 8 3 8-1.34 8-3-3.58-3-8-3z"/><path d="M4 7.5c0 1.66 3.58 3 8 3s8-1.34 8-3V10c0 1.66-3.58 3-8 3s-8-1.34-8-3z"/><path d="M4 11.5c0 1.66 3.58 3 8 3s8-1.34 8-3V14c0 1.66-3.58 3-8 3s-8-1.34-8-3z"/><path d="M4 15.5c0 1.66 3.58 3 8 3s8-1.34 8-3V18c0 1.66-3.58 3-8 3s-8-1.34-8-3z"/></svg>
+                <span class="gd-areas__node"></span>
+              </span>
+              <h3 class="gd-h3 gd-areas__title">Money.</h3>
+            </li>
+            <li class="gd-areas__item gd-areas__item--3">
+              <span class="gd-areas__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false"><path fill-rule="evenodd" d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7zm0 4.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5z"/></svg>
+                <span class="gd-areas__node"></span>
+              </span>
+              <h3 class="gd-h3 gd-areas__title">A move.</h3>
+            </li>
+            <li class="gd-areas__item gd-areas__item--4">
+              <span class="gd-areas__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false"><path fill-rule="evenodd" d="M9 3.5A1.5 1.5 0 0 0 7.5 5v2H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3.5V5A1.5 1.5 0 0 0 15 3.5zM9 5h6v2H9zM2 12.5h20V14H2z"/><path d="M10 11.5h4V15h-4z"/></svg>
+                <span class="gd-areas__node"></span>
+              </span>
+              <h3 class="gd-h3 gd-areas__title">Business.</h3>
+            </li>
+            <li class="gd-areas__item gd-areas__item--5">
+              <span class="gd-areas__node gd-areas__node--next" aria-hidden="true"></span>
+              <h3 class="gd-h3 gd-areas__title">What comes next.</h3>
+            </li>
+          </ul>
+        </div>
+
+        <div class="gd-connect__text">
+          <p class="gd-body gd-connect__body" data-connect-reveal="0">Gia helps you see how those decisions connect — and what opportunities may be relevant to you.</p>
+          <p class="gd-body gd-connect__body" data-connect-reveal="1">She brings your goals, progress and next steps into one clear picture.</p>
+          <p class="gd-data gd-connect__key" data-connect-reveal="2">One place to understand what’s possible.</p>
+          <div class="gd-connect__actions" data-connect-reveal="3">
+            <!-- TODO: destination for Explore with Gia (build spec Appendix B, item 1) -->
+            <a class="gd-button gd-button--primary" href="#">Explore with Gia</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Screen 4 — Gia in your life, horizontal story (build spec 5.4). The side brochures (5.4a) follow the runway. -->
+    <section id="screen-4" class="gd-story" data-screen="life">
+      <h2 class="visually-hidden">Gia in your life</h2>
+      <div class="gd-story__runway">
+        <div class="gd-story__stage">
+          <div class="gd-story__media">
+            <video class="gd-story__video" data-src="media/gd-walk.mp4" poster="media/gd-walk-poster.jpg" muted playsinline preload="none" aria-hidden="true" tabindex="-1"></video>
+          </div>
+
+          <div class="gd-story__modules">
+            <article class="gd-module gd-module--left">
+              <p class="gd-module__label">CHAPTER 01</p>
+              <p class="gd-eyebrow gd-module__eyebrow">FIND A HOME</p>
+              <h3 class="gd-module__title" id="module-homes-title">Find a home that fits the life you want.</h3>
+              <p class="gd-small gd-module__text">Gia helps you explore housing options, compare possibilities, and understand what may fit your plans.</p>
+              <button type="button" class="gd-button gd-button--secondary gd-module__cta" aria-haspopup="dialog" aria-controls="brochure-homes" aria-describedby="module-homes-title">Learn more</button>
+            </article>
+            <article class="gd-module gd-module--right">
+              <p class="gd-module__label">CHAPTER 02</p>
+              <p class="gd-eyebrow gd-module__eyebrow">UNDERSTAND YOUR FINANCES</p>
+              <h3 class="gd-module__title" id="module-finances-title">See what’s possible before you decide what’s next.</h3>
+              <p class="gd-small gd-module__text">Gia helps bring your financial picture, goals, and available options together so you can plan with more clarity.</p>
+              <button type="button" class="gd-button gd-button--secondary gd-module__cta" aria-haspopup="dialog" aria-controls="brochure-finances" aria-describedby="module-finances-title">Learn more</button>
+            </article>
+            <article class="gd-module gd-module--left">
+              <p class="gd-module__label">CHAPTER 03</p>
+              <p class="gd-eyebrow gd-module__eyebrow">PLAN A MOVE</p>
+              <h3 class="gd-module__title" id="module-moving-title">Turn a move into a plan.</h3>
+              <p class="gd-small gd-module__text">Gia can help organize the steps around moving, property decisions, and what comes next.</p>
+              <button type="button" class="gd-button gd-button--secondary gd-module__cta" aria-haspopup="dialog" aria-controls="brochure-moving" aria-describedby="module-moving-title">Learn more</button>
+            </article>
+            <article class="gd-module gd-module--right">
+              <p class="gd-module__label">CHAPTER 04</p>
+              <p class="gd-eyebrow gd-module__eyebrow">BUILD WHAT COMES NEXT</p>
+              <h3 class="gd-module__title" id="module-possibilities-title">Your next opportunity may start with one conversation.</h3>
+              <p class="gd-small gd-module__text">Explore business, travel, education, and other possibilities as they become part of your journey.</p>
+              <button type="button" class="gd-button gd-button--secondary gd-module__cta" aria-haspopup="dialog" aria-controls="brochure-possibilities" aria-describedby="module-possibilities-title">Learn more</button>
+            </article>
+          </div>
+
+          <div id="screen-4-final" class="gd-story__final">
+            <div class="gd-story__final-inner">
+              <h2 class="gd-h2 gd-h2--large gd-story__final-title">Start with Gia.</h2>
+              <div class="gd-story__final-lines">
+                <p class="gd-lead">You don’t have to plan everything today.</p>
+                <p class="gd-lead">Start with one question.</p>
+              </div>
+              <!-- TODO: destination for Meet Gia (build spec Appendix B, item 1) -->
+              <a class="gd-button gd-button--primary gd-story__final-cta" href="#">Meet Gia</a>
+              <p class="gd-story__final-note">Talk. Explore. Plan what’s next.</p>
+            </div>
+          </div>
+
+          <div class="gd-story__chrome" aria-hidden="true">
+            <div class="gd-story__progress"><span class="gd-story__progress-fill"></span></div>
+            <div class="gd-story__counter">
+              <p class="gd-story__count">01 / 04</p>
+              <div class="gd-story__ticks">
+                <span class="gd-story__tick is-active"></span>
+                <span class="gd-story__tick"></span>
+                <span class="gd-story__tick"></span>
+                <span class="gd-story__tick"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Side brochures (build spec 5.4a). Images load on first open (data-src). -->
+      <dialog class="gd-brochure" id="brochure-homes" aria-labelledby="brochure-homes-title">
+        <button type="button" class="gd-brochure__close" aria-label="Close" data-brochure-close>
+          <svg viewBox="0 0 14 14" aria-hidden="true" focusable="false"><path d="M1 1l12 12M13 1 1 13"/></svg>
+        </button>
+        <div class="gd-brochure__media">
+          <img class="gd-brochure__image" data-src="media/brochures/b-homes-main.webp" alt="A woman relaxing on her sofa with coffee, talking with Gia on a tablet" width="1535" height="1024" loading="lazy" decoding="async" style="object-position: 30% 50%">
+          <p class="gd-brochure__marker" aria-hidden="true">FIND A HOME</p>
+        </div>
+        <div class="gd-brochure__body" tabindex="-1">
+          <div class="gd-brochure__column">
+            <div class="gd-brochure__tags" data-brochure-intro>
+              <span class="gd-brochure__tag">FIND A HOME</span>
+              <span class="gd-brochure__tag gd-brochure__tag--sky">CHAPTER 01</span>
+            </div>
+            <h2 class="gd-brochure__title" id="brochure-homes-title" tabindex="-1" data-brochure-intro>Find a home that fits the life you want.</h2>
+            <p class="gd-brochure__subtitle" data-brochure-intro>Gia helps you explore homes, understand what fits your needs, and make clearer decisions about where and how you want to live.</p>
+
+            <section class="gd-brochure__story" data-brochure-intro>
+              <h3 class="gd-h3">A Home That Fits You.</h3>
+              <p>Gia can help you search for properties, compare options, research details, and keep track of the things that matter most to you.</p>
+              <p>With your permission, she can remember your preferences, your priorities, and the criteria you have already discussed, so you do not have to start from the beginning every time.</p>
+              <ul class="gd-brochure__list gd-brochure__list--dots">
+                <li>Property Discovery</li>
+                <li>Personal Preferences</li>
+                <li>Clearer Comparisons</li>
+              </ul>
+            </section>
+
+            <figure class="gd-brochure__figure" data-brochure-reveal>
+              <img data-src="media/brochures/b-homes-inline.webp" alt="A family gathered around an outdoor dinner table at night, with a tablet showing a message from Gia" width="1176" height="1024" loading="lazy" decoding="async" style="object-position: 50% 55%">
+            </figure>
+
+            <section class="gd-brochure__story" data-brochure-reveal>
+              <h3 class="gd-h3">Understand the Property.</h3>
+              <p>Gia can organize useful information about a home, including its condition, maintenance needs, improvements, local services, and nearby options.</p>
+              <p>Instead of giving you disconnected pieces of information, she helps bring the details together so you can understand the property in the context of your life.</p>
+              <figure class="gd-quote">
+                <figcaption class="gd-quote__role">GIA</figcaption>
+                <blockquote class="gd-quote__text"><p>“I found a Glonari Home that fits the criteria we’ve been discussing.”</p></blockquote>
+                <p class="gd-quote__outcome">A better decision starts with a clearer picture.</p>
+              </figure>
+            </section>
+
+            <section class="gd-brochure__story" data-brochure-reveal>
+              <h3 class="gd-h3">See the Home as Part of Your Life.</h3>
+              <p>A home is more than a property. It is part of the life you are building.</p>
+              <p>Gia can help you look at housing together with your resources, your lifestyle, and the plans you have for the future. The goal is not simply to find a place, but to understand what kind of home fits the life you want to create.</p>
+            </section>
+
+            <div class="gd-brochure__actions" data-brochure-reveal>
+              <!-- TODO: destination for Explore Homes (build spec Appendix B, item 1) -->
+              <a class="gd-button gd-button--primary" href="#">Explore Homes</a>
+              <button type="button" class="gd-button gd-button--secondary" data-brochure-close>Back to the story</button>
+            </div>
+          </div>
+        </div>
+      </dialog>
+
+      <dialog class="gd-brochure" id="brochure-finances" aria-labelledby="brochure-finances-title">
+        <button type="button" class="gd-brochure__close" aria-label="Close" data-brochure-close>
+          <svg viewBox="0 0 14 14" aria-hidden="true" focusable="false"><path d="M1 1l12 12M13 1 1 13"/></svg>
+        </button>
+        <div class="gd-brochure__media">
+          <img class="gd-brochure__image" data-src="media/brochures/b-finances-main.webp" alt="A woman holding a tablet showing Gia and a privacy screen that reads You’re in control" width="1536" height="1024" loading="lazy" decoding="async" style="object-position: 22% 50%">
+          <p class="gd-brochure__marker" aria-hidden="true">UNDERSTAND YOUR FINANCES</p>
+        </div>
+        <div class="gd-brochure__body" tabindex="-1">
+          <div class="gd-brochure__column">
+            <div class="gd-brochure__tags" data-brochure-intro>
+              <span class="gd-brochure__tag">UNDERSTAND YOUR FINANCES</span>
+              <span class="gd-brochure__tag gd-brochure__tag--sky">CHAPTER 02</span>
+            </div>
+            <h2 class="gd-brochure__title" id="brochure-finances-title" tabindex="-1" data-brochure-intro>Understand what your resources can provide before deciding what comes next.</h2>
+            <p class="gd-brochure__subtitle" data-brochure-intro>Gia helps bring your financial picture together, so you can see not only what you have, but what it may support in your life.</p>
+
+            <section class="gd-brochure__story" data-brochure-intro>
+              <h3 class="gd-h3">See the Bigger Picture.</h3>
+              <p>Gia can help organize your available resources in one place and make them easier to understand.</p>
+              <p>Instead of focusing only on balances or isolated numbers, she helps translate them into practical questions about your everyday life, housing, experiences, and future plans.</p>
+              <figure class="gd-quote">
+                <blockquote class="gd-quote__text"><p>“What can all of this provide for my life?”</p></blockquote>
+              </figure>
+            </section>
+
+            <figure class="gd-brochure__figure" data-brochure-reveal>
+              <img data-src="media/brochures/b-finances-inline.webp" alt="Two children walking hand in hand along a rocky shore at sunset" width="1024" height="683" loading="lazy" decoding="async" style="object-position: 60% 50%">
+            </figure>
+
+            <section class="gd-brochure__story" data-brochure-reveal>
+              <h3 class="gd-h3">Understand Your Capacity.</h3>
+              <p>Gia can help you look at your finances in the context of the way you actually live.</p>
+              <p>With your permission, she can take into account your current lifestyle, recurring costs, housing expenses, and other resources to help you understand how long they may support the life you have defined.</p>
+              <ul class="gd-brochure__list gd-brochure__list--dots">
+                <li>Everyday Life</li>
+                <li>Housing</li>
+                <li>Experiences</li>
+                <li>Reserve Strength</li>
+              </ul>
+              <figure class="gd-quote">
+                <figcaption class="gd-quote__role">GIA</figcaption>
+                <blockquote class="gd-quote__text"><p>“At your current lifestyle and resources, your estimated Living Capacity is 14.7 years.”</p></blockquote>
+              </figure>
+            </section>
+
+            <section class="gd-brochure__story" data-brochure-reveal>
+              <h3 class="gd-h3">Explore What Changes.</h3>
+              <p>Gia can help you explore different possibilities before you make a decision.</p>
+              <p>You can ask what happens if your housing costs change, if your recurring expenses are reduced, or if additional resources become available. Gia can help model those changes conversationally and show how they may affect the bigger picture.</p>
+              <p>She can also help identify savings, better offers, smarter purchases, and ways to reduce recurring expenses.</p>
+            </section>
+
+            <div class="gd-brochure__actions" data-brochure-reveal>
+              <!-- TODO: destination for Explore Your Options (build spec Appendix B, item 1) -->
+              <a class="gd-button gd-button--primary" href="#">Explore Your Options</a>
+              <button type="button" class="gd-button gd-button--secondary" data-brochure-close>Back to the story</button>
+            </div>
+          </div>
+        </div>
+      </dialog>
+
+      <dialog class="gd-brochure" id="brochure-moving" aria-labelledby="brochure-moving-title">
+        <button type="button" class="gd-brochure__close" aria-label="Close" data-brochure-close>
+          <svg viewBox="0 0 14 14" aria-hidden="true" focusable="false"><path d="M1 1l12 12M13 1 1 13"/></svg>
+        </button>
+        <div class="gd-brochure__media">
+          <img class="gd-brochure__image" data-src="media/brochures/b-moving-main.webp" alt="A woman with long hair walking down a sunlit city street" width="1040" height="1064" loading="lazy" decoding="async" style="object-position: 40% 50%">
+          <p class="gd-brochure__marker" aria-hidden="true">PLAN A MOVE</p>
+        </div>
+        <div class="gd-brochure__body" tabindex="-1">
+          <div class="gd-brochure__column">
+            <div class="gd-brochure__tags" data-brochure-intro>
+              <span class="gd-brochure__tag">PLAN A MOVE</span>
+              <span class="gd-brochure__tag gd-brochure__tag--sky">CHAPTER 03</span>
+            </div>
+            <h2 class="gd-brochure__title" id="brochure-moving-title" tabindex="-1" data-brochure-intro>Turn the next step into a clear plan.</h2>
+            <p class="gd-brochure__subtitle" data-brochure-intro>Gia helps you organize the decisions, information, and actions involved in moving from one home to the next.</p>
+
+            <section class="gd-brochure__story" data-brochure-intro>
+              <h3 class="gd-h3">Start With a Plan.</h3>
+              <p>Gia can help you move from a general idea to a more organized sequence of steps.</p>
+              <p>She can support planning, scheduling, research, communication, property discovery, and other multi-step tasks. With your permission, she can also remember what you have already decided and what still needs attention.</p>
+              <p>The process is simple:</p>
+              <p class="gd-brochure__process"><span class="gd-brochure__step">Understand</span> <span class="gd-brochure__arrow">→</span> <span class="gd-brochure__step">Plan</span> <span class="gd-brochure__arrow">→</span> <span class="gd-brochure__step">Ask Permission When Needed</span> <span class="gd-brochure__arrow">→</span> <span class="gd-brochure__step">Take Action</span> <span class="gd-brochure__arrow">→</span> <span class="gd-brochure__step">Monitor</span> <span class="gd-brochure__arrow">→</span> <span class="gd-brochure__step">Report Back</span></p>
+            </section>
+
+            <figure class="gd-brochure__figure" data-brochure-reveal>
+              <img data-src="media/brochures/b-moving-inline.webp" alt="A young professional walking calmly through a parking structure at night, wearing an earbud" width="1536" height="1024" loading="lazy" decoding="async" style="object-position: 35% 40%">
+            </figure>
+
+            <section class="gd-brochure__story" data-brochure-reveal>
+              <h3 class="gd-h3">Keep the Details Together.</h3>
+              <p>Moving involves many connected decisions.</p>
+              <p>Gia can help keep information in one place, connect the property search with your preferences, and help you stay focused on what you are trying to accomplish.</p>
+              <ul class="gd-brochure__list gd-brochure__list--dots">
+                <li>Planning</li>
+                <li>Scheduling</li>
+                <li>Property Research</li>
+                <li>Decision Tracking</li>
+              </ul>
+              <p>Rather than starting over in every conversation, Gia can use the context you have allowed her to remember and continue from where you left off.</p>
+            </section>
+
+            <section class="gd-brochure__story" data-brochure-reveal>
+              <h3 class="gd-h3">Move From Property to Home.</h3>
+              <p>Gia can help you evaluate property information, local services, maintenance considerations, and other details that affect your decision.</p>
+              <p>She can also help identify a home that matches the criteria you have already discussed.</p>
+              <p>The goal is to make the transition easier to understand, with the next step always clearer than the last.</p>
+            </section>
+
+            <div class="gd-brochure__actions" data-brochure-reveal>
+              <!-- TODO: destination for Explore Moving (build spec Appendix B, item 1) -->
+              <a class="gd-button gd-button--primary" href="#">Explore Moving</a>
+              <button type="button" class="gd-button gd-button--secondary" data-brochure-close>Back to the story</button>
+            </div>
+          </div>
+        </div>
+      </dialog>
+
+      <dialog class="gd-brochure" id="brochure-possibilities" aria-labelledby="brochure-possibilities-title">
+        <button type="button" class="gd-brochure__close" aria-label="Close" data-brochure-close>
+          <svg viewBox="0 0 14 14" aria-hidden="true" focusable="false"><path d="M1 1l12 12M13 1 1 13"/></svg>
+        </button>
+        <div class="gd-brochure__media">
+          <img class="gd-brochure__image" data-src="media/brochures/b-possibilities-main.webp" alt="A business owner smiling while taking notes during a video call with Gia" width="1536" height="1024" loading="lazy" decoding="async" style="object-position: 32% 50%">
+          <p class="gd-brochure__marker" aria-hidden="true">BUILD WHAT COMES NEXT</p>
+        </div>
+        <div class="gd-brochure__body" tabindex="-1">
+          <div class="gd-brochure__column">
+            <div class="gd-brochure__tags" data-brochure-intro>
+              <span class="gd-brochure__tag">BUILD WHAT COMES NEXT</span>
+              <span class="gd-brochure__tag gd-brochure__tag--sky">CHAPTER 04</span>
+            </div>
+            <h2 class="gd-brochure__title" id="brochure-possibilities-title" tabindex="-1" data-brochure-intro>Your next possibility can begin with one conversation.</h2>
+            <p class="gd-brochure__subtitle" data-brochure-intro>Gia helps you look beyond one decision and explore the opportunities that may shape what comes next in your life.</p>
+
+            <section class="gd-brochure__story" data-brochure-intro>
+              <h3 class="gd-h3">More Than One Direction.</h3>
+              <p>Life does not move in one category at a time.</p>
+              <p>Gia can help across travel, work, business opportunities, relationships, personal planning, research, and other multi-step goals. You can continue working with Gia even when the task changes.</p>
+              <ul class="gd-brochure__list gd-brochure__list--dots">
+                <li>Travel</li>
+                <li>Work</li>
+                <li>Business</li>
+                <li>Relationships</li>
+                <li>New Experiences</li>
+              </ul>
+            </section>
+
+            <figure class="gd-brochure__figure" data-brochure-reveal>
+              <img data-src="media/brochures/b-possibilities-inline.webp" alt="A café owner studying on a tablet while writing notes" width="1536" height="1024" loading="lazy" decoding="async" style="object-position: 40% 45%">
+            </figure>
+
+            <section class="gd-brochure__story" data-brochure-reveal>
+              <h3 class="gd-h3">Discover Relevant Opportunities.</h3>
+              <p>Gia can help identify possibilities that match your interests, needs, and goals.</p>
+              <p>This may include better offers, useful introductions, work opportunities, business opportunities, property opportunities, ways to save money, and other options available through the Glonari platform.</p>
+              <p>The aim is not to show you everything. It is to help you notice what may actually be relevant to you.</p>
+            </section>
+
+            <section class="gd-brochure__story" data-brochure-reveal>
+              <h3 class="gd-h3">One Conversation Can Open Another Door.</h3>
+              <p>A useful introduction can lead to a new home, a business opportunity, education, travel, a new connection, or another experience you had not considered before.</p>
+              <p>Gia helps you explore those possibilities while keeping your own priorities at the center.</p>
+              <figure class="gd-quote">
+                <figcaption class="gd-quote__role">GIA</figcaption>
+                <blockquote class="gd-quote__text"><p>“You asked me to watch airfare to Tokyo. The price is now within your target.”</p></blockquote>
+              </figure>
+            </section>
+
+            <p class="gd-brochure__closing" data-brochure-reveal>One conversation. More possibilities.</p>
+            <div class="gd-brochure__actions" data-brochure-reveal>
+              <!-- TODO: destination for Explore Possibilities (build spec Appendix B, item 1) -->
+              <a class="gd-button gd-button--primary" href="#">Explore Possibilities</a>
+              <button type="button" class="gd-button gd-button--secondary" data-brochure-close>Back to the story</button>
+            </div>
+          </div>
+        </div>
+      </dialog>
+    </section>
+  </main>
+
+  <!-- Global site shell — footer (build spec 5.5). -->
+  <footer class="gd-footer">
+    <div class="gd-container gd-footer__inner">
+      <img class="gd-footer__logo" src="media/logo/gd-lockup-light.webp" alt="Glonari Global Dream" width="915" height="393" loading="lazy" decoding="async">
+      <ul class="gd-footer__links">
+        <li><a class="gd-footer__link" href="#screen-1">Meet Gia</a></li>
+        <li><a class="gd-footer__link" href="#screen-2">How she helps</a></li>
+        <li><a class="gd-footer__link" href="#screen-side">Your control</a></li>
+        <li><a class="gd-footer__link" href="#screen-3">Everything connects</a></li>
+        <li><a class="gd-footer__link" href="#screen-4">In your life</a></li>
+      </ul>
+      <div class="gd-footer__legal">
+        <!-- TODO: copy needed — legal line -->
+        <p>© 2026 Global Dream</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="js/hero-scrub.js"></script>
+  <script src="js/reveal.js"></script>
+  <script src="js/gia-conversation.js"></script>
+  <script src="js/gia-knows.js"></script>
+  <script src="js/gia-side.js"></script>
+  <script src="js/gia-connect.js"></script>
+  <script src="js/gia-story.js"></script>
+  <script src="js/brochure.js"></script>
+  <script src="js/site-shell.js"></script>
+</body>
+</html>

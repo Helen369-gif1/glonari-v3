@@ -1,0 +1,289 @@
+/* Header and footer (build spec Section 5.5, design system Sections 11
+   and 16.8). The header is fixed, so it overlays Screen 1 without shifting
+   it; no ancestor of the pinned stages gains overflow or padding. Open
+   brochures are modal dialogs in the top layer, above the header. */
+
+:root {
+  --gd-header-height: 72px;
+}
+
+html {
+  scroll-padding-top: 80px;
+}
+
+@media (max-width: 768px) {
+  :root {
+    --gd-header-height: 64px;
+  }
+
+  html {
+    scroll-padding-top: 72px;
+  }
+}
+
+/* ---------- Header ---------- */
+
+.gd-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  height: var(--gd-header-height);
+  background: rgba(247, 243, 235, 0.96);
+  border-bottom: 1px solid var(--gd-line-soft);
+}
+
+/* brochure.js removes the page scrollbar while a panel is open; keep the
+   header's right edge where it was. */
+html.is-brochure-open .gd-header {
+  right: var(--gd-scrollbar-comp, 0px);
+}
+
+.gd-header__bar {
+  display: flex;
+  align-items: center;
+  gap: var(--gd-space-5);
+  height: 100%;
+}
+
+/* Back arrow to the Digital Banker atrium (the previous screen in the
+   Glonari chain). Explicit link, never history.back(). Mirrors the Global
+   Reserve header's .site-header__back; the negative margin keeps it close
+   to the logo instead of a full header gap away. */
+.gd-header__back {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 44px;
+  margin-right: calc(var(--gd-space-1) - var(--gd-space-5));
+  color: var(--gd-text-secondary);
+  font-size: 18px;
+  line-height: 1;
+  text-decoration: none;
+  border-radius: 2px;
+  transition: color 0.2s ease;
+}
+
+.gd-header__back:hover {
+  color: var(--gd-gold-deep);
+}
+
+.gd-header__brand {
+  display: block;
+  flex: none;
+  border-radius: 2px;
+}
+
+.gd-header__brand img {
+  width: auto;
+  height: 52px;
+}
+
+.gd-header__back:focus-visible,
+.gd-header__brand:focus-visible,
+.gd-header__link:focus-visible,
+.gd-header__toggle:focus-visible,
+.gd-footer__link:focus-visible {
+  outline: 2px solid var(--gd-gold-deep);
+  outline-offset: 3px;
+}
+
+.gd-header__nav {
+  min-width: 0;
+  margin-left: auto;
+}
+
+.gd-header__links {
+  display: flex;
+  align-items: center;
+  gap: var(--gd-space-4);
+}
+
+.gd-header__link,
+.gd-footer__link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--gd-text-primary);
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.2;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 200ms ease;
+}
+
+.gd-header__link:hover,
+.gd-header__link:active,
+.gd-footer__link:hover,
+.gd-footer__link:active {
+  color: var(--gd-gold-deep);
+}
+
+.gd-header__actions {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--gd-space-1);
+}
+
+.gd-header__action {
+  padding: 12px 20px;
+}
+
+/* CSS-line hamburger: three 2px lines; an X while the menu is open. */
+.gd-header__toggle {
+  display: none;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  color: var(--gd-text-primary);
+  cursor: pointer;
+}
+
+.gd-header__toggle-lines,
+.gd-header__toggle-lines::before,
+.gd-header__toggle-lines::after {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: currentColor;
+}
+
+.gd-header__toggle-lines {
+  position: relative;
+}
+
+.gd-header__toggle-lines::before,
+.gd-header__toggle-lines::after {
+  content: "";
+  position: absolute;
+  left: 0;
+}
+
+.gd-header__toggle-lines::before {
+  top: -7px;
+}
+
+.gd-header__toggle-lines::after {
+  top: 7px;
+}
+
+.gd-header.is-menu-open .gd-header__toggle-lines {
+  background: transparent;
+}
+
+.gd-header.is-menu-open .gd-header__toggle-lines::before {
+  top: 0;
+  transform: rotate(45deg);
+}
+
+.gd-header.is-menu-open .gd-header__toggle-lines::after {
+  top: 0;
+  transform: rotate(-45deg);
+}
+
+@media (max-width: 1100px) {
+  .gd-header__brand img {
+    height: 44px;
+  }
+
+  .gd-header__actions {
+    margin-left: auto;
+  }
+
+  .gd-header__toggle {
+    display: grid;
+  }
+
+  /* The nav becomes a solid menu under the bar. No animation. */
+  .gd-header__nav {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin: 0;
+    max-height: calc(100vh - var(--gd-header-height));
+    max-height: calc(100svh - var(--gd-header-height));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background: var(--gd-bg);
+    border-top: 1px solid var(--gd-line-soft);
+    border-bottom: 1px solid var(--gd-line-soft);
+  }
+
+  .gd-header.is-menu-open .gd-header__nav {
+    display: block;
+  }
+
+  .gd-header__links {
+    display: block;
+    width: min(100%, var(--gd-container-max));
+    margin-inline: auto;
+    padding: var(--gd-space-1) var(--gd-page-pad) var(--gd-space-2);
+  }
+
+  .gd-header__links li + li {
+    border-top: 1px solid var(--gd-line-soft);
+  }
+
+  .gd-header__link {
+    display: flex;
+    min-height: 52px;
+  }
+}
+
+@media (max-width: 359px) {
+  .gd-header__brand img {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+/* ---------- Footer ---------- */
+
+.gd-footer {
+  padding-block: var(--gd-section-pad-compact);
+  background: var(--gd-bg-soft);
+  border-top: 1px solid var(--gd-line-soft);
+}
+
+.gd-footer__logo {
+  width: 360px;
+  height: auto;
+}
+
+.gd-footer__links {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: var(--gd-space-4);
+  margin-top: var(--gd-space-5);
+}
+
+.gd-footer__legal {
+  margin-top: var(--gd-space-4);
+  padding-top: var(--gd-space-3);
+  border-top: 1px solid var(--gd-line-soft);
+  color: var(--gd-text-secondary);
+  font-family: var(--gd-font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.6;
+  letter-spacing: 0.04em;
+}
+
+@media (max-width: 768px) {
+  .gd-footer__logo {
+    width: min(100%, 280px);
+  }
+
+  .gd-footer__links {
+    flex-direction: column;
+    margin-top: var(--gd-space-4);
+  }
+}

@@ -1,0 +1,44 @@
+/* Gia site — design tokens.
+   Colors: docs/GLONARI_PULSE_COLORS.md. Type, spacing, layout, motion: docs/GIA-SITE-DESIGN-SYSTEM.md. */
+:root {
+  color-scheme: dark;
+  /* Background & surfaces */
+  --gp-black: #050402; --gp-bg: #0F0F0E; --gp-surface: #171514; --gp-surface-2: #1D1712;
+  --gp-warm-dark: #251D16; --gp-line: #3F2A1D;
+  --gp-glass: rgba(20, 17, 14, 0.62);
+  --gp-glass-border: rgba(242, 179, 90, 0.22);
+  --gp-glass-border-active: rgba(242, 179, 90, 0.55);
+  /* Glonari gold */
+  --gp-gold-glow: #FAB95A; --gp-gold: #F2B35A; --gp-gold-warm: #F1A74D; --gp-gold-mid: #C58E42;
+  --gp-gold-deep: #966B32; --gp-gold-dark: #604119; --gp-champagne: #EBC99E; --gp-copper: #C78D61;
+  /* Text */
+  --gp-text: #F6F0E7; --gp-white: #FFFFFF; --gp-text-2: #C7C0B6; --gp-text-muted: #8A847B; --gp-on-gold: #1A1206;
+  /* Data colors */
+  --gp-green: #2EDB8C; --gp-blue: #2F8CF0; --gp-teal: #1EC8E0; --gp-violet: #A35CE0; --gp-warning: #C3734E;
+  /* Effects */
+  --gp-btn-gradient: linear-gradient(180deg, #FAB95A 0%, #F1A74D 55%, #C58E42 100%);
+  --gp-power-glow: 0 0 40px rgba(250, 185, 90, 0.35);
+
+  /* Type (DS) */
+  --font-display: "Playfair Display", Georgia, "Times New Roman", serif;
+  --font-ui: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* Layout (DS) */
+  --container-max: 1200px;
+  --page-pad: clamp(24px, 3.5vw, 48px);
+  --section-pad: clamp(96px, 11vw, 160px);
+  --section-pad-compact: clamp(72px, 8vw, 96px);
+  --grid-gap: clamp(48px, 6vw, 96px);
+  --header-row: 72px;                                   /* level 1: brand, pages, CTA */
+  --subnav-h: 44px;                                     /* level 2: sections of this page */
+  --header-h: calc(var(--header-row) + var(--subnav-h)); /* total fixed header; level 2 hides at 1100px and below */
+  --ease: cubic-bezier(.22, .61, .36, 1);
+
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+@media (max-width: 1100px) { :root { --header-h: var(--header-row); } }
+@media (max-width: 768px) { :root { --header-row: 64px; --page-pad: 24px; } }
+@media (max-width: 480px) { :root { --page-pad: 20px; } }

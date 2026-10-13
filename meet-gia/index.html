@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Meet Gia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&amp;family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=Playfair+Display:wght@500;600;700&amp;display=swap" rel="stylesheet">
+<link rel="icon" href="assets/logo/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="assets/logo/favicon-180.png">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/shell.css">
+<link rel="stylesheet" href="css/pages/meet-gia.css">
+<!-- Dark entry veil, after #entry-veil in global-dream/index.html: opaque on the
+     first frame, fades out once the page has loaded. Color matches #exit-transition
+     in the root styles.css, so the hand-off from the Glonari scene stays black. -->
+<style>
+  #entry-veil {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    opacity: 1;
+    pointer-events: none;
+    background: #000;
+  }
+</style>
+</head>
+<body class="no-js" data-page="meet-gia">
+<div id="entry-veil" aria-hidden="true"></div>
+<script>
+  // Lifts the dark entry veil after load, or after VEIL_FALLBACK_MS if load
+  // is slower — whichever comes first, once. Instant under prefers-reduced-motion.
+  (function () {
+    var VEIL_HOLD_MS = 90;
+    var VEIL_OUT_MS = 300;
+    var VEIL_FALLBACK_MS = 1500; // lift anyway if load is slow to arrive
+    var el = document.getElementById('entry-veil');
+    if (!el) return;
+    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var lifted = false;
+    function lift() {
+      if (lifted) return;
+      lifted = true;
+      window.setTimeout(function () {
+        el.style.transition = reduceMotion ? 'none' : 'opacity ' + VEIL_OUT_MS + 'ms ease-out';
+        el.style.opacity = '0';
+        window.setTimeout(function () { el.remove(); }, reduceMotion ? 0 : VEIL_OUT_MS);
+      }, reduceMotion ? 0 : VEIL_HOLD_MS);
+    }
+    if (document.readyState === 'complete') lift();
+    else {
+      window.addEventListener('load', lift, { once: true });
+      window.setTimeout(lift, VEIL_FALLBACK_MS);
+    }
+  })();
+</script>
+<a class="sr-only" href="#main">Skip to content</a>
+
+<!-- shell:header -->
+<header class="site-header">
+  <div class="site-header__row">
+    <a class="back-link" href="../index.html" aria-label="Back to Glonari"><span class="back-link__arrow" aria-hidden="true">&larr;</span><span class="back-link__label">Glonari</span></a>
+    <a class="brand" href="#what" aria-label="Glonari, back to top">
+      <img class="brand__mark" src="assets/logo/glonari-mark.webp" width="192" height="192" alt="">
+      <span class="brand__name">Glonari</span>
+    </a>
+    <nav class="site-nav" aria-label="Site">
+        <a href="index.html" aria-current="page">Meet Gia</a>
+        <a href="glo.html">Introducing GLO</a>
+        <a href="global-connections.html">Global Connections</a>
+        <a href="how-glo-works.html">How GLO Works</a>
+    </nav>
+    <a class="btn btn--primary btn--sm header-cta" href="#join">Join the waitlist</a>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Open menu"><span></span></button>
+  </div>
+  <div class="subnav">
+    <nav class="subnav__inner" aria-label="On this page">
+        <a href="#what">What is Gia</a>
+        <a href="#how">How it works</a>
+        <a href="#people">How people use Gia</a>
+        <a href="#in-action">In action</a>
+        <a href="#memory">Memory</a>
+        <a href="#control">Control</a>
+        <a href="#work">Work</a>
+        <a href="#more-power">More power</a>
+    </nav>
+  </div>
+  <div class="progress" aria-hidden="true"></div>
+</header>
+<div class="mobile-menu" id="mobile-menu">
+  <nav aria-label="Site">
+    <ul class="mm">
+      <li class="mm__page is-current"><a href="index.html" aria-current="page">Meet Gia</a>
+        <ul class="mm__sections" aria-label="On this page">
+          <li><a href="#what">What is Gia</a></li>
+          <li><a href="#how">How it works</a></li>
+          <li><a href="#people">How people use Gia</a></li>
+          <li><a href="#in-action">In action</a></li>
+          <li><a href="#memory">Memory</a></li>
+          <li><a href="#control">Control</a></li>
+          <li><a href="#work">Work</a></li>
+          <li><a href="#more-power">More power</a></li>
+        </ul>
+      </li>
+      <li class="mm__page"><a href="glo.html">Introducing GLO</a></li>
+      <li class="mm__page"><a href="global-connections.html">Global Connections</a></li>
+      <li class="mm__page"><a href="how-glo-works.html">How GLO Works</a></li>
+    </ul>
+  </nav>
+  <a class="btn btn--primary" href="#join">Join the waitlist</a>
+</div>
+<!-- /shell:header -->
+
+<main id="main">
+
+<!-- 01 HERO -->
+<section class="hero" id="what" aria-label="Meet Gia">
+  <div class="hero__stage">
+    <canvas class="hero__canvas" aria-hidden="true"></canvas>
+    <div class="hero__scrim" aria-hidden="true"></div>
+    <div class="hero__copy">
+      <div class="container">
+        <div class="hero__caps">
+          <div class="cap cap--1"><h1>Your personal AI agent for thinking, deciding and getting things done.</h1></div>
+          <div class="cap cap--2" aria-hidden="true"><p class="cap__display">Meet Gia.</p></div>
+          <div class="cap cap--3" aria-hidden="true"><p class="cap__display">Ask. Explore. Compare. Decide.</p></div>
+          <div class="cap cap--4">
+            <p class="cap__display">Gia helps you move forward — while you stay in control.</p>
+            <div class="btn-row btn-row--stack">
+              <a class="btn btn--primary" href="#in-action">See Gia in action</a>
+              <a class="btn btn--secondary" href="#join">Join the waitlist</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="hero__hint" aria-hidden="true">Scroll</div>
+    <div class="hero__loading" aria-hidden="true"></div>
+  </div>
+</section>
+
+<!-- 02 HOW IT WORKS -->
+<section class="section" id="how" aria-labelledby="how-title">
+  <div class="container">
+    <header class="head--center reveal">
+      <p class="eyebrow">How it works</p>
+      <h2 class="h2" id="how-title">One request. Three simple steps.</h2>
+      <p class="lead">One conversation from start to finish. Here, a family planning a move asks Gia to compare three neighborhoods.</p>
+    </header>
+
+    <ol class="steps gap-major" data-stagger>
+      <li class="step">
+        <div class="step__text">
+          <span class="step__num">01</span>
+          <h3 class="h4">Tell Gia what you need</h3>
+          <p class="small">In text, voice or video.</p>
+        </div>
+        <div class="glass mock" aria-label="Example: the request">
+          <div class="modes" aria-hidden="true"><span class="mode is-on">Text</span><span class="mode">Voice</span><span class="mode">Video</span></div>
+          <div class="bubble bubble--user">Help me compare three neighborhoods for our move.</div>
+          <div class="mock__input" aria-hidden="true"><span>Type a message…</span><span>↑</span></div>
+        </div>
+      </li>
+      <li class="step">
+        <div class="step__text">
+          <span class="step__num">02</span>
+          <h3 class="h4">Gia researches and organizes</h3>
+          <p class="small">She gathers what matters and prepares useful options.</p>
+        </div>
+        <div class="glass mock" aria-label="Example: Gia researching">
+          <div class="gia-tag"><span class="gia-dot"></span>Gia is gathering</div>
+          <ul class="factor-list">
+            <li>Commute to downtown <span class="status status--ready">Done</span></li>
+            <li>Schools nearby <span class="status status--ready">Done</span></li>
+            <li>Housing costs <span class="status status--ready">Done</span></li>
+            <li>Parks, cafés, lifestyle <span class="status status--working">Researching</span></li>
+          </ul>
+        </div>
+      </li>
+      <li class="step">
+        <div class="step__text">
+          <span class="step__num">03</span>
+          <h3 class="h4">You review and decide</h3>
+          <p class="small">Approve, ask why, or change direction. You choose what happens next.</p>
+        </div>
+        <div class="glass mock is-active" aria-label="Example: comparison for review">
+          <table class="cmp">
+            <thead><tr><th scope="col"></th><th scope="col">Riverside</th><th scope="col">Maple Hts</th><th scope="col">Old Town</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">Commute</th><td>32 min</td><td class="best">24 min</td><td>41 min</td></tr>
+              <tr><th scope="row">Schools</th><td class="best">8.6</td><td>7.9</td><td>7.2</td></tr>
+              <tr><th scope="row">Avg. rent</th><td>$2,450</td><td>$2,780</td><td class="best">$2,190</td></tr>
+              <tr><th scope="row">Walkability</th><td>High</td><td>Medium</td><td class="best">Very high</td></tr>
+            </tbody>
+          </table>
+          <div class="btn-row">
+            <span class="btn btn--primary btn--sm">Approve shortlist</span>
+            <span class="btn btn--secondary btn--sm">Ask Gia why</span>
+          </div>
+        </div>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<!-- 02b A GIA THAT WORKS WITH YOU (breather) -->
+<section class="section section--compact section--deep" id="with-you" data-nav="how" aria-labelledby="with-you-title">
+  <div class="container breather">
+    <div class="breather__text reveal">
+      <h2 class="h2" id="with-you-title">More than answers.<span class="breather__sub">A Gia that works with you.</span></h2>
+      <ul class="pillars">
+        <li><h3 class="h4">She remembers what matters.</h3><p class="small">So you don’t have to start over every time.</p></li>
+        <li><h3 class="h4">She helps you decide.</h3><p class="small">She researches, compares and brings you clear options.</p></li>
+        <li><h3 class="h4">She gets things done.</h3><p class="small">With your direction and approval, she can carry the work forward.</p></li>
+      </ul>
+      <p class="breather__close">You stay in control.</p>
+    </div>
+    <figure class="breather__media media-frame" style="--ratio: 16 / 9">
+      <div class="media-frame__box" data-parallax>
+        <video class="breather__video" src="assets/video/works-with-you.mp4" poster="assets/images/works-with-you-start.webp" data-end-poster="assets/images/works-with-you-end.webp" width="1280" height="720" muted playsinline preload="auto" aria-hidden="true"></video>
+      </div>
+    </figure>
+  </div>
+</section>
+
+<!-- 03 HOW PEOPLE USE GIA -->
+<section class="section" id="people" aria-labelledby="people-title">
+  <div class="container">
+    <header class="head--center reveal">
+      <p class="eyebrow">How people use Gia</p>
+      <h2 class="h2" id="people-title">Different lives. One Gia.</h2>
+      <p class="lead">Not everyone uses her the same way. She helps with the thinking, organizing and follow-through each person already needs.</p>
+    </header>
+
+    <div class="personas gap-major" data-stagger>
+      <figure class="persona">
+        <div class="media-frame__box persona__frame" data-parallax>
+          <img class="persona__img" src="assets/images/busy-professional.webp" width="1200" height="675" loading="lazy" decoding="async" style="object-position: 38% 50%" alt="A man at an outdoor table at sunset checks his phone, with Gia's executive summary open on his laptop">
+        </div>
+        <figcaption class="persona__body">
+          <h3 class="h4">The busy professional</h3>
+          <p class="persona__tag">Too much to manage. Not enough time.</p>
+          <p class="small">Gia can prepare briefings, organize travel, research companies, keep track of open questions and turn notes into clear next steps.</p>
+        </figcaption>
+      </figure>
+      <figure class="persona">
+        <div class="media-frame__box persona__frame" data-parallax>
+          <img class="persona__img" src="assets/images/couple-comparing-homes.webp" width="1200" height="675" loading="lazy" decoding="async" style="object-position: 55% 50%" alt="A couple at home in the evening compares house listings with Gia on a tablet, brochures and a floor plan on the table">
+        </div>
+        <figcaption class="persona__body">
+          <h3 class="h4">The future builder</h3>
+          <p class="persona__tag">Buying a home. Moving. Investing. Planning what comes next.</p>
+          <p class="small">Gia can gather information, compare options, summarize complex documents, remember decisions and help model scenarios without losing the thread.</p>
+        </figcaption>
+      </figure>
+      <figure class="persona">
+        <div class="media-frame__box persona__frame" data-parallax>
+          <img class="persona__img" src="assets/images/quiet-moment.webp" width="1200" height="900" loading="lazy" decoding="async" style="object-position: 50% 45%" alt="A woman relaxing on her sofa talks with Gia on a tablet about ideas from her notebook">
+        </div>
+        <figcaption class="persona__body">
+          <h3 class="h4">The thinker &amp; explorer</h3>
+          <p class="persona__tag">Not another search result. A conversation that remembers where you left off.</p>
+          <p class="small">Think through an idea, brainstorm, plan leisure time or explore possibilities without starting from zero.</p>
+        </figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- 04 SEE GIA IN ACTION -->
+<section class="section" id="in-action" aria-labelledby="action-title">
+  <div class="container">
+    <div class="action">
+      <div class="action__list">
+        <header class="reveal">
+          <p class="eyebrow">See Gia in action</p>
+          <h2 class="h2" id="action-title">From a messy situation to a clear next step.</h2>
+          <p class="lead">One real scenario: your flight to New York was changed. Nothing is rebooked until you say so.</p>
+        </header>
+        <ol class="action__rows" id="action-rows">
+          <li class="arow is-active"><button type="button" data-state="0"><span class="arow__mark">01</span><span class="arow__title">You ask</span><span class="arow__desc">“My flight to New York was changed.” That's all Gia needs to start.</span></button></li>
+          <li class="arow"><button type="button" data-state="1"><span class="arow__mark">02</span><span class="arow__title">Gia researches</span><span class="arow__desc">She checks same-day flights, fares and connection times on your route.</span></button></li>
+          <li class="arow"><button type="button" data-state="2"><span class="arow__mark">03</span><span class="arow__title">You see the options</span><span class="arow__desc">Two alternatives with the trade-offs laid out: time against money.</span></button></li>
+          <li class="arow"><button type="button" data-state="3"><span class="arow__mark">04</span><span class="arow__title">Gia asks before acting</span><span class="arow__desc">Changing a booking costs money, so she waits for your confirmation.</span></button></li>
+          <li class="arow"><button type="button" data-state="4"><span class="arow__mark">05</span><span class="arow__title">Done</span><span class="arow__desc">The change is made and confirmed. You stay in the loop the whole time.</span></button></li>
+          <li class="arow arow--alt"><button type="button" data-state="5"><span class="arow__mark">!</span><span class="arow__title">When she can't verify</span><span class="arow__desc">If something is uncertain, Gia says so and suggests how to check.</span></button></li>
+        </ol>
+      </div>
+      <div class="action__panel">
+        <div class="glass phone is-active" role="region" aria-label="Gia conversation example" aria-live="polite">
+          <div class="phone__head"><span class="gia-dot"></span><span class="phone__title">Gia</span><span class="phone__sub">Trip to New York</span></div>
+          <div class="phone__body" id="phone-body"></div>
+          <div class="phone__foot">
+            <div class="phone__state"><span id="phone-state">Request</span><span id="phone-count">1 / 5</span></div>
+            <div class="mock__input" aria-hidden="true"><span>Type a message…</span><span>↑</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 MEMORY -->
+<section class="section section--deep" id="memory" aria-labelledby="memory-title">
+  <div class="container split split--mem">
+    <div>
+      <header class="reveal">
+        <p class="eyebrow">She gets to know you</p>
+        <h2 class="h2" id="memory-title">The more context you choose to share, the less you have to repeat.</h2>
+        <p class="lead">Gia can remember selected details across conversations. You decide what she keeps, and you can review or remove it at any time.</p>
+      </header>
+      <div class="tabs" role="tablist" aria-label="Memory examples">
+        <button class="tab" role="tab" aria-selected="true" aria-controls="mem-panel" data-mem="builder">Future builder</button>
+        <button class="tab" role="tab" aria-selected="false" aria-controls="mem-panel" data-mem="pro" tabindex="-1">Professional</button>
+        <button class="tab" role="tab" aria-selected="false" aria-controls="mem-panel" data-mem="parent" tabindex="-1">Parent</button>
+        <button class="tab" role="tab" aria-selected="false" aria-controls="mem-panel" data-mem="talk" tabindex="-1">Ongoing conversation</button>
+      </div>
+    </div>
+    <div class="glass mem is-active" id="mem-panel" role="tabpanel">
+      <div class="mem__chat" id="mem-chat"></div>
+      <aside class="mem__side" aria-label="Memory">
+        <div class="mem__head"><span class="h4">Memory</span><span class="caption" id="mem-count"></span></div>
+        <ul class="mem__list" id="mem-list"></ul>
+        <div class="mem__toast" id="mem-toast" aria-live="polite"></div>
+        <button class="btn btn--ghost btn--sm" type="button" id="mem-edit">Edit memory</button>
+        <p class="mem__note">Only items you approve are saved.</p>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- 06 CONTROL, PRIVACY & LIMITS -->
+<section class="section" id="control" aria-labelledby="control-title">
+  <div class="container">
+    <header class="head--center reveal">
+      <p class="eyebrow">Control, privacy &amp; limits</p>
+      <h2 class="h2" id="control-title">Helpful does not mean automatic.</h2>
+      <p class="lead">Gia prepares, recommends and organizes. Important actions stay visible and in your hands. When she is unsure, needs more information or can't safely help, she says so.</p>
+    </header>
+
+    <div class="control gap-major">
+      <div class="glass perm is-active" aria-labelledby="perm-q">
+        <div class="perm__icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F2B35A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8.5-7 10-4-1.5-7-5.5-7-10V6l7-3z"/><path d="M9.5 12l1.8 1.8L15 10"/></svg>
+        </div>
+        <p class="perm__q" id="perm-q">Share your aisle-seat preference?</p>
+        <p class="small">Gia wants to share your aisle-seat preference with a travel service to complete your booking.</p>
+        <div class="perm__choices" id="perm-choices">
+          <button class="btn btn--primary btn--sm" type="button" data-perm="Allow once">Allow once</button>
+          <button class="btn btn--secondary btn--sm" type="button" data-perm="Always allow">Always allow</button>
+          <button class="btn btn--ghost btn--sm" type="button" data-perm="Don't share">Don't share</button>
+        </div>
+        <p class="perm__result" id="perm-result" aria-live="polite"></p>
+        <div class="says">
+          <div class="say"><span class="say__label">Asking first</span><div class="bubble bubble--gia">I can draft the message, but I need your approval before I send it.</div></div>
+          <div class="say"><span class="say__label">Being honest about uncertainty</span><div class="bubble bubble--gia">I found three possible answers, but I could not verify the source.</div></div>
+          <div class="say"><span class="say__label">Handing off</span><div class="bubble bubble--gia">This request needs a licensed or human expert. I can help you prepare the questions.</div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 class="h4">Activity history</h3>
+        <p class="caption">Everything Gia did, in order. Nothing hidden.</p>
+        <ul class="log" id="log">
+          <li>Drafted a message to Alex<small>2h ago</small><span class="status status--review">Needs approval</span></li>
+          <li>Compared three travel options<small>3h ago</small><span class="status status--ready">Ready</span></li>
+          <li>Couldn't verify a school rating source<small>Yesterday</small><span class="status status--review">Flagged</span></li>
+          <li>Suggested a licensed tax advisor<small>Yesterday</small><span class="status status--muted">Handed off</span></li>
+          <li>Summarized lease agreement, 14 pages<small>Mon</small><span class="status status--ready">Ready</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="tiers" data-stagger>
+      <div class="card tier" style="--dot: var(--gp-gold-mid)" data-spotlight><h3 class="tier__name">Available now</h3><p class="small">Research, summarize, organize, compare options, draft materials.</p></div>
+      <div class="card tier" style="--dot: var(--gp-blue)" data-spotlight><h3 class="tier__name">With your approval</h3><p class="small">Share selected information, send or book where supported, complete higher-impact actions.</p></div>
+      <div class="card tier" style="--dot: var(--gp-violet)" data-spotlight><h3 class="tier__name">Coming next</h3><p class="small">Additional autonomous workflows, integrations and capabilities as they are released.</p></div>
+    </div>
+
+    <div class="faq">
+      <h3 class="h4">What Gia can and cannot do</h3>
+      <details><summary>Can Gia act without asking me?</summary><p class="small">Not for anything important. She can research, summarize and draft on her own. Sending, sharing, booking or paying always waits for your approval.</p></details>
+      <details><summary>What does Gia remember?</summary><p class="small">Only what you choose to save. You can review, edit or remove any item in Memory at any time.</p></details>
+      <details><summary>What happens when Gia isn't sure?</summary><p class="small">She tells you what she couldn't verify and suggests how to check it, instead of guessing.</p></details>
+      <details><summary>When does Gia hand off to a person?</summary><p class="small">When a request needs a licensed professional or a human expert. She says so and helps you prepare.</p></details>
+      <!-- Waiting for the answer from the product and legal teams: remove "hidden" and write the answer to show it. -->
+      <details hidden><summary>Where is my data stored, and how do I delete it?</summary><p class="small">Answer to come from the product and legal teams.</p></details>
+    </div>
+  </div>
+</section>
+
+<!-- 07 WORK -->
+<section class="section section--deep" id="work" aria-labelledby="work-title">
+  <div class="container">
+    <div class="split" style="align-items: start;">
+      <header class="reveal">
+        <p class="eyebrow">She can work with you</p>
+        <h2 class="h2" id="work-title">Use Gia for work that takes time, not just questions.</h2>
+        <p class="lead">Gia turns a larger task into a sequence: gather, analyze, organize, draft, then bring it back for your review. Less routine work to carry alone.</p>
+      </header>
+      <ul class="examples">
+        <li><b>Leader</b><span class="small">Prepare a briefing before a meeting, organize travel options, turn notes into follow-ups.</span></li>
+        <li><b>Future builder</b><span class="small">Compare homes, summarize documents, track open questions, model budget scenarios.</span></li>
+        <li><b>Parent</b><span class="small">Organize the week, combine schedules, build a shopping list, surface conflicts.</span></li>
+        <li><b>Business</b><span class="small">Research a company, list sources, outline risks, prepare a presentation draft.</span></li>
+      </ul>
+    </div>
+
+    <div class="glass ws gap-major is-active" aria-label="Example task workspace">
+      <div class="ws__pane">
+        <p class="ws__label">Your goal</p>
+        <p class="ws__goal">Research Northwind Logistics before Thursday's meeting and prepare a short presentation.</p>
+        <p class="ws__label">Your approvals</p>
+        <ul class="appr">
+          <li>Use public sources only <span class="status status--ready">Approved</span></li>
+          <li>Include last quarter's earnings call <span class="status status--ready">Approved</span></li>
+          <li id="appr-share">Share the draft with Maya <span class="btn-row" style="gap:6px"><button class="btn btn--primary btn--sm" type="button" data-appr="yes">Approve</button><button class="btn btn--ghost btn--sm" type="button" data-appr="no">Not yet</button></span></li>
+        </ul>
+      </div>
+      <div class="ws__pane">
+        <p class="ws__label">Gia's progress</p>
+        <ul class="tasks">
+          <li>Gather sources<small>14 sources found</small><span class="status status--ready">Ready</span></li>
+          <li>Analyze recent changes<small>New CEO, two acquisitions in 2026</small><span class="status status--ready">Ready</span></li>
+          <li>Outline risks<small>2 assumptions need your eye</small><span class="status status--review">Needs review</span></li>
+          <li>Prepare presentation draft<small>Slide 4 of 6</small><span class="status status--working">Researching</span><span class="bar"><i></i></span></li>
+        </ul>
+        <div class="ws__cols">
+          <div>
+            <p class="ws__label">Sources</p>
+            <div class="chips"><span class="chip">Annual report 2025</span><span class="chip">Q2 earnings call</span><span class="chip">Trade press (6)</span><span class="chip">Company blog</span></div>
+            <p class="ws__label" style="margin-top:20px">Assumptions</p>
+            <div style="display:grid;gap:8px">
+              <p class="assume">Revenue figures for 2026 are estimates from trade press.</p>
+              <p class="assume">The acquisition of Halden Freight has closed.</p>
+            </div>
+          </div>
+          <div>
+            <p class="ws__label">Draft</p>
+            <ol class="draft"><li>Company at a glance</li><li>What changed this year</li><li>Market position</li><li>Risks to discuss</li><li>Questions for Thursday</li><li>Sources</li></ol>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 08 MORE POWER -->
+<section class="section section--glow" id="more-power" aria-labelledby="power-title">
+  <div class="container">
+    <header class="head--center reveal">
+      <p class="eyebrow">More power, more tools</p>
+      <h2 class="h2" id="power-title">One Gia. More capability when you need it.</h2>
+      <p class="lead">Gia is the main product. Other Glonari services are tools she can bring into a task when they're relevant.</p>
+    </header>
+    <div class="tools gap-major" data-stagger>
+      <div class="card tool" data-spotlight>
+        <svg class="draw-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg>
+        <p class="tool__text">Explore homes and understand the practical monthly cost.</p>
+        <span class="tool__name">Homes</span>
+      </div>
+      <div class="card tool" data-spotlight>
+        <svg class="draw-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/><path d="M7 15h3"/></svg>
+        <p class="tool__text">Keep financial information and options organized in one place.</p>
+        <span class="tool__name">Money</span>
+      </div>
+      <div class="card tool" data-spotlight>
+        <svg class="draw-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17.5" cy="9" r="2.4"/><path d="M16 14.2c2.9.3 5 2.6 5 5.8"/></svg>
+        <p class="tool__text">Connect with the right people or specialists when a task needs them.</p>
+        <span class="tool__name">People &amp; experts</span>
+      </div>
+      <a class="card tool tool--link" href="glo.html" data-spotlight>
+        <svg class="draw-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"/></svg>
+        <p class="tool__text">Unlock additional resources, capacity and capabilities for Gia.</p>
+        <span class="tool__more">See what GLO adds</span>
+        <span class="tool__name">GLO</span>
+      </a>
+    </div>
+    <p class="caption tools-note">GLO access is subject to program terms.</p>
+  </div>
+</section>
+
+<!-- 09 FINAL CTA -->
+<section class="section section--deep" id="join" aria-labelledby="join-title">
+  <div class="container final">
+    <div>
+      <p class="eyebrow">Your Gia</p>
+      <h2 class="final__h" id="join-title">This is your Gia. Start with one real thing you want to get done.</h2>
+      <p class="lead">Talk to her. Give her context. Review what she prepares. Let the relationship become more useful over time.</p>
+      <ul class="uses">
+        <li><b>Everyday life:</b> plan, compare, remember and organize.</li>
+        <li><b>Work:</b> research, prepare and follow through.</li>
+        <li><b>Bigger decisions:</b> keep the details together and explore options without losing the thread.</li>
+      </ul>
+      <form class="waitlist" id="waitlist" novalidate>
+        <label class="sr-only" for="wl-email">Email address</label>
+        <input id="wl-email" type="email" name="email" placeholder="you@example.com" autocomplete="email" required>
+        <button class="btn btn--primary" type="submit">Join the waitlist</button>
+      </form>
+      <p class="waitlist__msg" id="wl-msg" aria-live="polite"></p>
+      <p class="final__alt"><a href="#in-action">See Gia in action</a></p>
+    </div>
+    <figure class="final__media" data-parallax>
+      <video class="final__img" data-play-once data-delay="400" data-still="assets/images/final-gia-still.webp" muted playsinline preload="metadata" poster="assets/images/final-gia-poster.webp" width="1280" height="720" aria-hidden="true">
+        <source src="assets/video/final-gia.mp4" type="video/mp4">
+      </video>
+    </figure>
+  </div>
+</section>
+
+</main>
+
+<!-- shell:footer -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer__top" style="--footer-cols: 2">
+      <div class="footer__brand">
+        <a class="footer-logo" href="#what" aria-label="Glonari, back to top">
+          <picture>
+            <source media="(max-width: 768px)" srcset="assets/logo/glonari-lockup-stacked.webp" width="760" height="359">
+            <img src="assets/logo/glonari-lockup-horizontal.webp" width="840" height="222" alt="Glonari. Experience more.">
+          </picture>
+        </a>
+        <p class="small footer__about">Gia is your personal AI agent by Glonari.</p>
+      </div>
+      <nav class="footer__col" aria-label="Footer: site">
+        <p class="footer__head">The site</p>
+        <ul>
+          <li><a href="index.html" aria-current="page">Meet Gia</a></li>
+          <li><a href="glo.html">Introducing GLO</a></li>
+          <li><a href="global-connections.html">Global Connections</a></li>
+          <li><a href="how-glo-works.html">How GLO Works</a></li>
+        </ul>
+      </nav>
+      <div class="footer__col">
+        <p class="footer__head">Membership</p>
+        <ul>
+          <li><a href="#join">Join the waitlist</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer__info">
+      <p class="caption"><strong>Important information.</strong> GLO&trade; is Glonari&rsquo;s Membership &amp; Access Token. Qualifying GLO can give Gia access to additional resources under applicable program terms. GLO itself does not pay income, interest or yield, and does not guarantee appreciation, liquidity or resale. Not every capability described on this site is available today; each one is labeled with its current status.</p>
+    </div>
+    <p class="caption mono footer__legal">© 2026 Glonari.</p>
+  </div>
+</footer>
+<!-- /shell:footer -->
+
+<script src="js/site.js"></script>
+<script src="js/components.js"></script>
+<script src="js/pages/meet-gia-frames.js"></script>
+<script src="js/pages/meet-gia.js"></script>
+</body>
+</html>

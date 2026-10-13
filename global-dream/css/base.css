@@ -1,0 +1,283 @@
+/* Global Dream — base layer.
+   Reset, fonts, container, section classes, type roles, buttons,
+   utilities, and the shared reveal states. Uses tokens.css only. */
+
+/* ---------- Reset ---------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+img,
+picture,
+video,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  background: none;
+  border: 0;
+}
+
+ol,
+ul {
+  list-style: none;
+}
+
+a {
+  color: inherit;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+/* ---------- Fonts and document ---------- */
+
+body {
+  background: var(--gd-bg);
+  color: var(--gd-text-secondary);
+  font-family: var(--gd-font-ui);
+  font-size: clamp(17px, 1.4vw, 20px);
+  font-weight: 400;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  color: var(--gd-text-primary);
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+/* ---------- Type roles (design system Section 4.2) ---------- */
+
+.gd-h2 {
+  font-size: clamp(32px, 4vw, 48px);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.gd-h2--large {
+  font-size: clamp(36px, 4.5vw, 56px);
+}
+
+.gd-h3 {
+  font-size: clamp(20px, 2vw, 28px);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+.gd-lead {
+  font-size: clamp(18px, 1.8vw, 22px);
+  line-height: 1.65;
+}
+
+.gd-body {
+  font-size: clamp(17px, 1.4vw, 20px);
+  line-height: 1.7;
+}
+
+.gd-small {
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.gd-eyebrow {
+  font-family: var(--gd-font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gd-gold-deep);
+}
+
+.gd-caption {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--gd-text-tertiary);
+}
+
+.gd-data {
+  font-size: clamp(30px, 3.2vw, 46px);
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  color: var(--gd-gold-deep);
+}
+
+/* ---------- Container ---------- */
+
+.gd-container {
+  width: min(100%, var(--gd-container-max));
+  margin-inline: auto;
+  padding-inline: var(--gd-page-pad);
+}
+
+@media (max-width: 768px) {
+  :root {
+    --gd-page-pad: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --gd-page-pad: 20px;
+  }
+}
+
+/* ---------- Sections (design system Section 5.3) ---------- */
+
+.gd-section {
+  padding-block: var(--gd-section-pad);
+  background: var(--gd-bg);
+}
+
+.gd-section--soft {
+  padding-block: var(--gd-section-pad);
+  background: var(--gd-bg-soft);
+}
+
+.gd-section--compact {
+  padding-block: var(--gd-section-pad-compact);
+}
+
+.gd-section--viewport {
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  padding-block: var(--gd-section-pad);
+}
+
+/* ---------- Buttons (build spec Section 4.2) ---------- */
+
+.gd-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 16px 28px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font-family: var(--gd-font-ui);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0.01em;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color 200ms ease,
+    border-color 200ms ease,
+    color 200ms ease;
+}
+
+.gd-button:focus-visible {
+  outline: 2px solid var(--gd-gold-deep);
+  outline-offset: 3px;
+}
+
+.gd-button--primary {
+  background: var(--gd-gold-deep);
+  color: #fff;
+  border-color: var(--gd-gold-deep);
+}
+
+.gd-button--primary:hover {
+  background: color-mix(in srgb, var(--gd-gold-deep) 88%, var(--gd-text-primary));
+  border-color: color-mix(in srgb, var(--gd-gold-deep) 88%, var(--gd-text-primary));
+}
+
+.gd-button--secondary {
+  background: transparent;
+  color: var(--gd-text-primary);
+  border-color: var(--gd-gold-line);
+}
+
+.gd-button--secondary:hover {
+  border-color: var(--gd-gold-deep);
+}
+
+/* Primary on the dark accent screen (Screen 2, design system 16.1). */
+.gd-button--primary.gd-button--on-dark {
+  background: var(--gd-gold);
+  color: var(--gd-text-primary);
+  border-color: var(--gd-gold);
+}
+
+.gd-button--primary.gd-button--on-dark:hover {
+  background: color-mix(in srgb, var(--gd-gold) 88%, var(--gd-night));
+  border-color: color-mix(in srgb, var(--gd-gold) 88%, var(--gd-night));
+}
+
+.gd-button--on-dark:focus-visible {
+  outline-color: var(--gd-gold);
+}
+
+/* ---------- Utilities ---------- */
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0 0 0 0) !important;
+  clip-path: inset(50%) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* ---------- Reveal (build spec Section 4.5) ----------
+   The hidden starting state applies only once reveal.js has added
+   .js to <html>, so content stays visible if JavaScript fails. */
+
+.js [data-reveal] {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 600ms cubic-bezier(.22, .61, .36, 1),
+    transform 600ms cubic-bezier(.22, .61, .36, 1);
+}
+
+.js [data-reveal].is-revealed {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}

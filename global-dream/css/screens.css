@@ -1,0 +1,1743 @@
+/* Screens 1, 2, 3 (build spec Sections 5.1-5.3). Built in tasks A2-A4. */
+
+/* ==========================================================================
+   Screen 1 — Hero / scroll video (build spec Section 5.1)
+
+   The default rules are the static composition: no runway, no pin, poster
+   as a cover image, blocks 1 and 3 stacked. This is what reduced motion
+   gets, and what remains if JavaScript or GSAP fails. hero-scrub.js adds
+   .is-scrub to the section to switch on the pinned scroll-scrub layout.
+   ========================================================================== */
+
+.gd-hero {
+  background: var(--gd-bg);
+}
+
+/* One grid cell holds the media layer, the veil, and the text layer. */
+.gd-hero__stage {
+  position: relative;
+  display: grid;
+  grid-template: minmax(0, 1fr) / minmax(0, 1fr);
+  min-height: 100vh;
+  min-height: 100svh;
+  overflow: clip;
+}
+
+.gd-hero__stage > * {
+  grid-area: 1 / 1;
+  min-width: 0;
+}
+
+/* The video is taken out of grid sizing so its intrinsic ratio can never
+   stretch the stage; it fills the layer explicitly. */
+.gd-hero__media {
+  position: relative;
+  overflow: hidden;
+  background: var(--gd-bg-soft);
+}
+
+.gd-hero__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+}
+
+/* Static warm legibility veil (build spec 5.1, design system 16.4).
+   --gd-night-umber at 48% / 38% / 14% / 6% / 0% alpha: dark behind the
+   text band, clear in the lower half. The video is lifted slightly so the
+   lobby reads bright rather than grey. It never animates. Positioned so it
+   paints above the positioned media layer. */
+.gd-hero__video {
+  filter: brightness(1.08) saturate(1.1) contrast(1.03);
+}
+
+.gd-hero__veil {
+  position: relative;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--gd-night-umber) 48%, transparent) 0%,
+    color-mix(in srgb, var(--gd-night-umber) 38%, transparent) 40%,
+    color-mix(in srgb, var(--gd-night-umber) 14%, transparent) 55%,
+    color-mix(in srgb, var(--gd-night-umber) 6%, transparent) 70%,
+    color-mix(in srgb, var(--gd-night-umber) 0%, transparent) 100%
+  );
+}
+
+.gd-hero__text {
+  position: relative;
+  padding-block: 16svh var(--gd-space-7);
+}
+
+.gd-hero__column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* Tight stack keeps block 3 in the upper band where the veil is darkest. */
+  gap: var(--gd-space-2);
+  width: min(80%, 1100px);
+  margin-inline: auto;
+  text-align: center;
+}
+
+.gd-hero__block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+}
+
+.gd-hero__block--1 {
+  gap: var(--gd-space-2);
+}
+
+.gd-hero__block--2 {
+  display: none;
+}
+
+.gd-hero__block--3 {
+  gap: var(--gd-space-4);
+}
+
+/* Playfair Display is declared here for Screen 1 only (no font token).
+   Light text on the dark veil; the shadow is Screen 1 only. */
+.gd-hero__title,
+.gd-hero__tagline,
+.gd-hero__phrase {
+  font-family: "Playfair Display", serif;
+  font-weight: 500;
+  color: var(--gd-surface);
+  text-shadow: 0 2px 24px color-mix(in srgb, var(--gd-night-umber) 45%, transparent);
+}
+
+/* The start padding balances the trailing letter-spacing so GIA centres. */
+.gd-hero__title {
+  font-size: clamp(72px, 9vw, 168px);
+  line-height: 1;
+  letter-spacing: 0.06em;
+  padding-inline-start: 0.06em;
+}
+
+.gd-hero__tagline {
+  font-size: clamp(22px, 2.2vw, 40px);
+  line-height: 1.3;
+}
+
+.gd-hero__phrase {
+  font-size: clamp(34px, 3.8vw, 72px);
+  line-height: 1.15;
+}
+
+.gd-hero .word {
+  display: inline-block;
+}
+
+@media (max-width: 599px) {
+  .gd-hero__text {
+    padding-top: 18svh;
+  }
+
+  .gd-hero__column {
+    width: 88%;
+  }
+}
+
+/* ---------- Pinned scroll-scrub layout ---------- */
+
+.gd-hero.is-scrub .gd-hero__runway {
+  height: 400vh;
+}
+
+.gd-hero.is-scrub .gd-hero__stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+}
+
+.gd-hero.is-scrub .gd-hero__text {
+  padding: 0;
+}
+
+/* All blocks share one centred column whose top sits at 16% of the stage;
+   the blocks occupy the same grid cell and replace one another. */
+.gd-hero.is-scrub .gd-hero__column {
+  position: absolute;
+  top: 16%;
+  left: 50%;
+  transform: translateX(-50%);
+  display: grid;
+  grid-template: auto / minmax(0, 1fr);
+  align-items: start;
+}
+
+.gd-hero.is-scrub .gd-hero__block {
+  grid-area: 1 / 1;
+}
+
+.gd-hero.is-scrub .gd-hero__block--2 {
+  display: flex;
+}
+
+.gd-hero.is-scrub .word,
+.gd-hero.is-scrub .gd-hero__cta {
+  will-change: transform, opacity;
+}
+
+.gd-hero.is-scrub .gd-hero__cta {
+  pointer-events: none;
+}
+
+.gd-hero.is-scrub .gd-hero__cta.is-interactive {
+  pointer-events: auto;
+}
+
+@media (max-width: 599px) {
+  .gd-hero.is-scrub .gd-hero__column {
+    top: 18%;
+  }
+}
+
+/* ==========================================================================
+   Screen 2 — What Gia does, dark accent (build spec Section 5.2)
+
+   The page's single dark screen: dark tokens from design system 16.1 only.
+   The default rules are the complete composition (gold line full, nodes
+   active, phrases visible). Once reveal.js has put .js on <html>, the rail
+   starts empty and gia-conversation.js builds it; it adds .is-complete when
+   done, or straight away under reduced motion or without GSAP.
+   ========================================================================== */
+
+.gd-conversation {
+  background: var(--gd-night);
+  color: var(--gd-night-text-2);
+}
+
+.gd-conversation__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--gd-grid-gap);
+  align-items: center;
+}
+
+.gd-conversation__grid > * {
+  min-width: 0;
+}
+
+.gd-conversation__title {
+  color: var(--gd-night-text);
+}
+
+.gd-conversation__body {
+  max-width: 520px;
+  margin-top: var(--gd-space-3);
+  color: var(--gd-night-text-2);
+}
+
+.gd-conversation__closing {
+  margin-top: var(--gd-space-5);
+}
+
+.gd-conversation__line {
+  color: var(--gd-night-text);
+}
+
+.gd-conversation__line--accent {
+  font-weight: 600;
+  color: var(--gd-gold);
+}
+
+.gd-conversation__actions {
+  margin-top: var(--gd-space-4);
+}
+
+/* ---------- Conversation rail ---------- */
+
+.gd-conversation__rail {
+  position: relative;
+}
+
+/* The track runs from the centre of node 1 to the centre of node 4.
+   The top and bottom here fit single-line rows; gia-conversation.js
+   measures the node centres and sets the exact top and height. */
+.gd-rail__track {
+  position: absolute;
+  top: 16px;
+  bottom: 16px;
+  left: 15.5px;
+  width: 1px;
+  background: var(--gd-night-line);
+  pointer-events: none;
+}
+
+.gd-rail__fill {
+  position: absolute;
+  inset: 0;
+  background: var(--gd-gold);
+  transform-origin: 50% 0;
+}
+
+/* Ambient dot: each runner is as tall as the track and carries its dot at
+   its top edge, so translating a runner by 100% of its own height moves
+   the dot from node 1 to node 4 at any rail size. */
+.gd-rail__runner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 100%;
+  opacity: 0;
+}
+
+.gd-rail__runner::before {
+  content: "";
+  position: absolute;
+  top: -3px;
+  left: -2.5px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--gd-gold);
+}
+
+/* Nodes paint above the track and the ambient dot. */
+.gd-rail {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  row-gap: 40px;
+}
+
+.gd-rail__item {
+  display: flex;
+  align-items: center;
+  gap: var(--gd-space-4);
+}
+
+.gd-rail__node {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--gd-night-line);
+  border-radius: 50%;
+  background: var(--gd-night-surface);
+  color: var(--gd-night-text-3);
+  font-family: var(--gd-font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1;
+  transition:
+    background-color 300ms ease,
+    border-color 300ms ease,
+    color 300ms ease;
+}
+
+.gd-rail__phrase {
+  min-width: 0;
+  color: var(--gd-night-text);
+  transition:
+    opacity 600ms cubic-bezier(.22, .61, .36, 1),
+    transform 600ms cubic-bezier(.22, .61, .36, 1);
+}
+
+/* Active node: gold fill, index in --gd-night. Complete by default. */
+.gd-rail__node,
+.js .gd-rail__item.is-active .gd-rail__node {
+  background: var(--gd-gold);
+  border-color: var(--gd-gold);
+  color: var(--gd-night);
+}
+
+/* Starting state, only when JavaScript runs. */
+.js .gd-conversation__rail:not(.is-complete) .gd-rail__fill {
+  transform: scaleY(0);
+}
+
+.js .gd-rail__node {
+  background: var(--gd-night-surface);
+  border-color: var(--gd-night-line);
+  color: var(--gd-night-text-3);
+}
+
+.js .gd-rail__phrase {
+  opacity: 0;
+  transform: translateX(-12px);
+}
+
+.js .gd-rail__item.is-active .gd-rail__phrase {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js .gd-conversation__rail:not(.is-complete) .gd-rail__fill,
+  .js .gd-rail__phrase {
+    opacity: 1;
+    transform: none;
+  }
+
+  .js .gd-rail__node {
+    background: var(--gd-gold);
+    border-color: var(--gd-gold);
+    color: var(--gd-night);
+  }
+
+  .gd-rail__node,
+  .gd-rail__phrase {
+    transition: none;
+  }
+
+  .gd-rail__runner {
+    display: none;
+  }
+}
+
+/* ---------- Screen 2 responsive ----------
+   Two columns only while each column is at least 360px: with the page
+   padding (3.5vw) and grid gap (6vw, min 48px), that holds down to 828px.
+   Below it the columns stack, text first, rail 48px after it. */
+
+@media (max-width: 827px) {
+  .gd-conversation__grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--gd-space-5);
+  }
+}
+
+@media (max-width: 768px) {
+  .gd-rail {
+    row-gap: 28px;
+  }
+
+  .gd-rail__item {
+    gap: 20px;
+  }
+
+  .gd-conversation__actions .gd-button {
+    width: 100%;
+  }
+}
+
+/* ==========================================================================
+   Screen 3 — Everything connects (build spec Section 5.3)
+
+   The default rules are the complete composition: tablet, areas, and text
+   at rest. gia-connect.js sets the starting states with GSAP, draws the
+   connector lines into the SVG, and runs the sequence. The areas are one
+   <ul> placed on the stage grid through a subgrid, so they sit around the
+   tablet by grid-area name and are never positioned absolutely.
+   ========================================================================== */
+
+/* Clips the halo on narrow screens. No sticky stage lives inside Screen 3.
+   The glow colour is shared by the lines, the nodes and the orbit dot
+   (design system 16.9). */
+.gd-connect {
+  --gd-connect-glow: color-mix(in srgb, var(--gd-gold) 35%, transparent);
+  overflow-x: clip;
+}
+
+.gd-connect__header {
+  max-width: 720px;
+  margin-inline: auto;
+  text-align: center;
+}
+
+/* ---------- Connection stage ----------
+   The tablet spans rows 1-5. The flexible rows (1fr / 1fr / 3fr) put the
+   icons of areas 1-4 near 17% and 53% of the tablet height, above the
+   frame-edge anchors at 36% and 64%, so each line is a visible S-curve
+   (as in the mockup). Area 5 sits in row 6, 32px below the tablet. */
+
+.gd-connect__stage {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, clamp(320px, 42vw, 560px)) minmax(0, 1fr);
+  grid-template-rows: 1fr auto 1fr auto 3fr auto;
+  grid-template-areas:
+    ".      tablet .     "
+    "area-1 tablet area-3"
+    ".      tablet .     "
+    "area-2 tablet area-4"
+    ".      tablet .     "
+    ".      area-5 .     ";
+  column-gap: var(--gd-space-5);
+  row-gap: 0;
+  margin-top: clamp(var(--gd-space-6), 6.5vw, var(--gd-space-7));
+}
+
+.gd-connect__stage > * {
+  min-width: 0;
+}
+
+/* ---------- Tablet ---------- */
+
+.gd-connect__device {
+  position: relative;
+  grid-area: tablet;
+}
+
+.gd-connect__halo {
+  position: absolute;
+  top: -5%;
+  left: -10%;
+  width: 120%;
+  height: 110%;
+  background: radial-gradient(closest-side, var(--gd-gold-soft), transparent);
+  pointer-events: none;
+}
+
+/* Orbit decoration (design system 16.9): a static dotted ellipse around
+   the tablet with a few gold specks. It sits outside .gd-connect__float,
+   so it never floats, and paints below the tablet and the lines. */
+.gd-connect__orbit {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 136%;
+  height: 118%;
+  transform: translate(-50%, -50%);
+  border: 1px dotted var(--gd-gold-line);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.gd-connect__orbit-top,
+.gd-connect__speck {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--gd-gold);
+}
+
+.gd-connect__orbit-top {
+  top: 0;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  margin: -3px 0 0 -3px;
+  box-shadow: 0 0 6px var(--gd-connect-glow);
+}
+
+/* Position, size and opacity come from inline --x, --y, --s, --o. */
+.gd-connect__speck {
+  top: var(--y);
+  left: var(--x);
+  width: var(--s);
+  height: var(--s);
+  margin: calc(var(--s) / -2) 0 0 calc(var(--s) / -2);
+  opacity: var(--o);
+}
+
+/* Positioned so it paints above the halo and the orbit. */
+.gd-connect__float {
+  position: relative;
+}
+
+/* Matches the image box exactly; the screen overlay uses its percentages. */
+.gd-connect__frame {
+  position: relative;
+  aspect-ratio: 1279 / 1062;
+}
+
+.gd-connect__image {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(var(--gd-shadow-tablet));
+}
+
+/* Tablet screen area inside the image (build spec 5.3). */
+.gd-connect__screen {
+  position: absolute;
+  top: 5.2%;
+  left: 4.5%;
+  width: 91.3%;
+  height: 89.5%;
+  pointer-events: none;
+}
+
+/* "Live" marker: small dark chip over imagery (design system 16.2). */
+.gd-connect__live {
+  position: absolute;
+  top: var(--gd-space-3);
+  left: var(--gd-space-3);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gd-space-1);
+  height: 26px;
+  padding-inline: 10px;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--gd-text-primary) 55%, transparent);
+  color: var(--gd-surface);
+  font-family: var(--gd-font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.08em;
+}
+
+.gd-connect__live-dot {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--gd-gold);
+}
+
+/* Missing media placeholder (build spec Section 6). */
+.gd-connect__pending {
+  display: none;
+}
+
+.gd-connect__frame.is-missing {
+  display: grid;
+  place-items: center;
+  background: var(--gd-bg-soft);
+  border: 1px dashed var(--gd-line);
+}
+
+.gd-connect__frame.is-missing .gd-connect__image,
+.gd-connect__frame.is-missing .gd-connect__screen {
+  display: none;
+}
+
+.gd-connect__frame.is-missing .gd-connect__pending {
+  display: block;
+  font-family: var(--gd-font-mono);
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--gd-text-tertiary);
+  text-align: center;
+}
+
+/* ---------- Connector lines ----------
+   Paints above the tablet (the tablet nodes sit half over the frame) and
+   below the area nodes (the lines start at the node centres). One
+   drop-shadow on the SVG gives the lines, tablet nodes and particle their
+   soft gold glow. */
+
+.gd-connect__lines {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  overflow: visible;
+  pointer-events: none;
+  filter: drop-shadow(0 0 4px var(--gd-connect-glow));
+}
+
+/* pathLength="1" on each path, so the draw is a 1 -> 0 dash offset. */
+.gd-connect__line {
+  fill: none;
+  stroke: var(--gd-gold);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-dasharray: 1 1;
+  stroke-dashoffset: 0;
+}
+
+/* Tablet node: 12px ringed dot (r 5 + 2px ring), centred on the frame edge. */
+.gd-connect__end-dot {
+  fill: var(--gd-surface);
+  stroke: var(--gd-gold);
+  stroke-width: 2;
+}
+
+/* One ring pulse when the line arrives; invisible at rest. */
+.gd-connect__end-pulse {
+  fill: none;
+  stroke: var(--gd-gold);
+  stroke-width: 1.5;
+  opacity: 0;
+}
+
+.gd-connect__particle {
+  fill: var(--gd-gold);
+}
+
+/* ---------- Life areas ---------- */
+
+.gd-areas {
+  position: relative;
+  z-index: 2;
+  grid-row: 1 / -1;
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: subgrid;
+  grid-template-rows: subgrid;
+  pointer-events: none;
+}
+
+.gd-areas__item {
+  display: flex;
+  align-items: center;
+  gap: var(--gd-space-2);
+  min-width: 0;
+  pointer-events: auto;
+}
+
+.gd-areas__item--1 { grid-area: area-1; }
+.gd-areas__item--2 { grid-area: area-2; }
+.gd-areas__item--3 { grid-area: area-3; }
+.gd-areas__item--4 { grid-area: area-4; }
+.gd-areas__item--5 { grid-area: area-5; }
+
+/* Areas 1-4: icon above the label, centred on it; the areas sit at the
+   outer edges of the side columns, as in the mockup, which leaves room
+   for the S-curves. Area 5 below the tablet: node above the label. */
+.gd-areas__item--1,
+.gd-areas__item--2,
+.gd-areas__item--3,
+.gd-areas__item--4,
+.gd-areas__item--5 {
+  flex-direction: column;
+  text-align: center;
+}
+
+.gd-areas__item--1,
+.gd-areas__item--2 {
+  justify-self: start;
+}
+
+.gd-areas__item--3,
+.gd-areas__item--4 {
+  justify-self: end;
+}
+
+.gd-areas__item--5 {
+  justify-self: center;
+  margin-top: var(--gd-space-4);
+}
+
+/* Icon circle (design system 16.9). */
+.gd-areas__icon {
+  position: relative;
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border: 1px solid var(--gd-gold);
+  border-radius: 50%;
+  background: radial-gradient(closest-side, var(--gd-surface), var(--gd-gold-soft));
+  box-shadow: 0 0 24px 6px var(--gd-gold-soft);
+}
+
+.gd-areas__icon svg {
+  width: 28px;
+  height: 28px;
+  fill: var(--gd-gold-deep);
+}
+
+/* Area node: 12px ringed dot, 14px outside the icon circle on the side
+   facing the tablet, level with the icon centre. The line starts at its
+   centre, under it. */
+.gd-areas__node {
+  position: absolute;
+  top: 50%;
+  width: 12px;
+  height: 12px;
+  margin-top: -6px;
+  border: 2px solid var(--gd-gold);
+  border-radius: 50%;
+  background: var(--gd-surface);
+  box-shadow: 0 0 6px var(--gd-connect-glow);
+}
+
+.gd-areas__item--1 .gd-areas__node,
+.gd-areas__item--2 .gd-areas__node {
+  left: calc(100% + 14px);
+}
+
+.gd-areas__item--3 .gd-areas__node,
+.gd-areas__item--4 .gd-areas__node {
+  right: calc(100% + 14px);
+}
+
+/* Area 5 keeps a larger glowing node, in flow above its label. */
+.gd-areas__node--next {
+  position: relative;
+  top: auto;
+  flex: none;
+  width: 20px;
+  height: 20px;
+  margin-top: 0;
+  background: radial-gradient(circle, var(--gd-gold) 0 3.5px, var(--gd-surface) 4px);
+  box-shadow: 0 0 0 6px var(--gd-gold-soft), 0 0 12px var(--gd-connect-glow);
+}
+
+.gd-areas__title {
+  min-width: 0;
+}
+
+/* ---------- Text block ---------- */
+
+.gd-connect__text {
+  max-width: 560px;
+  margin: var(--gd-space-6) auto 0;
+}
+
+.gd-connect__body + .gd-connect__body {
+  margin-top: var(--gd-space-2);
+}
+
+.gd-connect__key {
+  margin-top: var(--gd-space-4);
+}
+
+.gd-connect__actions {
+  margin-top: var(--gd-space-4);
+}
+
+/* ---------- Screen 3 responsive ---------- */
+
+/* Two rows: the tablet, then the areas as a list under a 1px rule, each
+   with its icon (area 5: its node) left of the label. The lines, their
+   nodes and the orbit are hidden. */
+@media (max-width: 1100px) {
+  .gd-connect__orbit {
+    display: none;
+  }
+
+  .gd-connect__stage {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    grid-template-areas:
+      "tablet"
+      "areas";
+    row-gap: var(--gd-space-5);
+  }
+
+  .gd-connect__device {
+    justify-self: center;
+    width: min(100%, 520px);
+  }
+
+  .gd-connect__lines {
+    display: none;
+  }
+
+  .gd-areas {
+    grid-area: areas;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: none;
+    gap: var(--gd-space-3) var(--gd-space-5);
+    padding-top: var(--gd-space-3);
+    border-top: 1px solid var(--gd-line);
+  }
+
+  .gd-areas__item,
+  .gd-areas__item--1,
+  .gd-areas__item--2,
+  .gd-areas__item--3,
+  .gd-areas__item--4,
+  .gd-areas__item--5 {
+    grid-area: auto;
+    flex-direction: row;
+    justify-self: stretch;
+    margin-top: 0;
+    text-align: left;
+  }
+
+  .gd-areas__item--5 {
+    grid-column: 1 / -1;
+  }
+
+  .gd-areas__icon {
+    width: 48px;
+    height: 48px;
+  }
+
+  .gd-areas__icon svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .gd-areas__icon .gd-areas__node {
+    display: none;
+  }
+
+  /* Centred in a 48px slot so the area 5 label lines up with the others. */
+  .gd-areas__node--next {
+    margin-inline: 14px;
+  }
+}
+
+@media (max-width: 768px) {
+  .gd-connect__actions .gd-button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .gd-areas {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ==========================================================================
+   Screen 2a — She knows you (build spec Section 5.2a)
+
+   Light section between the two dark accent screens. The default rules are
+   the complete composition: photo, memory panel with rows 2-4 highlighted,
+   quote card and outcome line at rest. gia-knows.js sets the starting
+   states with GSAP, draws the gold threads and runs the sequence once.
+   The memory panel, the quote card and the closing row are siblings of the
+   stage, not children of it, so the stage can clip the photo's scale-in.
+   Below 1200px they stack under the photo; from 1200px up the memory panel
+   sits on the photo and the quote card and closing row share one row under
+   it, joined to the tablet by the gold threads (design system 16.9).
+   ========================================================================== */
+
+/* Clips the panel's slide-in on narrow screens. No sticky stage lives
+   inside Screen 2a. The glow colour is the Screen 3 connection glow. */
+.gd-knows {
+  --gd-connect-glow: color-mix(in srgb, var(--gd-gold) 35%, transparent);
+  overflow-x: clip;
+}
+
+.gd-knows__header {
+  max-width: 720px;
+}
+
+.gd-knows__body {
+  max-width: 560px;
+  margin-top: var(--gd-space-3);
+}
+
+/* ---------- Photo stage ---------- */
+
+.gd-knows__visual {
+  position: relative;
+  margin-top: var(--gd-space-5);
+}
+
+.gd-knows__stage {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--gd-bg-soft);
+}
+
+.gd-knows__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 35% 50%;
+}
+
+/* Missing media placeholder (build spec Section 6). */
+.gd-knows__pending {
+  display: none;
+}
+
+.gd-knows__stage.is-missing {
+  display: grid;
+  place-items: center;
+  border: 1px dashed var(--gd-line);
+}
+
+.gd-knows__stage.is-missing .gd-knows__image {
+  display: none;
+}
+
+.gd-knows__stage.is-missing .gd-knows__pending {
+  display: block;
+  font-family: var(--gd-font-mono);
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--gd-text-tertiary);
+  text-align: center;
+}
+
+/* ---------- Memory panel and quote card ----------
+   Below 1200px the two cards sit under the photo, side by side. */
+
+.gd-knows__overlay {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--gd-space-3);
+  align-items: start;
+  margin-top: var(--gd-space-3);
+}
+
+.gd-knows__overlay > * {
+  min-width: 0;
+}
+
+/* Panels are at most 480px wide (design system 16.10). */
+.gd-memory,
+.gd-knows__quote {
+  max-width: 480px;
+}
+
+/* Solid elevated surface with a 3px gold bar along the top edge, clipped
+   by the radius (the bar is a background layer). */
+.gd-memory {
+  position: relative;
+  z-index: 2;
+  padding: 23px 20px 20px;
+  border: 1px solid var(--gd-gold-line);
+  border-radius: 8px;
+  background:
+    linear-gradient(var(--gd-gold), var(--gd-gold)) top / 100% 3px no-repeat border-box,
+    var(--gd-surface-elevated);
+  box-shadow: var(--gd-shadow-card);
+}
+
+.gd-memory__list {
+  margin-top: 12px;
+}
+
+.gd-memory__item {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 8px;
+  border-radius: 4px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--gd-text-primary);
+  transition: background-color 400ms ease, color 400ms ease;
+}
+
+.gd-memory__item + .gd-memory__item {
+  border-top: 1px solid var(--gd-line-soft);
+}
+
+/* 8px ring (2px gold) with a gold centre, on the first line of text. */
+.gd-memory__item::before {
+  content: "";
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border: 2px solid var(--gd-gold);
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--gd-gold) 0 1px, var(--gd-surface-elevated) 1.5px);
+}
+
+/* Rows 2-4: the memories Gia uses. Highlighted at rest. */
+.gd-memory__item[data-used] {
+  background: var(--gd-gold-soft);
+  color: var(--gd-gold-deep);
+  font-weight: 500;
+}
+
+.gd-memory__item[data-used].is-waiting {
+  background: transparent;
+  color: var(--gd-text-primary);
+  font-weight: 400;
+}
+
+/* The shared .gd-quote card (build spec 5.4a.2) on an elevated surface,
+   with the padding reduced. Scoped to the section: gia-story.css (which
+   defines .gd-quote) loads after this file. */
+.gd-knows .gd-knows__quote {
+  position: relative;
+  z-index: 2;
+  margin-top: 0;
+  padding: 20px 24px;
+  border-color: var(--gd-gold);
+  background: var(--gd-surface-elevated);
+  box-shadow: var(--gd-shadow-card);
+}
+
+/* Role row: Gia's avatar, then the GIA label. */
+.gd-knows__role {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.gd-knows__avatar {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border: 2px solid var(--gd-gold);
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* The card end of the tablet thread: 12px ringed dot centred on the top
+   border, above the avatar. Shown only with the threads. */
+.gd-knows__card-node {
+  display: none;
+}
+
+/* ---------- Gold threads (1200px and above) ---------- */
+
+.gd-knows__threads {
+  display: none;
+}
+
+/* pathLength="1" on each path, so the draw is a 1 -> 0 dash offset. */
+.gd-knows__thread {
+  fill: none;
+  stroke: var(--gd-gold);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-dasharray: 1 1;
+  stroke-dashoffset: 0;
+}
+
+/* Rows 1 and 5: memories Gia does not use for this answer. */
+.gd-knows__thread--faint {
+  opacity: 0.35;
+}
+
+/* ---------- Closing row ---------- */
+
+.gd-knows__closing {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.3fr);
+  gap: var(--gd-space-4);
+  align-items: end;
+  margin-top: var(--gd-space-5);
+}
+
+.gd-knows__closing > *,
+.gd-knows__step {
+  min-width: 0;
+}
+
+.gd-knows__stages {
+  display: contents;
+}
+
+.gd-knows__step {
+  padding-top: var(--gd-space-2);
+  border-top: 1px solid var(--gd-line-soft);
+}
+
+.gd-knows__step dd {
+  margin-top: var(--gd-space-1);
+  color: var(--gd-text-primary);
+}
+
+/* ---------- 1200px and above ----------
+   The memory panel sits on the photo, top-right, 32px from the top and
+   right edges; its width keeps its left edge 24px right of the tablet
+   frame. Under the photo, 32px below it, one row: the stages and the key
+   line on the left, the quote card on the right, its right edge on the
+   photo's right edge. The threads SVG covers the photo and that row,
+   above the photo and below the cards. */
+
+@media (min-width: 1200px) {
+  .gd-knows__visual {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 420px);
+    column-gap: var(--gd-space-5);
+    row-gap: var(--gd-space-4);
+    align-items: start;
+    margin-top: var(--gd-space-6);
+  }
+
+  .gd-knows__stage {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+
+  .gd-knows__overlay {
+    display: contents;
+  }
+
+  /* A darker contact shadow: the panel sits on a dark photo. */
+  .gd-memory {
+    position: absolute;
+    top: var(--gd-space-4);
+    right: var(--gd-space-4);
+    width: min(calc(30% - 56px), 360px);
+    box-shadow: var(--gd-shadow-card), 0 8px 24px color-mix(in srgb, var(--gd-night) 28%, transparent);
+  }
+
+  .gd-knows .gd-knows__quote {
+    grid-column: 2;
+    grid-row: 2;
+    width: 100%;
+    max-width: none;
+  }
+
+  .gd-knows__closing {
+    grid-column: 1;
+    grid-row: 2;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: var(--gd-space-4);
+    row-gap: var(--gd-space-3);
+    align-items: start;
+    margin-top: 0;
+  }
+
+  .gd-knows__key {
+    grid-column: 1 / -1;
+  }
+
+  .gd-knows__threads {
+    display: block;
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    overflow: visible;
+    pointer-events: none;
+    filter: drop-shadow(0 0 4px var(--gd-connect-glow));
+  }
+
+  /* Centred on the 1px top border, above the avatar centre
+     (24px padding + 20px avatar radius - 6px). */
+  .gd-knows__card-node {
+    display: block;
+    position: absolute;
+    top: -6.5px;
+    left: 38px;
+    width: 12px;
+    height: 12px;
+    border: 2px solid var(--gd-gold);
+    border-radius: 50%;
+    background: var(--gd-surface);
+    box-shadow: 0 0 6px var(--gd-connect-glow);
+  }
+}
+
+/* ---------- 768px and below ---------- */
+
+@media (max-width: 768px) {
+  .gd-knows__stage {
+    aspect-ratio: 4 / 3;
+  }
+
+  .gd-knows__image {
+    object-position: 40% 50%;
+  }
+
+  .gd-knows__overlay {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--gd-space-2);
+    margin-top: var(--gd-space-2);
+  }
+
+  /* Stacked: the two stages share a top rule. */
+  .gd-knows__closing {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .gd-knows__key {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 480px) {
+  .gd-knows__closing {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--gd-space-3);
+  }
+}
+
+/* ==========================================================================
+   Screen 2b — She’s on your side, second dark accent (build spec 5.2b)
+
+   Full-bleed photo on the left, text on the right; the request panel sits
+   on the photo, bottom-left. Photo, gold thread and panel share one grid
+   cell, so the panel is never clipped by the photo column. The default
+   rules are the complete composition: switches on, rows resolved, rows 2-3
+   dimmed, quote card visible. gia-side.js sets the starting states
+   with GSAP, places the phone halo and draws the thread (design system
+   16.9), and runs the sequence once. Stacked, the text comes first, then
+   the photo band, then the panel overlapping its bottom edge; the halo
+   stays and the thread is dropped.
+   ========================================================================== */
+
+/* No sticky stage lives inside Screen 2b. The glow colour is the Screen 3
+   connection glow. */
+.gd-side {
+  --gd-connect-glow: color-mix(in srgb, var(--gd-gold) 35%, transparent);
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  min-height: min(100svh, 960px);
+  overflow-x: clip;
+  background: var(--gd-night-warm);
+  color: var(--gd-night-text-2);
+}
+
+.gd-side > * {
+  min-width: 0;
+}
+
+/* ---------- Text column ---------- */
+
+.gd-side__text {
+  grid-column: 2;
+  grid-row: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: var(--gd-section-pad) var(--gd-page-pad);
+}
+
+.gd-side__inner {
+  max-width: 520px;
+}
+
+.gd-side__title {
+  color: var(--gd-night-text);
+}
+
+/* 48px gold rule, 24px above the H2. */
+.gd-side__title::before {
+  content: "";
+  display: block;
+  width: 48px;
+  height: 1px;
+  margin-bottom: var(--gd-space-3);
+  background: var(--gd-gold);
+}
+
+.gd-side__body {
+  margin-top: var(--gd-space-3);
+  color: var(--gd-night-text-2);
+}
+
+.gd-side__controls {
+  margin-top: var(--gd-space-4);
+}
+
+.gd-side__control {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gd-space-3);
+  padding-block: var(--gd-space-2);
+}
+
+.gd-side__control + .gd-side__control {
+  border-top: 1px solid var(--gd-night-line);
+}
+
+.gd-side__control-label {
+  min-width: 0;
+  color: var(--gd-night-text);
+}
+
+.gd-side__key {
+  margin-top: var(--gd-space-5);
+  color: var(--gd-gold);
+}
+
+.gd-side__note {
+  margin-top: var(--gd-space-2);
+  color: var(--gd-night-text-2);
+}
+
+/* ---------- Switches (design system 16.10) ----------
+   aria-checked is the state; the visual follows it. */
+
+.gd-switch {
+  position: relative;
+  flex: none;
+  width: 44px;
+  height: 24px;
+  border: 1px solid var(--gd-night-line);
+  border-radius: 12px;
+  background: transparent;
+  cursor: pointer;
+  transition: background-color 200ms ease, border-color 200ms ease;
+}
+
+.gd-switch[aria-checked="true"] {
+  border-color: var(--gd-gold);
+  background: var(--gd-gold);
+}
+
+.gd-switch:focus-visible {
+  outline: 2px solid var(--gd-gold);
+  outline-offset: 3px;
+}
+
+.gd-switch__thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--gd-night-text-3);
+  transition: transform 200ms ease, background-color 200ms ease;
+}
+
+.gd-switch[aria-checked="true"] .gd-switch__thumb {
+  background: var(--gd-night);
+  transform: translateX(20px);
+}
+
+/* One soft gold glow pulse on the track as a switch turns on. */
+.gd-switch__glow {
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  box-shadow: 0 0 12px 3px var(--gd-connect-glow);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ---------- Photo column ---------- */
+
+.gd-side__media {
+  position: relative;
+  grid-column: 1;
+  grid-row: 1;
+  overflow: hidden;
+  background: var(--gd-night);
+}
+
+/* Absolute, so the photo's intrinsic height never sizes the row. The
+   column is narrower than 4:5 at tablet and laptop widths; 90% keeps the
+   phone (right edge at 97% of the photo) in frame and crops the blurred
+   background on the left instead (the face starts at 30%). */
+.gd-side__image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  object-position: 90% 30%;
+}
+
+/* Missing media placeholder (build spec Section 6), on the dark surface. */
+.gd-side__pending {
+  display: none;
+}
+
+.gd-side__media.is-missing {
+  display: grid;
+  place-items: center;
+  border: 1px dashed var(--gd-night-line);
+}
+
+.gd-side__media.is-missing .gd-side__image,
+.gd-side__media.is-missing .gd-side__halo {
+  display: none;
+}
+
+.gd-side__media.is-missing .gd-side__pending {
+  display: block;
+  font-family: var(--gd-font-mono);
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--gd-night-text-2);
+  text-align: center;
+}
+
+/* Phone halo: a soft gold glow centred on the phone, 260px with gold at
+   60% at its centre, and a brighter 90px inner core of gold at 45% on top.
+   The alphas live in the layers, so the element's own opacity runs 0-1.
+   gia-side.js sets --phone-x and --phone-y from the photo's cover crop
+   and --halo-size, which shrinks below 260px only where the halo or its
+   1.8x pulse would otherwise reach the face; the core keeps its ratio. It
+   stays off-stage until they are set. */
+.gd-side__halo {
+  --halo: var(--halo-size, 260px);
+  position: absolute;
+  left: var(--phone-x, -999px);
+  top: var(--phone-y, -999px);
+  width: var(--halo);
+  height: var(--halo);
+  margin: calc(var(--halo) / -2) 0 0 calc(var(--halo) / -2);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle calc(var(--halo) * 45 / 260), color-mix(in srgb, var(--gd-gold) 45%, transparent), transparent),
+    radial-gradient(closest-side, color-mix(in srgb, var(--gd-gold) 60%, transparent), transparent);
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+.gd-side__halo--pulse {
+  opacity: 0;
+}
+
+/* ---------- Gold thread (two-column layout only) ----------
+   Covers the photo cell, above the photo and below the panel. */
+
+.gd-side__thread {
+  grid-column: 1;
+  grid-row: 1;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  overflow: visible;
+  pointer-events: none;
+  filter: drop-shadow(0 0 4px var(--gd-connect-glow));
+}
+
+/* pathLength="1", so the draw is a 1 -> 0 dash offset. */
+.gd-side__line {
+  fill: none;
+  stroke: var(--gd-gold);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-dasharray: 1 1;
+  stroke-dashoffset: 0;
+}
+
+/* ---------- Request panel ---------- */
+
+/* Solid warm surface with a 3px gold bar along the top edge, clipped by
+   the radius (the bar is a background layer). */
+.gd-request {
+  position: relative;
+  z-index: 2;
+  grid-column: 1;
+  grid-row: 1;
+  align-self: end;
+  justify-self: start;
+  width: min(420px, calc(100% - 2 * var(--gd-space-4)));
+  margin: var(--gd-space-4);
+  padding: 27px 24px 24px;
+  border: 1px solid var(--gd-gold-line);
+  border-radius: 8px;
+  background:
+    linear-gradient(var(--gd-gold), var(--gd-gold)) top / 100% 3px no-repeat border-box,
+    var(--gd-night-warm-surface);
+  box-shadow: var(--gd-shadow-night-panel);
+  color: var(--gd-night-text);
+}
+
+/* The panel end of the thread: 12px ringed dot centred on the top border,
+   on the side facing the phone. Shown only with the thread. */
+.gd-request__node {
+  position: absolute;
+  top: -6.5px;
+  right: 40px;
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--gd-gold);
+  border-radius: 50%;
+  background: var(--gd-surface);
+  box-shadow: 0 0 6px var(--gd-connect-glow);
+}
+
+.gd-side .gd-request__label {
+  color: var(--gd-night-text-2);
+}
+
+.gd-request__context {
+  margin-top: 12px;
+  color: var(--gd-night-text);
+}
+
+.gd-request__list {
+  margin-top: 12px;
+}
+
+/* Where the item and its status do not fit on one line (narrow phones),
+   the status wraps under the item, still right-aligned, so the item stays
+   on one line and row 1's strike-through runs through the text. */
+.gd-request__row {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: var(--gd-space-2);
+  row-gap: 4px;
+  padding-block: 10px;
+}
+
+.gd-request__row + .gd-request__row {
+  border-top: 1px solid var(--gd-night-line);
+}
+
+/* The item dims once it is withheld. Only row 1 is also struck through,
+   when the member turns "What she can share" off: there the line is the
+   member's own refusal. Rows 2-3 are Gia's judgement and stay unstruck. */
+.gd-request__item {
+  position: relative;
+  min-width: 0;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--gd-night-text);
+  transition: color 300ms ease;
+}
+
+[data-share-row] .gd-request__item::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+  background: var(--gd-night-text-3);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  transition: transform 300ms ease;
+}
+
+.gd-request__row.is-withheld .gd-request__item {
+  color: var(--gd-night-text-2);
+}
+
+[data-share-row].is-withheld .gd-request__item::after {
+  transform: none;
+}
+
+.gd-request__status {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  margin-left: auto;
+  gap: 6px;
+  font-family: var(--gd-font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gd-night-text-2);
+}
+
+.gd-request__glyph {
+  flex: none;
+  width: 12px;
+  height: 12px;
+  fill: none;
+  stroke: var(--gd-night-text-2);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Row 1: shared (check in gold), or not shared when the member turns
+   "What she can share" off (cross, dimmed like rows 2-3, and struck through). */
+[data-share-row] .gd-request__status {
+  color: var(--gd-night-text);
+}
+
+[data-share-row] .gd-request__glyph--check {
+  stroke: var(--gd-gold);
+}
+
+[data-share-row] .gd-request__glyph--cross,
+[data-share-row].is-withheld .gd-request__glyph--check {
+  display: none;
+}
+
+[data-share-row].is-withheld .gd-request__glyph--cross {
+  display: block;
+}
+
+[data-share-row].is-withheld .gd-request__status {
+  color: var(--gd-night-text-2);
+}
+
+/* 2px gold scan line; gia-side.js sweeps it across the row once. */
+.gd-request__scan {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 2px;
+  background: var(--gd-gold);
+  box-shadow: 0 0 8px var(--gd-connect-glow);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Gia's reply: the shared .gd-quote card with its dark values (design
+   system 16.10). Scoped to the section: gia-story.css (which defines
+   .gd-quote) loads after this file. */
+.gd-side .gd-side__quote {
+  margin-top: var(--gd-space-2);
+  padding: 20px 24px;
+  border-color: var(--gd-gold-line);
+  background: var(--gd-night-warm);
+}
+
+.gd-side .gd-side__role {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--gd-gold);
+}
+
+.gd-side__avatar {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border: 2px solid var(--gd-gold);
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.gd-side .gd-side__quote .gd-quote__text {
+  color: var(--gd-night-text);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gd-switch,
+  .gd-switch__thumb,
+  .gd-request__item,
+  [data-share-row] .gd-request__item::after {
+    transition: none;
+  }
+
+  .gd-request__scan,
+  .gd-side__halo--pulse,
+  .gd-switch__glow {
+    display: none;
+  }
+}
+
+/* ---------- Stacked ----------
+   Two columns from 1200px up only: below it the 420px panel on the photo
+   would cover the phone (approved 2026-10-02, the 2a breakpoint). Stacked:
+   text, then the photo band, then the panel overlapping the photo's bottom
+   edge by 48px. The halo stays; the thread and its nodes are dropped. */
+
+@media (max-width: 1199px) {
+  .gd-side {
+    grid-template-columns: minmax(0, 1fr);
+    min-height: 0;
+  }
+
+  .gd-side__text {
+    grid-column: 1;
+    grid-row: 1;
+    padding: var(--gd-section-pad-compact) var(--gd-page-pad) var(--gd-space-5);
+  }
+
+  /* The explicit width keeps the band full-bleed when max-height caps it.
+     72vw lets it grow on landscape tablets, where an 80svh band is too
+     short to hold both the face and the phone (approved 2026-10-02). */
+  .gd-side__media {
+    grid-row: 2;
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    max-height: max(80svh, 72vw);
+  }
+
+  .gd-side__image {
+    object-position: 50% 25%;
+  }
+
+  .gd-side__thread,
+  .gd-request__node {
+    display: none;
+  }
+
+  .gd-request {
+    grid-row: 3;
+    align-self: start;
+    width: auto;
+    max-width: 420px;
+    margin: -48px var(--gd-page-pad) 72px;
+  }
+}

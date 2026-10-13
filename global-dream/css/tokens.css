@@ -1,0 +1,83 @@
+/* Global Dream — design tokens.
+   Design system Section 3 (core) and Section 16.1 (dark accent: Screens 2
+   and 2b and the Screen 1 veil).
+   Tokens only: no selectors other than :root. */
+
+:root {
+  /* Light page surfaces */
+  --gd-bg: #F7F3EB;
+  --gd-bg-soft: #EFE7DA;
+  --gd-surface: #FFFDF8;
+  --gd-surface-elevated: #FFFFFF;
+
+  /* Warm architectural neutrals */
+  --gd-limestone: #D8C8B2;
+  --gd-sand: #C7B49A;
+  --gd-stone: #A69279;
+
+  /* Glonari gold / bronze accents */
+  --gd-gold: #B9863F;
+  --gd-gold-deep: #8A5A22;
+  --gd-gold-soft: rgba(185, 134, 63, 0.14);
+  --gd-gold-line: rgba(138, 90, 34, 0.28);
+
+  /* Sky accents from the supplied references */
+  --gd-sky: #2F95D7;
+  --gd-sky-deep: #175F8A;
+  --gd-sky-soft: #DCECF7;
+
+  /* Text */
+  --gd-text-primary: #1E2328;
+  --gd-text-secondary: #4F5961;
+  --gd-text-tertiary: #7A746B;
+  --gd-text-muted: #9A948B;
+
+  /* Rules and subtle depth */
+  --gd-line: #D8CDBE;
+  --gd-line-soft: rgba(91, 72, 49, 0.12);
+  --gd-shadow-soft: 0 14px 40px rgba(57, 43, 24, 0.08);
+  --gd-shadow-tablet: 0 24px 48px rgba(57, 43, 24, 0.14); /* drop-shadow() on the Screen 3 tablet image */
+  --gd-shadow-card: 0 18px 48px rgba(57, 43, 24, 0.18), 0 2px 6px rgba(57, 43, 24, 0.10); /* Screen 2a memory panel and quote card; Screen 4 chapter cards */
+
+  /* Type — unchanged */
+  --gd-font-ui: "IBM Plex Sans", system-ui, sans-serif;
+  --gd-font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  /* Container */
+  --gd-container-max: 1200px;
+  --gd-page-pad: clamp(24px, 3.5vw, 48px);
+
+  /* Spacing scale */
+  --gd-space-1: 8px;
+  --gd-space-2: 16px;
+  --gd-space-3: 24px;
+  --gd-space-4: 32px;
+  --gd-space-5: 48px;
+  --gd-space-6: 64px;
+  --gd-space-7: 96px;
+  --gd-space-8: 128px;
+  --gd-space-9: 160px;
+
+  /* Section rhythm */
+  --gd-section-pad: clamp(96px, 11vw, 160px);
+  --gd-section-pad-compact: clamp(72px, 8vw, 96px);
+  --gd-grid-gap: clamp(48px, 6vw, 96px);
+}
+
+/* Dark accent tokens — used only by Screens 2 and 2b and the Screen 1 veil
+   and text shadow (design system Sections 16.1 and 16.4). */
+:root {
+  --gd-night: #15181C;
+  --gd-night-surface: #1E2328;
+  --gd-night-line: rgba(247, 243, 235, 0.12);
+  --gd-night-text: #F7F3EB;
+  --gd-night-text-2: rgba(247, 243, 235, 0.72);
+  --gd-night-text-3: rgba(247, 243, 235, 0.48);
+  /* Warm bronze-umber: the Screen 1 veil and text shadow only (16.4). */
+  --gd-night-umber: color-mix(in srgb, var(--gd-gold-deep) 45%, var(--gd-night));
+  /* Warm charcoal: the Screen 2b background and its panel (16.1). */
+  --gd-night-warm: color-mix(in srgb, var(--gd-gold-deep) 12%, var(--gd-night));
+  --gd-night-warm-surface: color-mix(in srgb, var(--gd-night-text) 5%, var(--gd-night-warm));
+  /* The Screen 2b request panel's depth over the photo (16.10). */
+  --gd-shadow-night-panel: 0 24px 60px rgba(0, 0, 0, 0.55), 0 2px 8px rgba(0, 0, 0, 0.35);
+}

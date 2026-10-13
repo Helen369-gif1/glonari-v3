@@ -1,0 +1,405 @@
+/* Gold accent tokens (--gold/--gold-bright/--gold-bright-rgb) and the
+   universal box-sizing/margin/padding reset live in design-tokens.css
+   (linked from index.html before this file), shared with mobile/styles.css.
+
+   2026-10-13 — Campus scene v2 (DEVELOPMENT_PLAN.md Stage 19,
+   PRODUCT_REQUIREMENTS.md §29): the layered parallax scene (.scene-world /
+   .layer / .building / .plaza / .presenter rules) was replaced by one
+   fixed-camera video stage with SVG hotspots. The old rules are kept in
+   the project history (glonari-v1 before 2026-10-13), not here. */
+
+@font-face {
+  font-family: 'Cinzel';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('digital-banker/atrium/assets/fonts/cinzel-latin-600-normal.woff2') format('woff2');
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #0b1e3a;
+}
+
+/* Full-viewport window onto the Campus. */
+.stage-viewport {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: #000;
+}
+
+/* ---------- Campus stage ----------
+   One 16:9 box, the video's own 1280x720 frame. Videos, still frame, SVG
+   hotspots and the hover label are all children of this box and share its
+   coordinate system, so a hotspot can never drift off its building at any
+   window size.
+
+   Sizing (pure CSS, no JS layout pass): "cover", but with a capped crop,
+   so no building can be cropped out of reach on unusual screens —
+     - at most ~6% of the width is cut (keeps the GLONARI PULSE / HOMES
+       signs readable on 16:10 and 4:3/5:4 screens);
+     - at most ~11% of the height is cut (ultra-wide 21:9).
+   Where the cap leaves a band, the blurred backdrop below shows through and
+   the box's own edges fade into it.
+     width = max(contain, min(cover, 106.67vw, 199.1vh))  */
+.stage-backdrop {
+  position: absolute;
+  inset: -40px;
+  width: calc(100% + 80px);
+  height: calc(100% + 80px);
+  object-fit: cover;
+  filter: blur(28px) brightness(0.62) saturate(1.1);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+}
+
+/* Only once the Campus itself is up — never around the dark intro. */
+body.campus-ready .stage-backdrop {
+  opacity: 1;
+}
+
+.campus {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: max(min(100vw, 177.7778vh), min(max(100vw, 177.7778vh), 106.67vw, 199.1vh));
+  aspect-ratio: 16 / 9;
+  transform: translate(-50%, -50%);
+  -webkit-mask-image:
+    linear-gradient(to right, transparent, #000 3%, #000 97%, transparent),
+    linear-gradient(to bottom, transparent, #000 3%, #000 97%, transparent);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(to right, transparent, #000 3%, #000 97%, transparent),
+    linear-gradient(to bottom, transparent, #000 3%, #000 97%, transparent);
+  mask-composite: intersect;
+}
+
+.campus__still,
+.campus__loop,
+.campus__intro {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill; /* the box already has the video's exact aspect */
+  display: block;
+}
+
+/* The intro video sits on top only while it plays (and holds its last
+   frame until the loop's first frame is on screen — see main.js). */
+.campus__intro {
+  visibility: hidden;
+}
+.campus.is-intro .campus__intro {
+  visibility: visible;
+}
+
+/* Behind the branded overlay and until the intro's first frame: black
+   stage, so the intro opens from darkness instead of the finished Campus. */
+.campus.is-prelude .campus__still,
+.campus.is-prelude .campus__loop {
+  visibility: hidden;
+}
+
+/* ---------- Hotspots ----------
+   Drawn in index.html in the video's own pixel space (viewBox 1280x720).
+   DOM order = back to front, so where two shapes overlap the one in front
+   wins both the pointer and the highlight. Inert until the loop runs. */
+.campus__zones {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.campus.is-ready .zone__hit {
+  pointer-events: all;
+}
+
+.zone {
+  outline: none;
+}
+
+.zone__hit {
+  fill: transparent;
+  stroke: none;
+  pointer-events: none;
+  cursor: pointer;
+}
+
+/* "Lights up" the building itself: the same still frame, pre-brightened
+   (assets/campus/campus-still-lift.webp), masked to the building's shape.
+   Pixel-identical to the loop everywhere except brightness, because the
+   houses in the loop never move. */
+.zone__lift {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.45s ease;
+}
+
+.zone__glow {
+  fill: none;
+  stroke: var(--gold-bright);
+  stroke-width: 16;
+  stroke-linejoin: round;
+  filter: url(#zone-glow);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.45s ease;
+}
+
+/* Spotlight dim over the rest of the Campus while a zone is active. */
+.campus__dim {
+  fill: #05070d;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.45s ease;
+}
+.campus__zones.has-active .campus__dim {
+  opacity: 0.32;
+}
+
+/* Fountain: the globe and the water move, so no still-frame lift there —
+   only a soft warm light and the rim glow. */
+.zone__halo {
+  fill: url(#halo-grad);
+  opacity: 0;
+  mix-blend-mode: screen;
+  pointer-events: none;
+  transition: opacity 0.45s ease;
+}
+
+.zone.is-active .zone__lift {
+  opacity: 1;
+}
+/* Her cream outfit is already the brightest thing in frame — a lighter lift. */
+.zone[data-key="presenter"].is-active .zone__lift {
+  opacity: 0.5;
+}
+.zone.is-active .zone__glow {
+  opacity: 0.85;
+}
+.zone.is-active .zone__halo {
+  opacity: 1;
+}
+
+/* Keyboard focus gets the same highlight plus a visible ring on the glow. */
+.zone:focus-visible .zone__glow {
+  opacity: 1;
+  stroke-width: 9;
+}
+
+/* ---------- Hover / focus label ---------- */
+.campus__label {
+  position: fixed;
+  left: 0;
+  top: 0;
+  transform: translate(-50%, -100%) translateY(6px);
+  opacity: 0;
+  pointer-events: none;
+  white-space: nowrap;
+  padding: 7px 16px 6px;
+  border: 1px solid rgba(var(--gold-bright-rgb), 0.55);
+  border-radius: 999px;
+  background: rgba(12, 10, 6, 0.62);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35), 0 0 18px rgba(var(--gold-bright-rgb), 0.18);
+  font-family: 'Cinzel', 'Trajan Pro', Georgia, serif;
+  font-weight: 600;
+  font-size: clamp(11px, 0.85vw, 14px);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gold-bright);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  z-index: 5;
+}
+
+.campus__label.is-visible {
+  opacity: 1;
+  transform: translate(-50%, -100%) translateY(-4px);
+}
+
+body.modal-active .campus__label {
+  opacity: 0;
+}
+
+/* "Explore" hint only once the Campus is interactive. */
+body:not(.campus-ready) .explore-hint {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zone__lift,
+  .zone__glow,
+  .zone__halo,
+  .campus__dim,
+  .stage-backdrop,
+  .campus__label {
+    transition: none;
+  }
+}
+
+/* ---------- Custom cursor (fine-pointer desktop only) ----------
+   Hidden by default (covers touch/coarse-pointer and no-hover devices);
+   shown only under the media query below. Movement is driven entirely
+   by main.js and is independent of the scene's own transform. */
+.cursor-dot,
+.cursor-ring {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  border-radius: 50%;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+
+.cursor-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--gold-bright);
+  box-shadow: 0 0 0 1.75px rgba(20, 15, 5, 0.8), 0 0 10px 2px rgba(var(--gold-bright-rgb), 0.6);
+  z-index: 9999;
+  /* Reference (#cursor.hover in the Glonari Global Campus styles.css)
+     transitions width/height/background/box-shadow into its hover state
+     — carried over verbatim so the dot's grow-and-soften reaction on a
+     building matches that reference's feel, not a reinvented one. */
+  transition:
+    width 0.25s cubic-bezier(0.2, 0.9, 0.3, 1),
+    height 0.25s cubic-bezier(0.2, 0.9, 0.3, 1),
+    background 0.25s ease,
+    border 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+/* Toggled by main.js whenever the pointer (or keyboard focus) is on a
+   Campus hotspot (2026-10-13; formerly: an opaque building pixel) — same trigger condition and same visual response as the
+   reference project's "#cursor.hover" (there it's driven by
+   pointerenter/pointerleave on the hotspot buttons instead, since that
+   project's hit areas are real DOM elements; the effect itself is
+   unchanged). */
+.cursor-dot.hover {
+  width: 64px;
+  height: 64px;
+  background: rgba(var(--gold-bright-rgb), 0.08);
+  border: 1px solid rgba(var(--gold-bright-rgb), 0.8);
+  box-shadow: 0 0 0 1.5px rgba(0, 0, 0, 0.45), 0 0 30px 6px rgba(var(--gold-bright-rgb), 0.35);
+}
+
+.cursor-ring {
+  width: 30px;
+  height: 30px;
+  border: 1.5px solid rgba(0, 0, 0, 0.45);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.15);
+  z-index: 9998;
+  transition: width 0.4s ease, height 0.4s ease, opacity 0.4s ease;
+}
+
+/* Reference hides the trailing ring while the dot is in its hover state
+   (the dot itself becomes the big soft ring at that point) — same here. */
+.cursor-dot.hover ~ .cursor-ring {
+  opacity: 0;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  html, body {
+    cursor: none;
+  }
+
+  .cursor-dot,
+  .cursor-ring {
+    display: block;
+  }
+}
+
+/* ---------- Section modal ----------
+   Markup/behavior lives in index.html + section-modal.js; styling now
+   lives in section-modal.css (linked from <head>) so the exact same
+   rules apply unmodified to mobile/index.html too — see that file for
+   the actual #modal-overlay/#modal-card/etc. rules, not duplicated here. */
+
+/* ---------- Cross-project exit transition ----------
+   Plain fixed black overlay, sibling of .stage-viewport/#modal-overlay (see
+   index.html). Sits above everything (intro overlay included) while
+   active. Faded in by main.js's navigateWithFade() immediately before a
+   real page navigation to another one of the four connected sites (today:
+   the Digital Banker building -> digital-banker/gia/index.html), so the
+   jump reads as a deliberate cut-to-black instead of a hard reload flash.
+   Never removed/reset on this page since a navigation always follows it. */
+#exit-transition {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 10000;
+  transition: opacity 0.5s ease;
+}
+
+#exit-transition.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* ---------- Persistent "Explore" hint ----------
+   The one screen in the connected chain where interaction never ends (no
+   scroll runway, no one-shot action) and never needs its own hide logic —
+   unlike digital-banker/gia/index.html's .cue (which fades out as the
+   visitor scrolls past it) or digital-banker/atrium/index.html's .back-link
+   (which hides only during that screen's own modal/transition states),
+   this hint stays visible for as long as the scene itself is on screen,
+   with the sole exception of the section modal covering it (same
+   body.modal-active flag main.js now sets — see sectionModal.create()
+   above). Split into an outer element (position/visibility, driven by the
+   modal-active class) and an inner one (the continuous opacity pulse) so
+   the two concerns don't fight over the same `opacity` property — the
+   same split GIA's .cue/.cue__line already uses. */
+.explore-hint {
+  position: fixed;
+  left: 50%;
+  bottom: clamp(20px, 3.4vh, 44px);
+  transform: translateX(-50%);
+  z-index: 50;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.explore-hint__text {
+  display: block;
+  font-family: -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  font-weight: 400;
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.72);
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.45);
+  animation: exploreHintPulse 2.2s ease-in-out infinite;
+}
+
+@keyframes exploreHintPulse {
+  0%, 100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+body.modal-active .explore-hint {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .explore-hint__text {
+    animation: none;
+    opacity: 1;
+  }
+}

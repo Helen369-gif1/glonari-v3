@@ -1,0 +1,147 @@
+/* How GLO Works (how-glo-works.html) — page-specific sections. Shared components: css/components.css. */
+
+.hgw-head { max-width: 760px; }
+.hgw-principle { margin-top: 56px; }
+.hgw-split { align-items: end; }
+
+/* ===== 01 Hero: systems diagram on the right, built once each time the hero comes into view ===== */
+.hgw-stage {
+  position: absolute; z-index: 0; top: calc(var(--header-h) + 40px); bottom: 48px; left: calc(50% + 24px); right: var(--page-pad);
+  display: flex; align-items: center; justify-content: flex-start; pointer-events: none;
+}
+.hgw-diagram { width: 100%; max-width: 820px; height: auto; overflow: visible; }
+.hgw-diagram--narrow { display: none; }
+.hgw-hero .page-hero__text { max-width: min(560px, 44%); }
+
+.dg-node { fill: var(--gp-surface); stroke: var(--gp-line); stroke-width: 1; }
+.dg-key .dg-node { fill: rgba(242, 179, 90, .08); stroke: var(--gp-gold); stroke-width: 1.5; }
+.dg-out .dg-node { stroke: var(--gp-gold-dark); }
+.dg-dash .dg-node { stroke: var(--gp-text-muted); stroke-dasharray: 5 4; }
+.dg-warn .dg-node { stroke: var(--gp-warning); }
+.dg-title { font-family: var(--font-ui); font-size: 18px; font-weight: 600; fill: var(--gp-text); }
+.dg-title--gia { font-family: var(--font-display); font-size: 26px; fill: var(--gp-champagne); }
+.dg-sub { font-family: var(--font-ui); font-size: 13.5px; fill: var(--gp-text-2); }
+.dg-sub--keep { fill: var(--gp-gold-mid); }
+.dg-sub--change { fill: var(--gp-warning); }
+.dg-line { fill: none; stroke: var(--gp-text-muted); stroke-width: 1.5; }
+.dg-line--gold { stroke: var(--gp-gold-mid); }
+.dg-line--warn { stroke: var(--gp-warning); }
+.dg-line--dash { stroke-dasharray: 5 4; }
+.dg-head { fill: var(--gp-gold-mid); }
+.dg-head--warn { fill: var(--gp-warning); }
+.dg-head--muted { fill: var(--gp-text-muted); }
+.dg-divider { stroke: var(--gp-line); stroke-width: 1; stroke-dasharray: 3 5; }
+.dg-a { transform-box: fill-box; }
+
+@keyframes dgIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@keyframes dgDraw { 0% { opacity: 0; stroke-dashoffset: 1; } 15% { opacity: 1; } 100% { opacity: 1; stroke-dashoffset: 0; } }
+@media (prefers-reduced-motion: no-preference) {
+  /* Without JS the diagram is simply complete; with JS it waits for .is-playing (js/components.js, [data-motion]). */
+  body:not(.no-js) .hgw-stage:not(.is-playing) .dg-a,
+  body:not(.no-js) .hgw-stage:not(.is-playing) .dg-draw { opacity: 0; }
+  .hgw-stage .dg-draw { stroke-dasharray: 1; }
+  .hgw-stage.is-playing .dg-a { animation: dgIn .8s var(--ease) both; animation-delay: var(--d); }
+  .hgw-stage.is-playing .dg-draw { animation: dgDraw .9s var(--ease) both; animation-delay: var(--d); }
+}
+
+@media (max-width: 1280px) {
+  .hgw-hero { flex-direction: column; align-items: stretch; justify-content: flex-start; min-height: 0; padding-top: calc(var(--header-h) + 32px); padding-bottom: 72px; }
+  .hgw-stage { position: relative; inset: auto; width: 100%; max-width: 720px; margin: 0 auto 40px; padding-inline: var(--page-pad); order: -1; }
+  .hgw-hero .page-hero__text { max-width: 640px; }
+  .hgw-hero::before { background: linear-gradient(180deg, transparent 60%, var(--hero-fade, var(--gp-black)) 100%); }
+}
+@media (max-width: 600px) {
+  .hgw-diagram--wide { display: none; }
+  .hgw-diagram--narrow { display: block; max-width: 420px; margin-inline: auto; }
+}
+
+/* ===== 02 Three-layer model ===== */
+.layers { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; max-width: 1040px; margin-inline: auto; }
+/* The list resets its margins; keep the shared heading-to-component distance when .gap-major is set. */
+.layers.gap-major { margin-top: clamp(64px, 7vw, 96px); }
+.layer { display: grid; grid-template-columns: minmax(0, 220px) minmax(0, 1.2fr) minmax(0, 1fr); gap: 16px 32px; align-items: center; padding: 24px 28px; background: var(--gp-surface); border: 1px solid var(--gp-line); border-radius: 8px; }
+.layer--key { padding-block: 36px; border-color: var(--gp-glass-border-active); background: rgba(242, 179, 90, .05); }
+.layer__role { display: grid; gap: 4px; }
+/* Role mark above the tag: 56px at every width (the shared .card__art 72px step at 560px does not apply). */
+.layer__role > .layer__mark { height: 56px; margin-bottom: 8px; }
+.layer__mark .gia-core { --core: 56px; }
+.layer__tag { font-family: var(--font-mono); font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--gp-copper); }
+.layer__name { font-size: 20px; font-weight: 600; line-height: 1.25; color: var(--gp-text); }
+.layer--key .layer__name { font-size: 24px; color: var(--gp-gold); }
+.layer__text { margin: 0; font-size: 16px; line-height: 1.6; color: var(--gp-text); }
+.layer__eg { margin: 0; padding-left: 16px; border-left: 1px solid var(--gp-gold-dark); font-size: 14px; line-height: 1.55; color: var(--gp-text-2); }
+.layer__eg b { display: block; margin-bottom: 2px; font-family: var(--font-mono); font-size: 11px; font-weight: 600; letter-spacing: .06em; color: var(--gp-copper); }
+@media (max-width: 960px) { .layer { grid-template-columns: minmax(0, 1fr); } }
+
+/* ===== 03 Reusable capacity ===== */
+.hgw-keep { margin-top: 40px; }
+.hgw-note { margin-top: 16px; max-width: 760px; }
+
+/* ===== 04 Options ===== */
+.option--transfer { border-color: rgba(195, 115, 78, .45); }
+.hgw-after { margin-top: 24px; max-width: 760px; }
+.hgw-after b { color: var(--gp-text); }
+
+/* ===== 05 Global Connections vs secondary market: two separate paths, no shared endpoint ===== */
+.paths { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 48px; }
+.paths > * { min-width: 0; }
+.path { display: flex; flex-direction: column; gap: 12px; padding: 28px; border-radius: 8px; background: var(--gp-surface); border: 1px solid; }
+.path--work { border-color: var(--gp-glass-border); }
+.path--market { border-color: rgba(195, 115, 78, .5); }
+.path__title { margin: 0; font-size: 20px; font-weight: 600; color: var(--gp-text); }
+.path__sub { margin: 0; font-size: 16px; color: var(--gp-text-2); }
+.path__steps { list-style: none; margin: 8px 0 0; padding: 0; counter-reset: ps; display: grid; gap: 0; }
+.path__steps li { counter-increment: ps; position: relative; padding: 0 0 18px 36px; font-size: 15px; line-height: 1.5; color: var(--gp-text); }
+.path__steps li::before { content: counter(ps); position: absolute; left: 0; top: 0; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font-family: var(--font-mono); font-size: 11px; font-weight: 600; border: 1px solid; }
+.path__steps li:not(:last-child)::after { content: ""; position: absolute; left: 12px; top: 28px; bottom: 4px; width: 1px; background: currentColor; opacity: .25; }
+.path--work .path__steps li::before { border-color: var(--gp-glass-border-active); color: var(--gp-gold-mid); }
+.path--market .path__steps li::before { border-color: rgba(195, 115, 78, .6); color: var(--gp-warning); }
+/* .path__steps[data-draw]: the lines between step numbers open from the top, one after another
+   (--draw-i from js/components.js), like .steps-line[data-draw]; the numbers do not move. */
+@media (prefers-reduced-motion: no-preference) {
+  .path__steps.draw-on > li::after { transform: scaleY(0); transform-origin: center top; }
+  .path__steps.draw-on.is-drawn > li::after { transform: none; transition: transform .45s var(--ease) calc(var(--draw-i, 0) * .2s); }
+}
+.path__end { margin-top: auto; }
+.hgw-limit { margin-top: 32px; }
+.hgw-limit .small { margin: 0; }
+@media (max-width: 768px) { .paths { grid-template-columns: minmax(0, 1fr); gap: 24px; } .path { padding: 24px; } }
+
+/* ===== 06 Ecosystem: one end-to-end diagram, a pulse diagram [data-pulse="eco"] wired by js/pages/how-glo-works.js ===== */
+.eco {
+  --eco-gap: clamp(44px, 5vw, 64px); --eco-row: 80px;
+  display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); grid-template-areas: ". you ." "req gia out" ". glo ." "after after after";
+  column-gap: var(--eco-gap); row-gap: var(--eco-row); align-items: center; max-width: 1040px; margin-inline: auto;
+}
+.eco__node { position: relative; z-index: 1; display: grid; gap: 4px; padding: 16px 18px; text-align: center; background: var(--gp-surface); border: 1px solid var(--gp-line); border-radius: 8px; }
+.eco__name { font-size: 17px; font-weight: 600; color: var(--gp-text); }
+.eco__desc { font-size: 13px; line-height: 1.45; color: var(--gp-text-2); }
+.eco__you { grid-area: you; max-width: 280px; justify-self: center; }
+.eco__req { grid-area: req; }
+.eco__out { grid-area: out; border-color: var(--gp-gold-dark); }
+.eco__glo { grid-area: glo; max-width: 280px; justify-self: center; }
+.eco__gia { grid-area: gia; }
+.eco__gia .gia-core__plate { max-width: 280px; }
+.eco__after { grid-area: after; position: relative; z-index: 1; display: grid; gap: 12px; justify-items: center; margin-top: -24px; }
+.eco__after-label { margin: 0; font-family: var(--font-mono); font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--gp-copper); }
+.eco__paths { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+.eco__path { position: relative; padding: 8px 16px; border-radius: 999px; border: 1px solid var(--gp-glass-border); font-size: 14px; font-weight: 500; color: var(--gp-text); }
+.eco__path small { margin-left: 6px; font-size: 12px; font-weight: 400; color: var(--gp-text-muted); }
+.eco__path--dash { border-style: dashed; border-color: var(--gp-text-muted); }
+.eco__path--warn { border-color: rgba(195, 115, 78, .6); }
+@media (max-width: 1100px) { .eco__you, .eco__glo { max-width: 232px; } } /* wider side cards before the vertical layout */
+/* Vertical below 860px: the three inputs above Gia (GLO capacity moves up by grid area only), Deliverable below */
+@media (max-width: 860px) {
+  .eco { --pulse-layout: vertical; grid-template-columns: minmax(0, 1fr); grid-template-areas: "you" "req" "glo" "gia" "out" "after"; row-gap: 16px; max-width: 600px; padding-inline: 28px; }
+  .eco__you, .eco__glo { max-width: none; justify-self: stretch; }
+  .eco__gia { --core: 140px; margin-block: 40px 56px; }
+  .eco__after { margin-top: 16px; }
+}
+@media (max-width: 480px) { .eco { padding-inline: 22px; } }
+
+/* ===== 07 Final & important information ===== */
+.hgw-notice { margin-top: 32px; }
+.hgw-final-actions { margin-top: 32px; }
+#important-info .final { align-items: start; }
+/* Final photo: keep Gia's face and the options panel in frame (the 4:5 frame trims only top and bottom). */
+.hgw-final-photo { object-position: 50% 40%; }
