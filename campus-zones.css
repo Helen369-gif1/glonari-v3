@@ -1,0 +1,114 @@
+/* ---------- Campus hotspots (shared: index.html + mobile/index.html) ----------
+   The SVG itself is written by campus-zones.js. These rules moved here
+   unchanged from styles.css (2026-10-14, DEVELOPMENT_PLAN.md Stage 20), so
+   a tap-selected zone on mobile looks exactly like a hovered zone on
+   desktop: lift by the zone's mask, gold outline, the rest of the Campus
+   dimmed. Needs --gold-bright from design-tokens.css.
+
+   Drawn in a 1280x720 coordinate space (viewBox; the 1920x1080 video and
+   stills scale into it).
+   DOM order = back to front, so where two shapes overlap the one in front
+   wins both the pointer and the highlight. Inert until the loop runs. */
+.campus__zones {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.campus.is-ready .zone__hit {
+  pointer-events: all;
+}
+
+.zone {
+  outline: none;
+}
+
+.zone__hit {
+  fill: transparent;
+  stroke: none;
+  pointer-events: none;
+  cursor: pointer;
+}
+
+/* "Lights up" the building itself: the same still frame, pre-brightened
+   (assets/campus/campus-still-lift.webp), masked to the building's shape.
+   Pixel-identical to the loop everywhere except brightness, because the
+   houses in the loop never move. */
+.zone__lift {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.45s ease;
+}
+
+.zone__glow {
+  fill: none;
+  stroke: var(--gold-bright);
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+  stroke-linejoin: round;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.45s ease;
+}
+
+/* Spotlight dim over the rest of the Campus while a zone is active. */
+.campus__dim {
+  fill: #05070d;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.45s ease;
+}
+.campus__zones.has-active .campus__dim {
+  opacity: 0.32;
+}
+
+/* Fountain: the globe and the water move, so no still-frame lift there —
+   only a soft warm light and the rim glow. */
+.zone__halo {
+  fill: url(#halo-grad);
+  opacity: 0;
+  mix-blend-mode: screen;
+  pointer-events: none;
+  transition: opacity 0.45s ease;
+}
+
+.zone.is-active .zone__lift {
+  opacity: 1;
+}
+/* Her cream outfit is already the brightest thing in frame — a lighter lift. */
+.zone[data-key="presenter"].is-active .zone__lift {
+  opacity: 0.5;
+}
+.zone.is-active .zone__glow {
+  opacity: 0.95;
+}
+.zone.is-active .zone__halo {
+  opacity: 1;
+}
+
+/* Keyboard focus gets the same highlight plus a visible ring on the glow. */
+.zone:focus-visible .zone__glow {
+  opacity: 1;
+  stroke-width: 3;
+}
+
+/* The fountain ring is not clipped by a shape mask, so its full stroke shows —
+   half the width keeps it matching the ~1px building outlines. */
+.zone[data-key="fountain"] .zone__glow {
+  stroke-width: 1;
+}
+.zone[data-key="fountain"]:focus-visible .zone__glow {
+  stroke-width: 1.5;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zone__lift,
+  .zone__glow,
+  .zone__halo,
+  .campus__dim {
+    transition: none;
+  }
+}

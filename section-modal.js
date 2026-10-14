@@ -45,7 +45,8 @@
     },
     // 2026-10-13 — Campus scene v2 (DEVELOPMENT_PLAN.md Stage 19): three
     // new buildings and the GLONARI fountain became hotspots on the
-    // desktop Campus. Mobile doesn't reference these keys (yet).
+    // desktop Campus; since 2026-10-14 (Stage 20) the mobile Campus uses
+    // the same 11 zones, so mobile opens them too.
     'building-glonari-commercial': {
       name: 'Glonari Commercial',
       // TODO: replace with real copy
@@ -63,8 +64,8 @@
     },
     'fountain': {
       // Copy of the former desktop splash screen (index.html #intro-copy,
-      // removed 2026-10-14); still identical to mobile/index.html's
-      // branded intro overlay.
+      // removed 2026-10-14) and of mobile/'s branded intro overlay (also
+      // removed 2026-10-14, Stage 20).
       name: 'More than a place to live — a smarter path to ownership',
       desc: 'Glonari brings real estate, member participation, artificial intelligence, global connections, and financial intelligence together to help lower your cost of living and make ownership more achievable. Gia quietly connects it all.',
     },

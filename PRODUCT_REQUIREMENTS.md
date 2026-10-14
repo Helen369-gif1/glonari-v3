@@ -134,6 +134,8 @@ OPEN QUESTIONS (visual design and exact behavior not yet defined — do not inve
 
 > **UPDATE (2026-10-14)** — on desktop the branded intro overlay / loading screen (logo, "explore" button) described here is superseded: see the SUPERSEDED (2026-10-14) block at the end of §29 (splash screen removed, `campus-opening.mp4` replaces `campus-intro.mp4`, autoplay with fallbacks).
 
+> **SUPERSEDED (2026-10-14)** — mobile: the branded intro overlay / loading screen is gone from `mobile/` as well (no page uses it any more; `intro.css`, `intro.js`, `assets/glonari-logo.*` deleted). Replaced by: the mobile page starts straight into the same full-screen opening video as desktop, no splash, no click. See §30 and DEVELOPMENT_PLAN.md Stage 20. See chat/prompt from 2026-10-14.
+
 ## 9. Main Scene requirements
 
 Confirmed:
@@ -283,6 +285,8 @@ Confirmed motion principles to apply consistently across systems: smooth, soft, 
 
 > **SUPERSEDED (2026-10-13)** — desktop only (`mobile/` unchanged by decision): motion on the desktop Campus is now carried by the two videos (intro, loop); the presenter's greeting gesture is removed — she is fully static in the loop (no blinking or talking, by requirement). see chat/prompt from 2026-10-13.
 
+> **UPDATE (2026-10-14)** — "`mobile/` unchanged by decision" above no longer holds: motion on mobile is now the same two videos (opening, loop) plus a user-driven horizontal pan of the whole Campus (one transform, inertia with a soft stop at the frame's edges); buildings themselves never animate (no slide-in, no appear). See §30.
+
 ## 17. Performance requirements
 
 Confirmed constraint: the movement and hover systems must be smooth (implying `requestAnimationFrame`-driven or CSS-compositor-friendly transforms, not layout-triggering properties). Not yet defined: target frame budget, device support floor, or whether image optimization (current assets are 1.5–2.5MB PNGs each, ~18.5MB total) is in scope for this phase — flagged as a risk in §27, addressed as its own stage (Development Plan Stage 15) rather than assumed now.
@@ -384,6 +388,8 @@ Confirmed prior behavior (historical; see correction above): the scene scaled fl
 >
 > **SUPERSEDED (2026-10-12) — Digital Banker on mobile no longer opens the section modal; it opens the Digital Banker site, as on desktop.** "Tapping the active/centered building opens the modal" (the 2026-08-24 entry above) now holds for 6 of the 7 buildings. Tapping the **centered** Digital Banker (or Enter/Space on it) fades the Campus to black (`#exit-transition`, the same fade as the Gia → Meet Gia link) and opens `digital-banker/gia/`, continuing into the Atrium and Global Reserve / Global Dream like on desktop (§14). Tapping a peeking Digital Banker still only centers it. Returning with GIA's Back lands on `mobile/` without the intro and without the black fade. See DEVELOPMENT_PLAN.md Stage 14's matching note. See chat/prompt from 2026-10-12.
 
+> **SUPERSEDED (2026-10-14) — the mobile scene described in this section (tap zones over a flat image → layered strip → carousel of cut-out buildings, the separate static Gia figure, the branded intro) is replaced** by the mobile Campus on the desktop assets: full-screen opening video → loop, the real 16:9 Campus picture swiped sideways with inertia, and the same 11 hotspots as desktop — a tap highlights a zone exactly like a desktop hover and shows its name tag, a second tap (or a tap on the tag) does what a desktop click does. This also supersedes "no hover state / no movement on mobile" (2026-08-21): mobile now has the tap highlight and a user-driven horizontal pan of the whole picture (still no cursor parallax, no device tilt). The device gates and their criteria are unchanged. See §30 and DEVELOPMENT_PLAN.md Stage 20. See chat/prompt from 2026-10-14.
+
 ## 20. Accessibility requirements
 
 Confirmed baseline already present: descriptive `alt` text exists on the building images. Not yet defined: keyboard-navigability/focus handling for future clickable buildings, ARIA roles for panels/modals, and screen-reader behavior around the loading screen and the moving scene (a scene that moves with the mouse should not disorient or trap keyboard/screen-reader users — needs explicit design).
@@ -399,6 +405,8 @@ Confirmed baseline already present: descriptive `alt` text exists on the buildin
 Confirmed: any global movement, hover animation, loading transition, and panel animation must respect `prefers-reduced-motion: reduce`, offering either no motion or a minimally-reduced variant. Exact reduced-motion behavior per system (e.g., does the scene stay static, or keep hover feedback without the scale/motion?) is to be defined per-stage, not assumed globally now.
 
 > **SUPERSEDED (2026-10-13)** — desktop only (`mobile/` unchanged by decision): desktop reduced motion: no intro video; loop paused on its first frame. see chat/prompt from 2026-10-13.
+
+> **UPDATE (2026-10-14)** — mobile now follows the same reduced-motion rule as desktop: no opening video, the still frame with live zones; additionally glides (edge plates, bringing a zone into view) are instant and a flick has no inertia. See §30.
 
 ## 22. Technical constraints
 
@@ -447,6 +455,10 @@ Confirmed: any global movement, hover animation, loading transition, and panel a
 
 - Desktop first screen is the Campus scene v2 (§29): fixed-camera video stage with 11 SVG hotspots; houses, camera and presenter static in the loop; sign lettering from the source picture; static parts are built by montage over the still picture, not by video generation (generators always drift the camera). `mobile/` keeps the old carousel.
   > **SUPERSEDED (2026-10-13)** — this replaces, on desktop only, the per-layer parallax, the 7-building alpha-hit-tested set, the fountain water video over `plaza.png`, and the presenter WebM with its greeting gesture (all entries above). see chat/prompt from 2026-10-13.
+
+  > **SUPERSEDED (2026-10-14)** — "`mobile/` keeps the old carousel": the mobile first screen is now the same Campus (same media, same 11 hotspots), framed for a portrait screen and swiped sideways; see the next item and §30.
+  > **SUPERSEDED (2026-10-14)** — the loading-screen item above ("shared branded intro overlay … on both desktop and mobile") no longer holds on mobile either: neither version has a splash screen; `intro.css`/`intro.js` are deleted. And the chain item's "centered Digital Banker in the `mobile/` carousel": on mobile, Digital Banker is now a hotspot like on desktop (tap = highlight, second tap = `digital-banker/gia/` with the black fade).
+- Mobile first screen is the mobile Campus (§30, 2026-10-14): straight into the full-screen opening video (no splash, no click, muted), then the loop; one 16:9 box (video, still, SVG zones) moved by one transform; fixed framing during the opening with the globe and pedestal whole and Gia to their left; then horizontal swiping with inertia and soft stops at the frame's edges (no empty margins), edge plates naming the nearest building beyond each edge; tap = desktop hover highlight + name tag, second tap / tag tap = desktop click; buildings never animate; opening once per session, shared `glonari.openingSeen` flag with desktop.
 
 ## 24. Open questions
 
@@ -572,3 +584,21 @@ Source: see chat/prompt from 2026-10-13. DEVELOPMENT_PLAN.md Stage 19.
 >   - [x] 768×900 / 1200×900: no mp4, no `campus-still.webp` requests; the mobile intro stays skipped on a returning visit.
 >   - [x] Autoplay refused / reduced motion → interactive Campus in ≈0.2 s; no new console errors.
 >   - [ ] A real back/forward-cache restore was simulated only: headless Playwright does not use the bfcache, so the handler was checked with a synthetic `pageshow` event.
+> **UPDATE (2026-10-14, §30)** — "Desktop only, `mobile/` unchanged" / "`mobile/` keeps its own branded intro overlay, `intro.css`/`intro.js`" / "The files `intro.css`/`intro.js`/`assets/glonari-logo.*` stay" above no longer hold: `mobile/` now uses this section's opening, loop, still and the same 11 hotspots (§30); `intro.css`, `intro.js`, `assets/glonari-logo.*` are deleted. Desktop behaviour unchanged. The hotspot SVG is now written by the shared `campus-zones.js` (identical markup) and its CSS lives in the shared `campus-zones.css`. `glonari.openingSeen` (once per session) and the `glonariSkipIntro` marker apply to both versions. See DEVELOPMENT_PLAN.md Stage 19/20 and chat/prompt from 2026-10-14.
+
+## 30. Mobile Campus on the desktop assets (2026-10-14)
+
+Source: see chat/prompt from 2026-10-14 (client opened the site on a phone, saw a dark splash with small text, did not know what to tap, then a scene of cut-out "sticker" buildings sliding in one by one; asked for full-screen video at once and a realistic, whole scene, as on glonari.com on a phone). DEVELOPMENT_PLAN.md Stage 20. Supersedes the mobile parts of §8, §19 and §23.
+
+- **Start:** no splash screen, no logo, no "explore". On load the page plays `assets/campus/campus-opening.mp4` full screen, muted, `playsinline`, started with `play()`, poster `campus-opening-poster.webp`; then hands off seamlessly to `campus-loop.mp4`. No sound, no click. No black first paint: until the poster/still decodes, a tiny inlined blurred copy of the same picture is shown.
+- **Once per session:** the same rules and the same `sessionStorage['glonari.openingSeen']` flag as desktop (one showing per tab session for both versions); Back/Forward, arriving from a sub-site, and the desktop page's `glonariSkipIntro` marker go straight into the loop. Fallbacks as desktop: autoplay refused, load error/404, nothing playing within 4 s → loop or still frame with working zones; reduced motion → still frame.
+- **Framing:** the scene fills the screen by height ("cover"); part of the 16:9 frame's width is visible. Video, still, lift layer and the SVG zones (viewBox 1280×720, the same 11 zones as desktop from one shared source) sit in one container moved by one transform — no layer can drift. During the opening the horizontal position is fixed so that the globe with its pedestal is fully visible and as much of Gia (left of the globe) as fits; the loop starts at the same position. No vertical page scroll.
+- **Swiping (after the hand-off):** horizontal drag anywhere on the picture, finger or mouse, with inertia; stops softly at the frame's edges and never shows empty space beyond them. Transform + `requestAnimationFrame` only; the video is not re-laid out. Buildings never animate (no appearing, no sliding in).
+- **Edge plates:** at the bottom left/right, the name of the nearest building beyond that screen edge with an arrow; tap → smooth glide to that building, centred. No plate when nothing is beyond the edge.
+- **Taps:** tap a zone → the desktop hover highlight (lift by the mask, gold outline, rest dimmed) + a name tag with "→". Tap the tag or the same zone again → the desktop click action (black-fade jump to Digital Banker / Meet Gia, or the section modal). Tap empty ground → clear. A zone partly beyond an edge glides into view on the first tap. A swipe never counts as a tap (10 px slop).
+- **Modal on a narrow screen:** 16 px body text, × in the corner plus Close, closes on a backdrop tap, long text scrolls inside the card.
+- **Removed:** the old mobile scene (cut-out building strip `mobile/assets/buildings/*-frontal-cropped.*`, `*-angled.*` on `mobile/assets/background-cropped.*`, arrows, dots, the separate Gia figure), the mobile branded intro, `intro.js`, `intro.css`, `assets/glonari-logo.*` (all in git history). Root `assets/` sources only the old mobile scene used (`background.png`, `plaza.png`, `sky.*`, `fountain.*`, `presenter.webm`, `presenter-poster.*`, `presenter-hitmask.png`) are now unreferenced but kept, pending a separate decision.
+- **Unchanged:** the desktop ↔ `mobile/` redirect logic. Known: a phone in landscape (e.g. 844×390) stays on the desktop page; there a tap on a zone performs the click action at once, without a highlight/name tag first (desktop highlights on mouse hover and keyboard focus only).
+- **Differences from glonari.com on a phone (reference, 2026-10-14):** glonari.com shows a poster with an "Enter the campus" button and a "Drag to explore the campus" hint, uses its own lighter phone videos (≈2.3 MB together), and a single tap on a building navigates at once; its name plates sit at each building, not at the screen edges. Here: no button and no hint (start is automatic), the desktop videos (≈14 MB first visit), two-step tap (highlight, then open), and edge plates for buildings beyond the screen.
+- **Weight:** first visit ≈ 14.2 MB; reload / return in the same session ≈ 6.4 MB without HTTP cache (no opening), ≈ 0 with cache.
+- **Open:** manual check on a real iPhone (Safari) and Android phone.

@@ -1,0 +1,538 @@
+[
+ {
+  "name": "redirected to mobile/",
+  "pass": true,
+  "info": "http://localhost:8765/mobile/index.html"
+ },
+ {
+  "name": "opening pending on fresh entry",
+  "pass": true
+ },
+ {
+  "name": "opening plays without click, muted",
+  "pass": true,
+  "info": {
+   "muted": true,
+   "paused": false,
+   "t": 1.285556,
+   "audio": 0,
+   "poster": "campus-opening-poster.webp",
+   "src": "campus-opening.mp4"
+  }
+ },
+ {
+  "name": "no black flash at start (min luma first 1.5 s)",
+  "pass": true,
+  "info": {
+   "first": 113.2,
+   "min": 113.2,
+   "all": [
+    113.2,
+    123.6
+   ]
+  }
+ },
+ {
+  "name": "no vertical/horizontal page scroll",
+  "pass": true,
+  "info": {
+   "sw": 375,
+   "sh": 667,
+   "w": 375,
+   "h": 667
+  }
+ },
+ {
+  "name": "position fixed during opening (swipe ignored)",
+  "pass": true,
+  "info": {
+   "tx0": -321.644,
+   "tx1": -321.644,
+   "openingTx": -321.6444444444445
+  }
+ },
+ {
+  "name": "tap during opening does nothing",
+  "pass": true
+ },
+ {
+  "name": "hand-off: same position as opening",
+  "pass": true,
+  "info": {
+   "opening": -321.644,
+   "loop": -321.644
+  }
+ },
+ {
+  "name": "hand-off: brightness continuous",
+  "pass": true,
+  "info": [
+   127.8,
+   123.8,
+   123.7,
+   123.6,
+   123.6,
+   123.5
+  ]
+ },
+ {
+  "name": "loop playing, opening removed from view",
+  "pass": true,
+  "info": {
+   "url": "/mobile/index.html",
+   "tx": -321.644,
+   "top": 0,
+   "frame": {
+    "w": 1185.7777777777778,
+    "h": 667,
+    "top": 0,
+    "minTx": -810.7777777777778,
+    "openingTx": -321.6444444444445
+   },
+   "ready": true,
+   "pending": false,
+   "opening": true,
+   "selected": null,
+   "tag": null,
+   "left": "Glonari News",
+   "right": "Global Dream",
+   "modal": null,
+   "exit": false,
+   "loopPaused": false,
+   "scrollW": 375,
+   "scrollH": 667,
+   "innerW": 375,
+   "innerH": 667,
+   "scrollY": 0
+  }
+ },
+ {
+  "name": "glonari.openingSeen set",
+  "pass": true
+ },
+ {
+  "name": "globe+pedestal inside screen at opening framing",
+  "pass": true,
+  "info": {
+   "pedLeft": 175.82638888888886,
+   "pedRight": 366.6625,
+   "giaLeft": -50.212500000000034,
+   "giaRight": 166.56249999999994,
+   "vw": 375
+  }
+ },
+ {
+  "name": "swipe moves the Campus, inertia continues after release",
+  "pass": true,
+  "info": {
+   "before": -321.644,
+   "justAfter": -488.311,
+   "inert": -773.187
+  }
+ },
+ {
+  "name": "left edge: clamps at 0 (no empty margin)",
+  "pass": true,
+  "info": 0
+ },
+ {
+  "name": "left edge: no left plate, right plate shown",
+  "pass": true,
+  "info": {
+   "left": null,
+   "right": "Global Connections"
+  }
+ },
+ {
+  "name": "right edge: clamps at minTx",
+  "pass": true,
+  "info": {
+   "tx": -810.778,
+   "minTx": -810.7777777777778
+  }
+ },
+ {
+  "name": "right edge: no right plate, left plate shown",
+  "pass": true,
+  "info": {
+   "left": "Global Dream",
+   "right": null
+  }
+ },
+ {
+  "name": "left plate \"Global Dream\" glides it to centre",
+  "pass": true,
+  "info": {
+   "cx": 187.49200439453125,
+   "centre": 187.5,
+   "tx": -596.225,
+   "plog": [
+    "pointerup 23 40,367 stage-viewport",
+    "pointerdown 24 335,367 campus is-ready",
+    "pointerup 24 40,367 stage-viewport",
+    "pointerdown 25 93,626 campus__edge-name",
+    "pointerup 25 93,626 campus__edge-name"
+   ]
+  }
+ },
+ {
+  "name": "right plate \"Signature Personas\" glides it to centre",
+  "pass": true,
+  "info": {
+   "cx": 211.0186767578125,
+   "tx": -810.778
+  }
+ },
+ {
+  "name": "plates always name the nearest building beyond each edge",
+  "pass": true,
+  "info": {
+   "checked": 6,
+   "bad": 0
+  }
+ },
+ {
+  "name": "swipe that starts on a zone selects nothing",
+  "pass": true,
+  "info": {
+   "sel": null
+  }
+ },
+ {
+  "name": "4px tremor still a tap (selects)",
+  "pass": true
+ },
+ {
+  "name": "tap on empty place clears selection",
+  "pass": true,
+  "info": null
+ },
+ {
+  "name": "  modal closes with ×",
+  "pass": true
+ },
+ {
+  "name": "zone building-pulse: tap highlights + tag, 2nd tap → Glonari Pulse",
+  "pass": true,
+  "info": {
+   "sel": "building-pulse",
+   "tag": "Glonari Pulse",
+   "glows": 1,
+   "got": "Glonari Pulse",
+   "geo": true
+  }
+ },
+ {
+  "name": "  modal closes by tapping the backdrop",
+  "pass": true
+ },
+ {
+  "name": "zone building-glonari-news: tap highlights + tag, 2nd tap → Glonari News",
+  "pass": true,
+  "info": {
+   "sel": "building-glonari-news",
+   "tag": "Glonari News",
+   "glows": 1,
+   "got": "Glonari News",
+   "geo": true
+  }
+ },
+ {
+  "name": "zone building-global-connections: tap highlights + tag, 2nd tap → Global Connections",
+  "pass": true,
+  "info": {
+   "sel": "building-global-connections",
+   "tag": "Global Connections",
+   "glows": 1,
+   "got": "Global Connections",
+   "geo": true
+  }
+ },
+ {
+  "name": "  back from /digital-banker/gia/index.html: loop, not dark",
+  "pass": true,
+  "info": {
+   "url": "/mobile/index.html",
+   "exit": false,
+   "opening": false,
+   "luma": 123.8
+  }
+ },
+ {
+  "name": "zone building-banker: tap highlights + tag, 2nd tap → /digital-banker/gia/index.html",
+  "pass": true,
+  "info": {
+   "sel": "building-banker",
+   "tag": "Digital Banker",
+   "glows": 1,
+   "got": "/digital-banker/gia/index.html",
+   "geo": true
+  }
+ },
+ {
+  "name": "zone building-global-dream: tap highlights + tag, 2nd tap → Global Dream",
+  "pass": true,
+  "info": {
+   "sel": "building-global-dream",
+   "tag": "Global Dream",
+   "glows": 1,
+   "got": "Global Dream",
+   "geo": true
+  }
+ },
+ {
+  "name": "zone building-glonari-commercial: tap highlights + tag, 2nd tap → Glonari Commercial",
+  "pass": true,
+  "info": {
+   "sel": "building-glonari-commercial",
+   "tag": "Glonari Commercial",
+   "glows": 1,
+   "got": "Glonari Commercial",
+   "geo": true
+  }
+ },
+ {
+  "name": "zone building-glonari-homes: tap highlights + tag, 2nd tap → Glonari Homes",
+  "pass": true,
+  "info": {
+   "sel": "building-glonari-homes",
+   "tag": "Glonari Homes",
+   "glows": 1,
+   "got": "Glonari Homes",
+   "geo": true
+  }
+ },
+ {
+  "name": "zone building-glonari-journey: tap highlights + tag, 2nd tap → Glonari Journey",
+  "pass": true,
+  "info": {
+   "sel": "building-glonari-journey",
+   "tag": "Glonari Journey",
+   "glows": 1,
+   "got": "Glonari Journey",
+   "geo": true
+  }
+ },
+ {
+  "name": "zone building-persona: tap highlights + tag, 2nd tap → Signature Persona Pavilion",
+  "pass": true,
+  "info": {
+   "sel": "building-persona",
+   "tag": "Signature Personas",
+   "glows": 1,
+   "got": "Signature Persona Pavilion",
+   "geo": true
+  }
+ },
+ {
+  "name": "zone fountain: tap highlights + tag, 2nd tap → More than a place to live — a smarter path to ownership",
+  "pass": true,
+  "info": {
+   "sel": "fountain",
+   "tag": "Glonari",
+   "glows": 1,
+   "got": "More than a place to live — a smarter path to ownership",
+   "geo": true
+  }
+ },
+ {
+  "name": "  back from /meet-gia/index.html: loop, not dark",
+  "pass": true,
+  "info": {
+   "url": "/mobile/index.html",
+   "exit": false,
+   "opening": false,
+   "luma": 123.8
+  }
+ },
+ {
+  "name": "zone presenter: tap highlights + tag, 2nd tap → /meet-gia/index.html",
+  "pass": true,
+  "info": {
+   "sel": "presenter",
+   "tag": "Meet Gia",
+   "glows": 1,
+   "got": "/meet-gia/index.html",
+   "geo": true
+  }
+ },
+ {
+  "name": "tap on the name tag opens the zone",
+  "pass": true
+ },
+ {
+  "name": "modal readable: body ≥ 16px, card inside screen",
+  "pass": true,
+  "info": {
+   "p": "16px",
+   "h": "22px",
+   "card": [
+    16,
+    359
+   ],
+   "vw": 375
+  }
+ },
+ {
+  "name": "long modal text scrolls inside the card (page does not)",
+  "pass": true,
+  "info": {
+   "top": 451,
+   "sh": 3131,
+   "ch": 633,
+   "docY": 0
+  }
+ },
+ {
+  "name": "selection cleared before the check",
+  "pass": true
+ },
+ {
+  "name": "partly hidden zone: first tap glides it fully into view",
+  "pass": true,
+  "info": {
+   "before": [
+    270.4518127441406,
+    429.7890930175781
+   ],
+   "after": [
+    199.65390014648438,
+    358.9911804199219
+   ],
+   "vw": 375
+  }
+ },
+ {
+  "name": "mouse drag pans as well",
+  "pass": true,
+  "info": {
+   "a": -504.394,
+   "b": -639.394
+  }
+ },
+ {
+  "name": "console clean on mobile/ (sub-site pages visited by the test excluded)",
+  "pass": true,
+  "info": [
+   "error: Failed to load resource: the server responded with a status of 404 (Not Found) @/digital-banker/gia/index.html"
+  ]
+ },
+ {
+  "name": "no requests to removed old-scene files",
+  "pass": true,
+  "info": []
+ },
+ {
+  "name": "reload → straight into the loop (no opening)",
+  "pass": true,
+  "info": {
+   "url": "/mobile/index.html",
+   "tx": -321.644,
+   "top": 0,
+   "frame": {
+    "w": 1185.7777777777778,
+    "h": 667,
+    "top": 0,
+    "minTx": -810.7777777777778,
+    "openingTx": -321.6444444444445
+   },
+   "ready": true,
+   "pending": false,
+   "opening": false,
+   "selected": null,
+   "tag": null,
+   "left": "Glonari News",
+   "right": "Global Dream",
+   "modal": null,
+   "exit": false,
+   "loopPaused": false,
+   "scrollW": 375,
+   "scrollH": 667,
+   "innerW": 375,
+   "innerH": 667,
+   "scrollY": 0
+  }
+ },
+ {
+  "name": "weight: first visit 14.13 MB, reload 0.00 MB",
+  "pass": true,
+  "info": {
+   "first": 14818653,
+   "reload": 3733
+  }
+ },
+ {
+  "name": "back link from meet-gia → mobile loop, not dark",
+  "pass": true,
+  "info": {
+   "url": "/mobile/index.html",
+   "opening": false,
+   "luma": 123.7
+  }
+ },
+ {
+  "name": "back link from digital-banker → mobile loop, not dark",
+  "pass": true,
+  "info": {
+   "url": "/mobile/index.html",
+   "opening": false,
+   "luma": 123.7
+  }
+ },
+ {
+  "name": "fallback autoplay-refused: interactive Campus in 230 ms, not black",
+  "pass": true,
+  "info": {
+   "dt": 230,
+   "luma": 121.5,
+   "loopPaused": true,
+   "pending": false,
+   "errors": []
+  }
+ },
+ {
+  "name": "fallback autoplay-refused: zones work",
+  "pass": true
+ },
+ {
+  "name": "fallback reduced-motion: interactive Campus in 203 ms, not black",
+  "pass": true,
+  "info": {
+   "dt": 203,
+   "luma": 121.2,
+   "loopPaused": true,
+   "pending": false,
+   "errors": []
+  }
+ },
+ {
+  "name": "fallback reduced-motion: zones work",
+  "pass": true
+ },
+ {
+  "name": "fallback opening-404: interactive Campus in 199 ms, not black",
+  "pass": true,
+  "info": {
+   "dt": 199,
+   "luma": 125.7,
+   "loopPaused": false,
+   "pending": false,
+   "errors": [
+    "HTTP 404 http://localhost:8765/assets/campus/campus-opening.mp4",
+    "error: Failed to load resource: the server responded with a status of 404 (Not Found) @/mobile/index.html"
+   ]
+  }
+ },
+ {
+  "name": "fallback opening-404: zones work",
+  "pass": true
+ },
+ {
+  "name": "glonariSkipIntro marker → loop, marker consumed",
+  "pass": true,
+  "info": {
+   "opening": false,
+   "marker": null
+  }
+ }
+]
