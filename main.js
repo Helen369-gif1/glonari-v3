@@ -7,8 +7,9 @@
   // Replaces the layered mouse-parallax scene (see DEVELOPMENT_PLAN.md
   // Stage 19 / PRODUCT_REQUIREMENTS.md §29 for what was superseded):
   //
-  //   branded overlay ("explore")  →  intro video (camera pulls back from
-  //   the globe, Gia walks in)     →  seamless 14 s loop (fixed camera;
+  //   opening video (2026-10-14: starts on page load, no splash screen,
+  //   no click — flight over the Campus, into the globe close-up, camera
+  //   pulls back, Gia walks in)  →  seamless 14 s loop (fixed camera;
   //   only the fountain jets and the globe move)  →  11 hotspots live.
   //
   // The hotspots are SVG shapes drawn in index.html in a fixed
@@ -23,7 +24,7 @@
 
   const root = document.documentElement;
   const loopVideo = campus.querySelector('.campus__loop');
-  const introVideo = campus.querySelector('.campus__intro');
+  const openingVideo = campus.querySelector('.campus__opening');
   const zonesSvg = campus.querySelector('.campus__zones');
   const label = document.querySelector('.campus__label');
   const labelName = document.querySelector('.campus__label-name');
@@ -38,14 +39,17 @@
   const finePointerQuery = window.matchMedia('(hover: hover) and (pointer: fine)');
 
   // ---------- Video sequence ----------
-  let introStarted = false;
+  let openingStarted = false;
   let loopStarted = false;
-  let introSafetyTimer = null;
+  let openingSafetyTimer = null;
 
-  // No playable source at all (unsupported codec, missing file): play()
-  // may then never settle, so check up front instead of waiting it out.
+  // Already failed (unsupported codec, missing file). networkState is
+  // deliberately not checked: it reads NETWORK_NO_SOURCE for a moment at
+  // the start of every load, and a cached page runs this script inside
+  // that moment. Later failures arrive as 'error' / a rejected play() /
+  // the safety timers below.
   function cannotPlay(video) {
-    return !video || !!video.error || video.networkState === HTMLMediaElement.NETWORK_NO_SOURCE;
+    return !video || !!video.error;
   }
 
   function enterReady() {
@@ -74,12 +78,15 @@
   function startLoop() {
     if (loopStarted) return;
     loopStarted = true;
-    window.clearTimeout(introSafetyTimer);
+    window.clearTimeout(openingSafetyTimer);
 
     const handOff = () => {
-      // The loop is on screen under the intro's held last frame → drop the
-      // intro layer. Both frames are the same picture, so the cut is invisible.
-      campus.classList.remove('is-prelude', 'is-intro');
+      // The loop is on screen under the opening's held last frame → drop
+      // the opening layer. Both frames are the same picture, so the cut is
+      // invisible.
+      root.classList.remove('opening-pending');
+      campus.classList.remove('is-handoff');
+      if (openingVideo) openingVideo.pause();
       enterReady();
     };
 
@@ -90,7 +97,7 @@
       return;
     }
 
-    campus.classList.remove('is-prelude'); // still + loop may show under the intro now
+    campus.classList.add('is-handoff'); // still + loop may show under the opening now
     loopVideo.currentTime = 0;
     const playing = loopVideo.play();
     if (playing && typeof playing.catch === 'function') {
@@ -101,54 +108,46 @@
     onFirstFrame(loopVideo, handOff);
   }
 
-  function playIntro() {
-    if (introStarted || loopStarted) return;
-    introStarted = true;
+  function playOpening() {
+    if (openingStarted || loopStarted) return;
+    openingStarted = true;
 
-    if (reduceMotionQuery.matches || cannotPlay(introVideo)) {
+    // Reduced motion, or no playable opening: straight to the finished
+    // Campus (loop, or the still frame if the loop can't play either).
+    if (reduceMotionQuery.matches || cannotPlay(openingVideo)) {
       startLoop();
       return;
     }
 
-    campus.classList.add('is-intro');
-    introVideo.addEventListener('ended', startLoop, { once: true });
-    introVideo.addEventListener('error', startLoop, { once: true });
-    const source = introVideo.querySelector('source');
-    if (source) source.addEventListener('error', startLoop, { once: true });
+    openingVideo.addEventListener('ended', startLoop, { once: true });
+    openingVideo.addEventListener('error', startLoop, { once: true });
 
-    // Safety net: if the intro stalls (slow network, a decode error that
-    // fires no event), the Campus still arrives.
-    const armSafety = () => {
-      window.clearTimeout(introSafetyTimer);
-      const ms = ((introVideo.duration || 6.3) + 5) * 1000;
-      introSafetyTimer = window.setTimeout(startLoop, ms);
-    };
-    armSafety();
-    introVideo.addEventListener('playing', armSafety, { once: true });
+    // Safety net: if the opening never starts (slow network, a decode
+    // error that fires no event) the visitor gets the Campus after a few
+    // seconds on the poster; once it plays, if it stalls, after its
+    // length plus a margin.
+    openingSafetyTimer = window.setTimeout(startLoop, 4000);
+    openingVideo.addEventListener('playing', () => {
+      window.clearTimeout(openingSafetyTimer);
+      const ms = ((openingVideo.duration || 8.4) + 5) * 1000;
+      openingSafetyTimer = window.setTimeout(startLoop, ms);
+    }, { once: true });
 
-    introVideo.currentTime = 0;
-    // The intro always plays muted (its audio track is removed).
-    introVideo.play().catch(startLoop);
+    // Autoplay without a user gesture: allowed because the video is
+    // muted (no audio track at all) and playsinline. If the browser
+    // still refuses, go straight to the interactive Campus.
+    openingVideo.currentTime = 0;
+    const playing = openingVideo.play();
+    if (playing && typeof playing.catch === 'function') playing.catch(startLoop);
   }
 
-  const introPending = root.classList.contains('intro-active');
-  if (introPending && !reduceMotionQuery.matches) {
-    // Behind the branded overlay: keep the stage black, so when the overlay
-    // fades the intro video opens from darkness (its own first frames are
-    // black) rather than from the finished Campus.
-    campus.classList.add('is-prelude');
-  }
-
-  if (introPending) {
-    if (window.glonariIntroExiting) {
-      playIntro();
-    } else {
-      document.addEventListener('glonari:intro-exit', playIntro, { once: true });
-    }
+  if (root.classList.contains('opening-pending')) {
+    playOpening();
   } else {
     // Returning to the Campus (Back/Forward, or from a sub-site) or the
-    // intro was suppressed: straight into the loop, no intro video.
-    introStarted = true;
+    // opening was suppressed: straight into the loop, no opening video
+    // (index.html already removed that element).
+    openingStarted = true;
     startLoop();
   }
 

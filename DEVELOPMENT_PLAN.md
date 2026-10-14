@@ -154,6 +154,9 @@ How to use this plan: give Claude Code **one stage at a time**. Each stage is se
 
 > **SUPERSEDED (2026-10-12) — "shows on every normal load" (Revisit/reload behavior above): returning to the Campus no longer replays the intro, on desktop and mobile.** Replaced by: both `index.html` and `mobile/index.html` define `glonariReturningToCampus()` in their device-gate `<head>` script; it is true when the navigation type is `back_forward` (browser Back/Forward to the Campus), or when the page was not reloaded and `document.referrer` is same-origin under `/meet-gia/`, `/digital-banker/`, `/global-dream/` or `/global-reserve/` (e.g. Meet Gia's "← Glonari" back link). The intro-decision script then skips adding `intro-active` when either the existing one-shot `glonariSkipIntro` marker or this check is true. Because the initial synchronous device-gate redirect uses `.replace()` (the destination sees only the gate page as referrer, with a plain `navigate` type), the initial `goMobile()`/`goDesktop()` call now sets `glonariSkipIntro` first when the visit is a returning one. Still shows the intro: a fresh load, a deep link or outside link, and a manual reload (including a reload right after coming back). `intro.js`, intro visuals and the presenter's "greeting waits for the intro" rule are unchanged (with no intro, the greeting plays on load). **Verified** (Playwright, Chromium, local http server): desktop 1400x900 — fresh load intro ON; Meet Gia → Back: OFF; Meet Gia "← Glonari" link: OFF; reload after that: ON. Mobile 400x860 (via the desktop gate redirect) — fresh: ON; Back: OFF; "← Glonari" link (desktop index → redirect → mobile): OFF; reload: ON. See chat/prompt from 2026-10-12.
 
+
+> **UPDATE (2026-10-14)** — on desktop the branded intro overlay (logo, headline/subhead, "explore" button) described here is superseded: see the SUPERSEDED (2026-10-14) block at the end of Stage 19 (splash screen removed, `campus-opening.mp4` replaces `campus-intro.mp4`, autoplay with fallbacks).
+
 ---
 
 ## Stage 5 — Global scene movement preparation
@@ -544,6 +547,8 @@ How to use this plan: give Claude Code **one stage at a time**. Each stage is se
 
 > **SUPERSEDED (2026-10-13)** — desktop only (`mobile/` unchanged by decision): motion now comes from the two videos, not from JS animation: intro video plays (with sound) when "explore" is clicked, then hands off to the loop on its first rendered frame with no visible cut. Replaced by Stage 19, see chat/prompt from 2026-10-13.
 
+> **UPDATE (2026-10-14)** — on desktop the "explore"-triggered intro video described here is superseded: see the SUPERSEDED (2026-10-14) block at the end of Stage 19 (splash screen removed, `campus-opening.mp4` replaces `campus-intro.mp4`, autoplay with fallbacks).
+
 ## Stage 13 — Responsive behavior
 
 **Objective:** Validate the full experience (not just the static composition) across relevant viewport sizes.
@@ -878,13 +883,19 @@ How to use this plan: give Claude Code **one stage at a time**. Each stage is se
 
 **Sequence:** branded intro overlay (unchanged) → "explore" → `assets/campus/campus-intro.mp4` (≈6.2 s, appears from black, camera pulls back from the globe, presenter walks in; plays with sound since the click is a user gesture, muted fallback) → `assets/campus/campus-loop.mp4` (the user's original `glonari_loop_globe.mp4`, 14 s, 1280×720, 24 fps, no audio, remuxed with faststart only — not re-encoded) → hotspots live. Returning visits (Back/Forward, coming back from a sub-site, live device-gate redirect) skip both the overlay and the intro video and start on the loop.
 
+> **UPDATE (2026-10-14)** — on desktop the sequence (branded overlay → "explore" → `campus-intro.mp4`) described here is superseded: see the SUPERSEDED (2026-10-14) block at the end of Stage 19 (splash screen removed, `campus-opening.mp4` replaces `campus-intro.mp4`, autoplay with fallbacks).
+
 **Fixed requirements (from the user):** in the loop the houses are pixel-static, the camera is static, the presenter is fully static (no blinking, no talking); sign lettering comes from the source picture.
 
 **Hotspots (11):** Glonari Pulse, Glonari News, Global Connections, Digital Banker, Global Dream, Glonari Commercial, Glonari Homes, Glonari Journey, Signature Personas, presenter (Meet Gia), fountain/globe. Shapes are SVG paths in the video's own 1280×720 space inside the same 16:9 box as the video, so they cannot drift at any window size. DOM order is back-to-front; overlaps (front-row domes over back-row buildings, the presenter over Journey and the fountain) are resolved by order for the pointer and by masks for the highlight. Presenter shape = traced from a segmentation mask (`assets/campus/presenter-mask-add.png` / `-cut.png`).
 
 **Click map:** Digital Banker → `digital-banker/gia/index.html`; presenter → `meet-gia/index.html` (both with the existing black fade); Pulse / News / Global Connections / Global Dream / Signature Personas → existing section-modal content; Commercial / Homes / Journey → section modal, placeholder copy marked TODO in `section-modal.js`; fountain → section modal with the branded-intro headline/subhead. Glonari Ancillary's modal content stays in `section-modal.js` (mobile uses it) but has no building on the new desktop picture.
 
+> **UPDATE (2026-10-14)** — on desktop the fountain copy's source (the branded intro) described here is superseded: see the SUPERSEDED (2026-10-14) block at the end of Stage 19 (splash screen removed, `campus-opening.mp4` replaces `campus-intro.mp4`, autoplay with fallbacks).
+
 **Files:** `index.html`, `styles.css`, `main.js` (rewritten for the new scene), `intro.js` (dispatches `glonari:intro-exit` when the overlay starts fading; harmless on mobile), `section-modal.js` (4 new content keys), new `assets/campus/` (intro, loop, still frame, pre-brightened still, presenter masks). Old desktop scene assets under `assets/` are left in place (unreferenced by the desktop page now; `mobile/` uses its own).
+
+> **UPDATE (2026-10-14)** — on desktop the role of `intro.js` and the `campus-intro.mp4` asset described here are superseded: see the SUPERSEDED (2026-10-14) block at the end of Stage 19 (splash screen removed, `campus-opening.mp4` replaces `campus-intro.mp4`, autoplay with fallbacks).
 
 **Acceptance criteria:**
 - [x] Intro video starts under the overlay's fade, opens from black; loop takes over with no black frame or visible cut.
@@ -895,9 +906,13 @@ How to use this plan: give Claude Code **one stage at a time**. Each stage is se
 - [ ] Manual check in real Chrome / Safari / Firefox (headless test browser has no H.264; verified with a temporary VP9 copy).
 - [ ] Real copy for Commercial, Homes, Journey.
 
+> **UPDATE (2026-10-14)** — on desktop the intro-related criteria (first two) described here are superseded: see the SUPERSEDED (2026-10-14) block at the end of Stage 19 (splash screen removed, `campus-opening.mp4` replaces `campus-intro.mp4`, autoplay with fallbacks).
+
 **Status:** implemented — pending manual visual approval.
 
 > **SUPERSEDED (2026-10-13)** — intro plays muted (audio track removed); hover outline is now a crisp ~2px gold line and the lift mask has hard edges (no feather / no blur), replaced the soft glow, see chat/prompt from 2026-10-13. Details: `<video class="campus__intro">` carries `muted`, `playIntro()` just calls `play().catch(startLoop)` (no unmute / muted-retry); `campus-intro.mp4` remuxed with `-c:v copy -an +faststart` (video-only, 1280×720, 24 fps, 6.21 s). `#feather` and `#zone-glow` filters removed; `.zone__glow` stroke-width 4 (half clipped by the mask → ~2px visible), active opacity 0.95, focus-visible stroke-width 6. `presenter-mask-add.png` / `-cut.png` alpha re-thresholded at 128 with ≤1px antialias (same 460×460, same position).
+
+> **UPDATE (2026-10-14)** — on desktop the `campus-intro.mp4` / `.campus__intro` described here are superseded: see the SUPERSEDED (2026-10-14) block at the end of Stage 19 (splash screen removed, `campus-opening.mp4` replaces `campus-intro.mp4`, autoplay with fallbacks).
 
 > **UPDATE (2026-10-13)** — unused assets of the old desktop parallax scene were deleted (`assets/banker.png`, `banker.webp`, `banker frontal.png`, `banker frontal.webp`, `global-connections.png`, `global-connections.webp`, `global-connections frontal.png`, `global-connections frontal.webp`, `global-dream.png`, `global-dream.webp`, `global-dream frontal.png`, `global-dream frontal.webp`, `glonari-ancillary.png`, `glonari-ancillary.webp`, `glonari-ancillary frontal.png`, `glonari-ancillary frontal.webp`, `glonari-news.png`, `glonari-news.webp`, `glonari-news frontal.png`, `glonari-news frontal.webp`, `persona.png`, `persona.webp`, `persona frontal.png`, `persona frontal.webp`, `pulse.png`, `pulse.webp`, `pulse frontal.png`, `pulse frontal.webp`, `background.webp`, `plaza.webp`, `fountain-water.mp4`, `water-mask.svg` — 32 files, `assets/` 48M → 12M); mobile/ assets kept (`mobile/assets/` untouched; root `background.png`, `fountain.*`, `plaza.png`, `sky.*`, `glonari-logo.*`, `presenter*` and `assets/campus/` kept). See chat/prompt from 2026-10-13.
 
@@ -906,6 +921,27 @@ How to use this plan: give Claude Code **one stage at a time**. Each stage is se
 > **SUPERSEDED (2026-10-13)** — desktop Campus now always fills the screen (pure cover, no capped crop, no blurred backdrop, no edge fade); windows narrower than 3:2 (max-aspect-ratio: 3/2) or under 768px go to mobile/; the mobile page's reverse redirect uses the exact negation. See chat/prompt from 2026-10-13. Implementation: forward gate in `index.html` is `matchMedia('(max-width: 767px), not all and (min-aspect-ratio: 3/2)')` (a strict "< 3:2", so an exact 3:2 window stays on desktop); reverse gate in `mobile/index.html` is `(min-width: 768px) and (min-aspect-ratio: 3/2) and (hover: hover) and (pointer: fine)` — the width/aspect part is the exact negation, the existing hover/pointer condition is kept, so touch devices still never go to desktop.
 
 > **SUPERSEDED (2026-10-14)** — campus-loop.mp4 / campus-intro.mp4 / stills are now 1920x1080: static buildings and sky rebuilt from the original source picture (higher resolution than the 720p video), fountain/globe and presenter taken from the original loop and upscaled, softer colour grade (less glare and saturation) applied identically to intro, loop and stills; intro's last 0.5 s blends into the new loop's first frame. See chat/prompt from 2026-10-14.
+
+
+> **SUPERSEDED (2026-10-14)** — splash screen removed; `campus-opening.mp4` replaces `campus-intro.mp4`; the scene starts automatically. Desktop only — `mobile/` is unchanged (it keeps its own branded intro overlay, `intro.css`/`intro.js`). Replaced by:
+> - **No splash screen:** the overlay with the Glonari logo, headline/subhead and the "explore" button is gone from `index.html` (markup, the `intro.css`/`intro.js` links and the GSAP CDN tag, which only `intro.js` used). The files `intro.css`/`intro.js`/`assets/glonari-logo.*` stay — `mobile/index.html` still uses them. The Campus starts by itself on page load: no click, no gesture.
+> - **New opening video:** `assets/campus/campus-opening.mp4` (≈8.4 s, 202 frames, 1920×1080, 24 fps, H.264, no audio track) replaces `campus-intro.mp4` (deleted from the repo, kept in git history): flight over the Campus (source: generated video `01.mp4`, sped up, colour matched to the scene) → zoom into the former intro up to Gia's entrance → Gia walks in and gestures to the globe → seamless hand-off to `campus-loop.mp4`. Its last frame matches the loop's first frame (PSNR 32.85 dB by file; the old intro was 34.97 dB). Autoplays muted + `playsinline`, `preload="auto"` (the loop keeps `preload="auto"` too, so it is buffered by the hand-off). The hand-off to the loop and the moment the 11 zones go live are the same logic as after the old intro; zones stay inert and untabbable while the opening plays.
+> - **Poster:** `assets/campus/campus-opening-poster.webp` (the opening's first frame, 1920×1080, WebP q85) is shown from the first paint (preloaded with high priority), so there is no black screen before the first video frame.
+> - **Former splash text:** the headline/subhead ("More than a place to live — a smarter path to ownership" / "Glonari brings real estate, … Gia quietly connects it all.") stays, verbatim, in the fountain modal (`section-modal.js`, key `fountain` — it was already there).
+> - **Fallbacks:** `play()` refused by the browser, or the video fails to load (error / 404 / nothing playing within 4 s) → straight to the final interactive Campus: the loop, or the still frame if the loop can't play either. `prefers-reduced-motion: reduce` → the opening is skipped, still frame with live zones. Never a blank or stuck screen.
+> - **Returning visits (unchanged behaviour):** Back/Forward, arriving from a sub-site (`meet-gia/`, `digital-banker/`, `global-dream/`, `global-reserve/`), and the live device-gate redirect from `mobile/` skip the opening and start on the loop, exactly as they skipped the old splash + intro; a normal load or manual reload plays it. New: those visits no longer download the opening file at all, and a mobile redirect fetches neither the opening nor its poster.
+> - **Implementation:** the `<head>` script sets `opening-pending` on `<html>` for a fresh entry (replaces `intro-active`) and preloads the poster; an inline script right after `<video class="campus__opening">` sets its `poster`/`src` only then (otherwise removes the element); `styles.css` shows the opening layer while `opening-pending` is present and hides the still/loop under it until `.campus.is-handoff`; `main.js` `playOpening()` replaces `playIntro()` and the `glonari:intro-exit` listener. Bug fixed along the way: `cannotPlay()` no longer treats the transient `NETWORK_NO_SOURCE` as a failure — on a cached load it fired and skipped the video (with the old code, Back to the Campus showed a paused still instead of the loop).
+> - **Acceptance criteria (2026-10-14):**
+>   - [x] Page starts without a click; opening plays muted (0 bytes of decoded audio); poster visible before the first frame, no black flash (lowest on-screen mean luma during start ≈ 100/255).
+>   - [x] Opening → loop hand-off without a black frame: on-screen mean luma steps by ≤ 3.3/255 at the seam (the file's last frame is ≈ 2.3/255 darker than the loop's first), within the normal frame-to-frame change inside the opening (≤ 5.1/255).
+>   - [x] During the opening, hovering any zone highlights nothing; after the hand-off all 11 zones hover correctly (1440×900, 2560×1440).
+>   - [x] Fountain modal shows the former splash text verbatim.
+>   - [x] Autoplay refused / opening file missing / reduced motion → interactive Campus within ≈ 0.3 s.
+>   - [x] 768×900 and 1200×900 → `mobile/` before any video request; 1440×900 stays.
+>   - [x] No new console errors.
+>   - [ ] Manual check in real Chrome / Safari / Firefox (automated: Playwright Chromium 151, which now plays H.264).
+>
+> **Status:** implemented — pending manual visual approval. QA screenshots: `docs/qa/2026-10-14-campus-opening/`. See chat/prompt from 2026-10-14.
 
 ---
 

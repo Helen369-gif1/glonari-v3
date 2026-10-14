@@ -1,9 +1,11 @@
 (() => {
   'use strict';
 
-  // Branded intro (shared: desktop main.js's index.html + mobile/main.js's
-  // mobile/index.html) — see intro.css for the visual states this toggles
-  // and index.html/mobile/index.html for the inline <head> script that
+  // Branded intro — mobile/index.html only since 2026-10-14 (the desktop
+  // index.html dropped this splash screen and its "explore" button and
+  // now autoplays assets/campus/campus-opening.mp4 instead; see
+  // DEVELOPMENT_PLAN.md Stage 19). See intro.css for the visual states
+  // this toggles and mobile/index.html for the inline <head> script that
   // decides, per page load, whether the intro runs at all.
   //
   // That decision already happened synchronously, before this (deferred)
@@ -43,10 +45,10 @@
 
     overlay.classList.add('intro-exit');
 
-    // 2026-10-13: tell the page the overlay has started fading, so the
-    // desktop Campus can start its intro video underneath that fade (the
-    // video itself opens from black). The flag covers a listener that
-    // attaches late. Mobile has no listener; harmless there.
+    // 2026-10-13: tell the page the overlay has started fading (was used
+    // by the desktop Campus to start its intro video; since 2026-10-14
+    // desktop no longer loads this file and mobile has no listener, so
+    // this is currently unused but harmless).
     window.glonariIntroExiting = true;
     document.dispatchEvent(new CustomEvent('glonari:intro-exit'));
 

@@ -62,7 +62,9 @@
       desc: 'Glonari Journey follows you from your first step on the Campus to the keys in your hand — every milestone, every decision, and what comes next, in one place.',
     },
     'fountain': {
-      // Same copy as the branded intro overlay (index.html #intro-copy).
+      // Copy of the former desktop splash screen (index.html #intro-copy,
+      // removed 2026-10-14); still identical to mobile/index.html's
+      // branded intro overlay.
       name: 'More than a place to live — a smarter path to ownership',
       desc: 'Glonari brings real estate, member participation, artificial intelligence, global connections, and financial intelligence together to help lower your cost of living and make ownership more achievable. Gia quietly connects it all.',
     },

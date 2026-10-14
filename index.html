@@ -29,13 +29,14 @@
   // manual `resize` listener; the SAME MediaQueryList object is reused
   // for both the one-time check and this listener, rather than
   // constructing a second one for the same query.
-  // Returning to the Campus (2026-10-12): the branded intro is only for
-  // a fresh entry. A browser Back/Forward to this page, or arriving from
-  // one of the sub-sites (their "← Glonari" back link, or any link out of
-  // meet-gia/, digital-banker/, global-dream/, global-reserve/), lands
-  // straight in the Campus. Same-origin referrer only, so an outside
-  // link still gets the intro, and a manual reload (which keeps the old
-  // referrer) still shows it.
+  // Returning to the Campus (2026-10-12): the opening video (2026-10-14:
+  // campus-opening.mp4; it replaced the branded intro overlay + the old
+  // intro video) is only for a fresh entry. A browser Back/Forward to
+  // this page, or arriving from one of the sub-sites (their "← Glonari"
+  // back link, or any link out of meet-gia/, digital-banker/,
+  // global-dream/, global-reserve/), lands straight in the Campus loop.
+  // Same-origin referrer only, so an outside link still gets the opening,
+  // and a manual reload (which keeps the old referrer) still shows it.
   function glonariReturningToCampus() {
     try {
       var nav = performance.getEntriesByType('navigation')[0];
@@ -64,8 +65,9 @@
 
   if (mobileQuery.matches) {
     // A returning visit forwarded to mobile carries its "skip the intro"
-    // decision along: after .replace() the mobile page only sees this
-    // page as its referrer and a plain 'navigate' type.
+    // decision along (mobile/ still has its own branded intro overlay):
+    // after .replace() the mobile page only sees this page as its
+    // referrer and a plain 'navigate' type.
     if (glonariReturningToCampus()) sessionStorage.setItem('glonariSkipIntro', '1');
     goMobile();
   } else {
@@ -87,10 +89,10 @@
           // One-shot marker consumed by mobile/index.html's own inline
           // <head> script — this call site is the LIVE resize/orientation
           // redirect, not the initial synchronous check above, so the
-          // destination page must not replay the branded intro (see
-          // intro.js). Set immediately before the existing goMobile()
-          // call; goMobile() itself and the redirect criteria are
-          // unchanged.
+          // destination page must not replay mobile's branded intro (see
+          // intro.js, now mobile-only). Set immediately before the
+          // existing goMobile() call; goMobile() itself and the redirect
+          // criteria are unchanged.
           sessionStorage.setItem('glonariSkipIntro', '1');
           goMobile();
         }
@@ -99,17 +101,28 @@
   }
 </script>
 <script>
-  // Branded intro one-shot marker (see intro.js/intro.css): consumed here,
-  // once, so only the automatic live-redirect above (the only call site
-  // that sets it) suppresses the intro on its destination page. A normal
-  // load, a manual reload, or a redirect from the initial synchronous
-  // check further up never has this marker set, so they always show it.
-  // Returning to the Campus (see glonariReturningToCampus above) skips it
-  // too.
+  // Opening video (2026-10-14, DEVELOPMENT_PLAN.md Stage 19): a fresh
+  // entry plays assets/campus/campus-opening.mp4 straight away (no splash
+  // screen, no click), then hands off to the loop — see main.js.
+  // `opening-pending` on <html> is what makes styles.css show the opening
+  // layer (with its poster) from the very first paint. The one-shot
+  // marker below is set only by the automatic live-redirect from
+  // mobile/ (and consumed here, once), so that landing page skips the
+  // opening; returning to the Campus (see glonariReturningToCampus above)
+  // skips it too. A normal load or a manual reload always plays it.
+  // The poster (the opening's first frame) is preloaded from here rather
+  // than from a <link> tag, so a redirected mobile visit or a returning
+  // visit never fetches it.
   if (sessionStorage.getItem('glonariSkipIntro')) {
     sessionStorage.removeItem('glonariSkipIntro');
-  } else if (!glonariReturningToCampus()) {
-    document.documentElement.classList.add('intro-active');
+  } else if (!glonariReturningToCampus() && !mobileQuery.matches) {
+    document.documentElement.classList.add('opening-pending');
+    var posterPreload = document.createElement('link');
+    posterPreload.rel = 'preload';
+    posterPreload.as = 'image';
+    posterPreload.href = 'assets/campus/campus-opening-poster.webp';
+    posterPreload.fetchPriority = 'high';
+    document.head.appendChild(posterPreload);
   }
 </script>
 <title>Glonari Global Scene</title>
@@ -117,31 +130,8 @@
 <link rel="stylesheet" href="design-tokens.css">
 <link rel="stylesheet" href="styles.css">
 <link rel="stylesheet" href="section-modal.css">
-<link rel="stylesheet" href="intro.css">
 </head>
 <body>
-  <!-- Branded intro overlay: shared markup/behavior with mobile/index.html
-       — see intro.css/intro.js. Sits above the Campus (and its own
-       #modal-overlay) while active; fully removed from the DOM on exit.
-       Not aria-hidden: unlike the old auto-exiting version, this one holds
-       a real interactive control (the "explore" button) that assistive
-       tech must be able to reach. -->
-  <div id="intro-overlay">
-    <div class="intro-inner">
-      <div class="intro-logo" id="intro-logo">
-        <picture>
-          <source type="image/webp" srcset="assets/glonari-logo.webp">
-          <img src="assets/glonari-logo.png" alt="Glonari" width="1584" height="763">
-        </picture>
-      </div>
-      <div class="intro-copy" id="intro-copy">
-        <h1 class="intro-headline">More than a place to live — a smarter path to ownership</h1>
-        <p class="intro-subhead">Glonari brings real estate, member participation, artificial intelligence, global connections, and financial intelligence together to help lower your cost of living and make ownership more achievable. Gia quietly connects it all.</p>
-      </div>
-      <button type="button" class="intro-cta" id="intro-cta">explore</button>
-    </div>
-  </div>
-
   <!-- Campus scene (2026-10-13, replaces the layered parallax scene —
        see DEVELOPMENT_PLAN.md Stage 19 / PRODUCT_REQUIREMENTS.md §29).
        .campus is a fixed 16:9 box (the video frame; video is 1920x1080) sized
@@ -157,9 +147,23 @@
     <video class="campus__loop" muted loop playsinline preload="auto" poster="assets/campus/campus-still.webp" aria-hidden="true">
       <source src="assets/campus/campus-loop.mp4" type="video/mp4">
     </video>
-    <video class="campus__intro" muted playsinline preload="auto" aria-hidden="true">
-      <source src="assets/campus/campus-intro.mp4" type="video/mp4">
-    </video>
+    <video class="campus__opening" muted playsinline preload="auto" aria-hidden="true"></video>
+    <script>
+      // The opening's poster and src are set here, synchronously while the
+      // page is parsed (so both load just as early as with plain
+      // attributes), and only on a fresh entry: a returning visit (no
+      // `opening-pending`) drops the element instead and never fetches the
+      // ~14 MB file, and a mobile redirect never fetches either (the
+      // browser's preload scanner would grab a plain poster= attribute).
+      (function (video) {
+        if (document.documentElement.classList.contains('opening-pending')) {
+          video.poster = 'assets/campus/campus-opening-poster.webp';
+          video.src = 'assets/campus/campus-opening.mp4';
+        } else {
+          video.remove();
+        }
+      })(document.currentScript.previousElementSibling);
+    </script>
     <svg class="campus__zones" viewBox="0 0 1280 720" preserveAspectRatio="none" aria-label="Glonari Campus">
       <defs>
         <radialGradient id="halo-grad"><stop offset="0" stop-color="#ffe9b8" stop-opacity=".38"/><stop offset="1" stop-color="#ffe9b8" stop-opacity="0"/></radialGradient>
@@ -260,8 +264,6 @@
   <!-- Cross-project navigation fade (Digital Banker, Meet Gia). -->
   <div id="exit-transition" aria-hidden="true"></div>
 
-  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/gsap.min.js" defer></script>
-  <script src="intro.js" defer></script>
   <script src="section-modal.js" defer></script>
   <script src="main.js" defer></script>
 </body>

@@ -1,4 +1,9 @@
-/* ---------- Branded intro overlay (shared: desktop index.html + mobile/index.html) ----------
+/* ---------- Branded intro overlay (mobile/index.html) ----------
+   2026-10-14: desktop index.html no longer links this file — its splash
+   screen was removed in favour of the autoplaying campus-opening.mp4
+   (DEVELOPMENT_PLAN.md Stage 19). Mentions of index.html below are
+   historical; mobile/ is unchanged.
+
    Full-screen entrance shown above the Campus scene while it finishes
    loading. Self-contained: defines its own --gold-bright/--gold-bright-rgb
    like section-modal.css already does, rather than relying on the host

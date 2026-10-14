@@ -54,7 +54,7 @@ html, body {
 
 .campus__still,
 .campus__loop,
-.campus__intro {
+.campus__opening {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -63,19 +63,22 @@ html, body {
   display: block;
 }
 
-/* The intro video sits on top only while it plays (and holds its last
-   frame until the loop's first frame is on screen — see main.js). */
-.campus__intro {
+/* Opening video (2026-10-14, campus-opening.mp4): on top from the very
+   first paint of a fresh entry — index.html's <head> script sets
+   `opening-pending` on <html> — showing its poster (the first frame)
+   until playback starts, and holding its last frame until the loop's
+   first frame is on screen (main.js then removes the class). */
+.campus__opening {
   visibility: hidden;
 }
-.campus.is-intro .campus__intro {
+html.opening-pending .campus__opening {
   visibility: visible;
 }
 
-/* Behind the branded overlay and until the intro's first frame: black
-   stage, so the intro opens from darkness instead of the finished Campus. */
-.campus.is-prelude .campus__still,
-.campus.is-prelude .campus__loop {
+/* Until main.js hands off to the loop, keep the finished Campus hidden
+   under the opening, so it can't flash before the poster has decoded. */
+html.opening-pending .campus:not(.is-handoff) .campus__still,
+html.opening-pending .campus:not(.is-handoff) .campus__loop {
   visibility: hidden;
 }
 
@@ -310,7 +313,7 @@ body:not(.campus-ready) .explore-hint {
 
 /* ---------- Cross-project exit transition ----------
    Plain fixed black overlay, sibling of .stage-viewport/#modal-overlay (see
-   index.html). Sits above everything (intro overlay included) while
+   index.html). Sits above everything while
    active. Faded in by main.js's navigateWithFade() immediately before a
    real page navigation to another one of the four connected sites (today:
    the Digital Banker building -> digital-banker/gia/index.html), so the
