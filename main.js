@@ -84,6 +84,15 @@
       // The loop is on screen under the opening's held last frame → drop
       // the opening layer. Both frames are the same picture, so the cut is
       // invisible.
+      if (root.classList.contains('opening-pending')) {
+        // Shown (or skipped by a fallback) once → not again in this tab's
+        // session; index.html's <head> script reads this flag.
+        try {
+          sessionStorage.setItem('glonari.openingSeen', '1');
+        } catch (e) {
+          // No sessionStorage: every load behaves like a first visit.
+        }
+      }
       root.classList.remove('opening-pending');
       campus.classList.remove('is-handoff');
       if (openingVideo) openingVideo.pause();
@@ -171,6 +180,17 @@
 
   const exitTransition = document.getElementById('exit-transition');
   const EXIT_FADE_MS = 550; // #exit-transition's CSS transition + margin
+
+  // Back/Forward can restore this page from the back/forward cache exactly
+  // as it was left — black #exit-transition on top, loop paused. Lift the
+  // fade and resume the loop.
+  window.addEventListener('pageshow', (event) => {
+    if (!event.persisted) return;
+    if (exitTransition) exitTransition.classList.remove('active');
+    if (loopStarted && !reduceMotionQuery.matches && !cannotPlay(loopVideo)) {
+      loopVideo.play().catch(() => {});
+    }
+  });
 
   function navigateWithFade(url) {
     if (!exitTransition) {

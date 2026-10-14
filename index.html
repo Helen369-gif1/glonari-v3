@@ -29,6 +29,18 @@
   // manual `resize` listener; the SAME MediaQueryList object is reused
   // for both the one-time check and this listener, rather than
   // constructing a second one for the same query.
+
+  // sessionStorage can throw (storage blocked, some private modes); every
+  // access goes through this, and a failure reads as "nothing stored", so
+  // the page then behaves like a first visit.
+  function glonariSession(method, key, value) {
+    try {
+      return sessionStorage[method](key, value);
+    } catch (e) {
+      return null;
+    }
+  }
+
   // Returning to the Campus (2026-10-12): the opening video (2026-10-14:
   // campus-opening.mp4; it replaced the branded intro overlay + the old
   // intro video) is only for a fresh entry. A browser Back/Forward to
@@ -36,7 +48,9 @@
   // back link, or any link out of meet-gia/, digital-banker/,
   // global-dream/, global-reserve/), lands straight in the Campus loop.
   // Same-origin referrer only, so an outside link still gets the opening,
-  // and a manual reload (which keeps the old referrer) still shows it.
+  // and a manual reload (which keeps the old referrer) still shows it —
+  // unless it was already shown in this tab (see `glonari.openingSeen`
+  // in the next script).
   function glonariReturningToCampus() {
     try {
       var nav = performance.getEntriesByType('navigation')[0];
@@ -68,7 +82,7 @@
     // decision along (mobile/ still has its own branded intro overlay):
     // after .replace() the mobile page only sees this page as its
     // referrer and a plain 'navigate' type.
-    if (glonariReturningToCampus()) sessionStorage.setItem('glonariSkipIntro', '1');
+    if (glonariReturningToCampus()) glonariSession('setItem', 'glonariSkipIntro', '1');
     goMobile();
   } else {
     var pendingMobileRedirect = null;
@@ -93,7 +107,7 @@
           // intro.js, now mobile-only). Set immediately before the
           // existing goMobile() call; goMobile() itself and the redirect
           // criteria are unchanged.
-          sessionStorage.setItem('glonariSkipIntro', '1');
+          glonariSession('setItem', 'glonariSkipIntro', '1');
           goMobile();
         }
       }, 300);
@@ -105,28 +119,44 @@
   // entry plays assets/campus/campus-opening.mp4 straight away (no splash
   // screen, no click), then hands off to the loop — see main.js.
   // `opening-pending` on <html> is what makes styles.css show the opening
-  // layer (with its poster) from the very first paint. The one-shot
-  // marker below is set only by the automatic live-redirect from
-  // mobile/ (and consumed here, once), so that landing page skips the
-  // opening; returning to the Campus (see glonariReturningToCampus above)
-  // skips it too. A normal load or a manual reload always plays it.
-  // The poster (the opening's first frame) is preloaded from here rather
-  // than from a <link> tag, so a redirected mobile visit or a returning
-  // visit never fetches it.
-  if (sessionStorage.getItem('glonariSkipIntro')) {
-    sessionStorage.removeItem('glonariSkipIntro');
-  } else if (!glonariReturningToCampus() && !mobileQuery.matches) {
-    document.documentElement.classList.add('opening-pending');
-    var posterPreload = document.createElement('link');
-    posterPreload.rel = 'preload';
-    posterPreload.as = 'image';
-    posterPreload.href = 'assets/campus/campus-opening-poster.webp';
-    posterPreload.fetchPriority = 'high';
-    document.head.appendChild(posterPreload);
+  // layer (with its poster) from the very first paint.
+  //
+  // It is skipped — straight into the loop — when:
+  //  - the one-shot marker below is set: only by the automatic
+  //    live-redirect from mobile/ (consumed here, once);
+  //  - returning to the Campus (see glonariReturningToCampus above);
+  //  - it was already shown in this tab's session (2026-10-14, later):
+  //    main.js sets `glonari.openingSeen` once the opening has handed off
+  //    to the loop or a fallback skipped it, so a reload or an outside
+  //    link in the same tab no longer replays it; a new tab plays it.
+  //
+  // Nothing here runs when the first script is already redirecting to
+  // mobile/: the "skip the intro" marker it just set for mobile/ must
+  // survive (a browser that keeps parsing after location.replace() would
+  // otherwise consume it again right here), and no
+  // desktop image is preloaded for a page that is leaving. The still and
+  // the poster are preloaded from here rather than from <link> tags for
+  // that reason.
+  function glonariPreload(href, priority) {
+    var link = document.createElement('link');
+    link.rel = 'preload';
+    link.as = 'image';
+    link.href = href;
+    if (priority) link.fetchPriority = priority;
+    document.head.appendChild(link);
+  }
+
+  if (!mobileQuery.matches) {
+    if (glonariSession('getItem', 'glonariSkipIntro')) {
+      glonariSession('removeItem', 'glonariSkipIntro');
+    } else if (!glonariReturningToCampus() && glonariSession('getItem', 'glonari.openingSeen') !== '1') {
+      document.documentElement.classList.add('opening-pending');
+      glonariPreload('assets/campus/campus-opening-poster.webp', 'high');
+    }
+    glonariPreload('assets/campus/campus-still.webp');
   }
 </script>
 <title>Glonari Global Scene</title>
-<link rel="preload" as="image" href="assets/campus/campus-still.webp">
 <link rel="stylesheet" href="design-tokens.css">
 <link rel="stylesheet" href="styles.css">
 <link rel="stylesheet" href="section-modal.css">
@@ -143,24 +173,30 @@
        so the shapes never have to. -->
   <div class="stage-viewport">
   <div class="campus" id="campus">
-    <img class="campus__still" src="assets/campus/campus-still.webp" alt="" width="1920" height="1080">
-    <video class="campus__loop" muted loop playsinline preload="auto" poster="assets/campus/campus-still.webp" aria-hidden="true">
-      <source src="assets/campus/campus-loop.mp4" type="video/mp4">
-    </video>
+    <img class="campus__still" alt="" width="1920" height="1080">
+    <video class="campus__loop" muted loop playsinline preload="auto" aria-hidden="true"></video>
     <video class="campus__opening" muted playsinline preload="auto" aria-hidden="true"></video>
     <script>
-      // The opening's poster and src are set here, synchronously while the
-      // page is parsed (so both load just as early as with plain
-      // attributes), and only on a fresh entry: a returning visit (no
-      // `opening-pending`) drops the element instead and never fetches the
-      // ~14 MB file, and a mobile redirect never fetches either (the
-      // browser's preload scanner would grab a plain poster= attribute).
-      (function (video) {
+      // Every src/poster of the Campus media is set here, synchronously
+      // while the page is parsed (so they load just as early as plain
+      // attributes would), and only when this page is staying on desktop:
+      // the browser's preload scanner fetches plain src=/poster=
+      // attributes even on a page that is already redirecting to mobile/.
+      // The opening is set up only on a fresh entry (`opening-pending`);
+      // otherwise the element is dropped and its file is never fetched,
+      // and the loop starts from its first frame over the still.
+      (function (opening) {
+        if (mobileQuery.matches) return;
+        var campus = opening.parentNode;
+        var loop = campus.querySelector('.campus__loop');
+        campus.querySelector('.campus__still').src = 'assets/campus/campus-still.webp';
+        loop.poster = 'assets/campus/campus-still.webp';
+        loop.src = 'assets/campus/campus-loop.mp4';
         if (document.documentElement.classList.contains('opening-pending')) {
-          video.poster = 'assets/campus/campus-opening-poster.webp';
-          video.src = 'assets/campus/campus-opening.mp4';
+          opening.poster = 'assets/campus/campus-opening-poster.webp';
+          opening.src = 'assets/campus/campus-opening.mp4';
         } else {
-          video.remove();
+          opening.remove();
         }
       })(document.currentScript.previousElementSibling);
     </script>

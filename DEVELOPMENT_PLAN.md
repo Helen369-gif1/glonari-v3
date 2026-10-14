@@ -943,6 +943,25 @@ How to use this plan: give Claude Code **one stage at a time**. Each stage is se
 >
 > **Status:** implemented — pending manual visual approval. QA screenshots: `docs/qa/2026-10-14-campus-opening/`. See chat/prompt from 2026-10-14.
 
+
+> **UPDATE (2026-10-14, later)** — follow-up to the SUPERSEDED (2026-10-14) block above (opening video). Desktop only, `mobile/` unchanged. See chat/prompt from 2026-10-14.
+> - **Once per session:** once the opening has handed off to the loop, or a fallback skipped it (autoplay refused, load failure, reduced motion), `main.js` writes `sessionStorage['glonari.openingSeen'] = '1'` (in try/catch). The `<head>` script then skips the opening for the rest of that tab's session: a manual reload or an outside link in the same tab goes straight to the loop from its first frame with live zones, the opening file is not loaded, and the poster is the still frame (the loop's first frame), never the fly-over. A new tab plays it again; without sessionStorage every load behaves like a first visit. The existing skips (Back/Forward, coming from a sub-site, live redirect from mobile/) are unchanged. This replaces "a normal load or manual reload plays it" in the block above.
+> - **Back from a sub-site:** `main.js` also handles a back/forward-cache restore (`pageshow` with `persisted`): it lifts the black `#exit-transition` fade and resumes the loop, so going Back never lands on a dark screen.
+> - **Seam blended into the loop frame:** `campus-opening.mp4` re-encoded in one ffmpeg pass. Its last 12 frames are blended into a frozen copy of `campus-loop.mp4`'s first frame. Frame 190+k = the opening frame mixed with the loop's first frame at weight smoothstep((k+1)/12), so frame 201 is the loop's first frame. Encoding: H.264 High, yuv420p, 24 fps, no audio, +faststart, CRF 21.5, `-preset slow`, and an x264 zone `q=16` on frames 200–201 (the held last frame). Without that zone the last frame only reached ≈34 dB at a 7–8 MB size. Still 202 frames, 8.417 s.
+>   - Size: 14,126,243 → **7,845,835 bytes** (≈7.8 MB).
+>   - PSNR of the last frame against the loop's first frame (by file): 32.85 → **41.50 dB**.
+>   - PSNR of the new file against the old one, all frames except the last 12: mean **42.85 dB** (lowest frame 39.38 dB).
+>   - Mean luma at the seam (by file): last frame 124.51 vs loop's first frame 124.51 (was 122.20 vs 124.51). On screen, the luma rises monotonically into the loop with steps ≤ 1.0/255 (was a +3.3/255 step).
+>   - Poster `campus-opening-poster.webp` regenerated from the new first frame (WebP q85).
+> - **No still on a mobile redirect:** `campus-still.webp` (its preload, the `<img>` src and the loop's `poster`) and the loop's `src` are no longer in the markup. The same inline script that sets up the opening sets them, and only when the page stays on desktop. The still preload moved into the `<head>` script after the redirect check, so it still starts as early as before. At 768×900 and 1200×900 there are no requests to any mp4 or to `campus-still.webp`. Autoplay refused / reduced motion still give the interactive Campus in ≈0.1–0.2 s.
+> - **"Skip the intro" marker for mobile/:** the desktop `<head>` script that consumes `glonariSkipIntro` no longer runs when the page is already redirecting to `mobile/`, so the marker it has just set for a returning visit survives the redirect. Finding: in Chromium the second script never ran after `location.replace()` anyway, so the marker already arrived (verified against the previous commit). The fix makes this independent of whether a browser keeps parsing after `replace()`. All desktop `sessionStorage` access now goes through a try/catch helper (`glonariSession`), so blocked storage can no longer abort the redirect.
+> - **Acceptance criteria (2026-10-14, later):**
+>   - [x] First visit → opening; reload → loop; Meet Gia → Back → loop, not dark, 11 zones work; same via Digital Banker; outside link in the same tab → loop; new tab → opening.
+>   - [x] Last frame ≥ 40 dB against the loop's first frame (41.50); body ≥ 38 dB against the old file (42.85); file 7–8 MB (7.85).
+>   - [x] 768×900 / 1200×900: no mp4, no `campus-still.webp` requests; the mobile intro stays skipped on a returning visit.
+>   - [x] Autoplay refused / reduced motion → interactive Campus in ≈0.2 s; no new console errors.
+>   - [ ] A real back/forward-cache restore was simulated only: headless Playwright does not use the bfcache, so the handler was checked with a synthetic `pageshow` event.
+
 ---
 
 ## Summary: stage dependency chain
