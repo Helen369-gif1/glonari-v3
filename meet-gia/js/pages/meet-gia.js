@@ -19,6 +19,15 @@
       calm.preload = 'none';
       calm.poster = calm.dataset.endPoster;
     } else {
+      // preload="none" in the markup keeps this clip off the initial load
+      // (it competed with the hero frames); start buffering one screen early.
+      const warm = new IntersectionObserver((entries) => {
+        if (!entries.some(en => en.isIntersecting)) return;
+        warm.disconnect();
+        calm.preload = 'auto';
+        try { calm.load(); } catch (e) {}
+      }, { rootMargin: '100% 0px' });
+      warm.observe(calm);
       let armed = true;
       new IntersectionObserver((entries) => {
         entries.forEach(en => {
@@ -79,15 +88,15 @@
   }
   function nearestLoaded(i) {
     for (let d = 0; d < N; d++) {
-      if (imgs[i - d] && imgs[i - d].complete) return imgs[i - d];
-      if (imgs[i + d] && imgs[i + d].complete) return imgs[i + d];
+      if (imgs[i - d] && imgs[i - d].naturalWidth) return imgs[i - d];
+      if (imgs[i + d] && imgs[i + d].naturalWidth) return imgs[i + d];
     }
     return null;
   }
   function render(p) {
     const i = Math.round(clamp(p / VIDEO_END, 0, 1) * (N - 1));
     ctx.imageSmoothingQuality = 'high';
-    const base = imgs[i] && imgs[i].complete ? imgs[i] : nearestLoaded(i);
+    const base = imgs[i] && imgs[i].naturalWidth ? imgs[i] : nearestLoaded(i);
     drawImg(base, p, 1);
   }
   function captions(p) {
@@ -121,21 +130,42 @@
     if (!raf) raf = requestAnimationFrame(tick);
   }
 
+  /* Frames load coarse to fine (first, last, then every 16th, 8th, 4th, 2nd...)
+     with at most LOAD_CONCURRENCY requests in flight, so the first frame is not
+     queued behind 95 others and the scrub is usable after the first few dozen
+     requests; render() fills gaps from the nearest loaded frame. Phones and
+     Save-Data load every 2nd / 4th frame only (the scroll is shorter there,
+     a skipped frame is not visible), halving the hero download on mobile. */
+  const LOAD_CONCURRENCY = 6;
+  const saveData = !!(navigator.connection && navigator.connection.saveData);
+  const STRIDE = saveData ? 4 : window.matchMedia('(max-width: 900px), (pointer: coarse)').matches ? 2 : 1;
+  function frameOrder() {
+    if (reduce) return [N - 1]; // in reduced motion, only the final frame is needed
+    const order = [0, N - 1], seen = new Set(order);
+    for (let step = 16; step >= STRIDE; step /= 2) {
+      for (let k = 0; k < N; k += step) if (!seen.has(k)) { seen.add(k); order.push(k); }
+    }
+    return order;
+  }
   function loadFrames() {
-    // In reduced motion, only the final frame is needed.
-    const order = reduce ? [N - 1] : [0, N - 1, ...Array.from({ length: N }, (_, k) => k).filter(k => k && k !== N - 1)];
-    order.forEach((k) => {
+    const order = frameOrder();
+    let next = 0;
+    const startNext = () => {
+      if (next >= order.length) return;
+      const k = order[next++];
       const im = new Image();
       im.decoding = 'async';
-      im.onload = () => {
+      im.onload = im.onerror = () => {
         loaded++;
         loadBar.style.transform = `scaleX(${loaded / order.length})`;
         if (loaded === order.length) loadBar.style.opacity = 0;
         if (reduce) render(1); else if (k === 0 || !raf) render(current);
+        startNext();
       };
       im.src = FRAMES[k];
       imgs[k] = im;
-    });
+    };
+    for (let c = 0; c < LOAD_CONCURRENCY; c++) startNext();
   }
 
   sizeCanvas();

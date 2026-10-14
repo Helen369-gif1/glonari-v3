@@ -182,6 +182,14 @@ body{
   height:100%; width:0;
   background:linear-gradient(90deg, rgba(216,178,106,.35), var(--accent));
 }
+/* video download progress, shown only until the clip is in memory */
+.loading{
+  position:absolute; left:0; top:0; height:2px; width:100%;
+  background:var(--accent);
+  transform-origin:0 50%; transform:scaleX(0);
+  transition:transform .2s linear, opacity .4s ease;
+}
+.loading.is-done{ opacity:0; }
 
 /* ---------- back navigation -----------------------------------
    Explicit hard link back to the Glonari campus (never history.back(),
@@ -264,8 +272,10 @@ body{
 
 <main class="track" id="track">
   <div class="pin">
+    <!-- No src here: the script fetches the whole clip into memory first
+         (see "video source" below), so scrubbing never waits on the network. -->
     <video id="video"
-           src="digital-banker-mobile-1080p-scrub.mp4"
+           data-src="digital-banker-mobile-1080p-scrub.mp4"
            poster="poster.jpg"
            muted playsinline webkit-playsinline
            preload="auto"
@@ -306,6 +316,7 @@ body{
       <span class="cue__line"></span>
     </div>
 
+    <div class="loading" id="loading" aria-hidden="true"></div>
     <div class="progress" aria-hidden="true"><div class="progress__bar" id="bar"></div></div>
   </div>
 </main>
@@ -621,8 +632,12 @@ body{
     if (needsFrame) {
       needsFrame = Math.abs(targetTime - currentTime) > 0.0004;
 
+      /* One seek at a time: a new currentTime while the previous seek is still
+         pending aborts it, and on iOS a stream of those never paints a frame.
+         Until the seek lands, needsFrame stays on so the latest time follows. */
       if (video.readyState >= 1 && Math.abs(video.currentTime - currentTime) > SEEK_EPSILON) {
-        try { video.currentTime = currentTime; } catch (e) { /* not seekable yet */ }
+        if (video.seeking) needsFrame = true;
+        else { try { video.currentTime = currentTime; } catch (e) { /* not seekable yet */ } }
       }
       applyText(currentTime);
     }
@@ -633,8 +648,9 @@ body{
 
   /* ---------------- first frame / iOS decode kick -------------- */
   var primed = false;
+  var hasSource = false;   // set by loadSource() below
   function prime() {
-    if (primed) return;
+    if (primed || !hasSource) return;
     primed = true;
     var p = video.play();
     if (p && typeof p.then === 'function') {
@@ -704,6 +720,46 @@ body{
     else video.addEventListener('loadeddata', reveal, { once: true });
   });
   setTimeout(reveal, 2500);   // never leave the copy hidden
+
+  /* ---------------- video source (added 2026-10-14) ---------------
+     Streaming the clip made the first visit unscrubbable on phones: every
+     scroll position became a range request, so the frame stayed on the
+     poster until the whole file was in the HTTP cache (a second visit
+     worked). The clip (~3.3MB) is now fetched whole, with progress in
+     #loading, and played from an in-memory blob: once it is there, every
+     seek is local. The poster and the text timeline follow the scroll in
+     the meantime. Without fetch/Blob support, or if the fetch fails, the
+     plain file URL is used as before. */
+  var loadingEl = document.getElementById('loading');
+  function setSource(src) {
+    if (hasSource) return;
+    hasSource = true;
+    video.src = src;
+    if (loadingEl) loadingEl.classList.add('is-done');
+  }
+  function loadSource() {
+    var url = video.getAttribute('data-src');
+    if (!window.fetch || !window.Blob || !window.URL || !URL.createObjectURL) { setSource(url); return; }
+    fetch(url).then(function (res) {
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      var total = +res.headers.get('Content-Length') || 0;
+      if (!res.body || !res.body.getReader || !total) return res.blob();
+      var reader = res.body.getReader(), chunks = [], got = 0;
+      function pump() {
+        return reader.read().then(function (r) {
+          if (r.done) return new Blob(chunks, { type: 'video/mp4' });
+          chunks.push(r.value);
+          got += r.value.length;
+          if (loadingEl) loadingEl.style.transform = 'scaleX(' + Math.min(1, got / total).toFixed(3) + ')';
+          return pump();
+        });
+      }
+      return pump();
+    }).then(function (blob) {
+      setSource(URL.createObjectURL(blob.type ? blob : new Blob([blob], { type: 'video/mp4' })));
+    }).catch(function () { setSource(url); });
+  }
+  loadSource();
 
   layout();
   readScroll();
